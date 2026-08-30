@@ -11,6 +11,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
+            margin: 0;
         }
 
         #videoPreview {
@@ -46,14 +47,42 @@
             color: white;
         }
 
+        #clipButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         #downloadButton {
             background: green;
             color: white;
             display: none;
         }
 
+        #progressContainer {
+            width: 100%;
+            max-width: 500px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            margin: 20px auto 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: #2196f3;
+            transition: width 0.1s linear;
+        }
+
+        #progressText {
+            font-weight: bold;
+            display: none;
+        }
+
         #status {
-            margin-top: 20px;
+            margin-top: 15px;
             font-weight: bold;
             word-break: break-word;
         }
@@ -66,7 +95,11 @@
 
     <p>Upload your long video to start.</p>
 
-    <input type="file" id="videoInput" accept="video/*">
+    <input
+        type="file"
+        id="videoInput"
+        accept="video/*"
+    >
 
     <video
         id="videoPreview"
@@ -77,27 +110,33 @@
     <div class="controls">
 
         <div>
-            <label for="startTime">Start Time:</label>
+            <label for="startTime">
+                Start Time:
+            </label>
 
             <input
                 type="number"
                 id="startTime"
                 value="0"
                 min="0"
-                step="0.1">
+                step="0.1"
+            >
 
             seconds
         </div>
 
         <div>
-            <label for="endTime">End Time:</label>
+            <label for="endTime">
+                End Time:
+            </label>
 
             <input
                 type="number"
                 id="endTime"
                 value="0"
                 min="0"
-                step="0.1">
+                step="0.1"
+            >
 
             seconds
         </div>
@@ -108,18 +147,25 @@
             Create Clip
         </button>
 
+        <div id="progressContainer">
+            <div id="progressBar"></div>
+        </div>
+
+        <div id="progressText">
+            0%
+        </div>
+
+        <div id="status"></div>
+
         <br>
 
         <a
             id="downloadButton"
             href="#"
-            download="clipped-video.webm">
-
+            download="clipped-video.webm"
+        >
             Download Clip
-
         </a>
-
-        <div id="status"></div>
 
     </div>
 
@@ -146,6 +192,15 @@
         const downloadButton =
             document.getElementById("downloadButton");
 
+        const progressContainer =
+            document.getElementById("progressContainer");
+
+        const progressBar =
+            document.getElementById("progressBar");
+
+        const progressText =
+            document.getElementById("progressText");
+
         const status =
             document.getElementById("status");
 
@@ -154,6 +209,10 @@
         let mediaRecorder = null;
 
         let recordedChunks = [];
+
+        let currentVideoURL = null;
+
+        let currentDownloadURL = null;
 
         videoInput.addEventListener(
             "change",
@@ -167,11 +226,17 @@
 
                 selectedFile = file;
 
-                const videoURL =
+                if (currentVideoURL) {
+                    URL.revokeObjectURL(
+                        currentVideoURL
+                    );
+                }
+
+                currentVideoURL =
                     URL.createObjectURL(file);
 
                 videoPreview.src =
-                    videoURL;
+                    currentVideoURL;
 
                 videoPreview.style.display =
                     "block";
@@ -182,6 +247,8 @@
                     "none";
 
                 status.textContent = "";
+
+                resetProgress();
 
             }
         );
@@ -210,6 +277,45 @@
             }
         );
 
+        function resetProgress() {
+
+            progressBar.style.width =
+                "0%";
+
+            progressText.textContent =
+                "0%";
+
+            progressContainer.style.display =
+                "none";
+
+            progressText.style.display =
+                "none";
+        }
+
+        function updateProgress(value) {
+
+            const percent =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Math.round(value)
+                    )
+                );
+
+            progressBar.style.width =
+                percent + "%";
+
+            progressText.textContent =
+                percent + "%";
+
+            progressContainer.style.display =
+                "block";
+
+            progressText.style.display =
+                "block";
+        }
+
         clipButton.addEventListener(
             "click",
             async function () {
@@ -223,10 +329,14 @@
                 }
 
                 const start =
-                    parseFloat(startTime.value);
+                    parseFloat(
+                        startTime.value
+                    );
 
                 const end =
-                    parseFloat(endTime.value);
+                    parseFloat(
+                        endTime.value
+                    );
 
                 if (
                     isNaN(start) ||
@@ -269,10 +379,22 @@
                     downloadButton.style.display =
                         "none";
 
+                    status.textContent =
+                        "Preparing clip...";
+
+                    updateProgress(0);
+
                     recordedChunks = [];
 
-                    status.textContent =
-                        "Preparing video clip...";
+                    if (currentDownloadURL) {
+
+                        URL.revokeObjectURL(
+                            currentDownloadURL
+                        );
+
+                        currentDownloadURL =
+                            null;
+                    }
 
                     const stream =
                         videoPreview.captureStream();
@@ -291,7 +413,8 @@
                     ) {
 
                         if (
-                            MediaRecorder.isTypeSupported(type)
+                            MediaRecorder
+                                .isTypeSupported(type)
                         ) {
 
                             supportedType =
@@ -341,48 +464,139 @@
                             }
                         );
 
-                    videoPreview.currentTime =
-                        start;
+                    status.textContent =
+                        "Seeking to start position...";
 
                     await new Promise(
-                        function (resolve) {
+                        function (resolve, reject) {
 
-                            videoPreview.onseeked =
+                            const seekHandler =
                                 function () {
 
-                                    resolve();
+                                    videoPreview
+                                        .removeEventListener(
+                                            "seeked",
+                                            seekHandler
+                                        );
 
+                                    resolve();
                                 };
+
+                            videoPreview
+                                .addEventListener(
+                                    "seeked",
+                                    seekHandler
+                                );
+
+                            videoPreview.currentTime =
+                                start;
+
+                            setTimeout(
+                                function () {
+
+                                    videoPreview
+                                        .removeEventListener(
+                                            "seeked",
+                                            seekHandler
+                                        );
+
+                                    if (
+                                        Math.abs(
+                                            videoPreview.currentTime -
+                                            start
+                                        ) < 1
+                                    ) {
+
+                                        resolve();
+
+                                    } else {
+
+                                        reject(
+                                            new Error(
+                                                "Unable to seek to the selected start time."
+                                            )
+                                        );
+
+                                    }
+
+                                },
+                                5000
+                            );
 
                         }
                     );
 
-                    mediaRecorder.start();
+                    const clipDuration =
+                        end - start;
+
+                    mediaRecorder.start(
+                        100
+                    );
 
                     status.textContent =
-                        "Creating video clip...";
+                        "Creating clip...";
 
-                    videoPreview.play();
+                    await videoPreview.play();
 
-                    const clipDuration =
-                        (end - start) * 1000;
+                    const startTimestamp =
+                        performance.now();
 
                     await new Promise(
                         function (resolve) {
 
-                            setTimeout(
-                                resolve,
-                                clipDuration
-                            );
+                            const progressTimer =
+                                setInterval(
+                                    function () {
+
+                                        const elapsed =
+                                            performance.now() -
+                                            startTimestamp;
+
+                                        const percent =
+                                            (
+                                                elapsed /
+                                                (clipDuration * 1000)
+                                            ) * 100;
+
+                                        updateProgress(
+                                            percent
+                                        );
+
+                                        if (
+                                            elapsed >=
+                                            clipDuration * 1000
+                                        ) {
+
+                                            clearInterval(
+                                                progressTimer
+                                            );
+
+                                            resolve();
+                                        }
+
+                                    },
+                                    100
+                                );
 
                         }
                     );
 
                     videoPreview.pause();
 
+                    updateProgress(100);
+
                     mediaRecorder.stop();
 
                     await recordingFinished;
+
+                    if (
+                        recordedChunks.length === 0
+                    ) {
+
+                        throw new Error(
+                            "No video data was recorded."
+                        );
+                    }
 
                     const blob =
                         new Blob(
@@ -393,14 +607,18 @@
                             }
                         );
 
-                    const url =
-                        URL.createObjectURL(blob);
+                    currentDownloadURL =
+                        URL.createObjectURL(
+                            blob
+                        );
 
                     downloadButton.href =
-                        url;
+                        currentDownloadURL;
 
                     downloadButton.download =
-                        "clipped-video.webm";
+                        "clipped-video-" +
+                        Date.now() +
+                        ".webm";
 
                     downloadButton.style.display =
                         "inline-block";
