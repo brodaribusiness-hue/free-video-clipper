@@ -6,6 +6,8 @@
 
     <title>Free Video Clipper</title>
 
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,7 +51,6 @@
 
         #clipButton:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
         }
 
         #downloadButton {
@@ -73,12 +74,12 @@
             width: 0%;
             height: 100%;
             background: #2196f3;
-            transition: width 0.1s linear;
+            transition: width 0.15s linear;
         }
 
         #progressText {
-            font-weight: bold;
             display: none;
+            font-weight: bold;
         }
 
         #status {
@@ -144,7 +145,7 @@
         <div id="durationText"></div>
 
         <button id="clipButton">
-            Create Clip
+            Create MP4 Clip
         </button>
 
         <div id="progressContainer">
@@ -162,8 +163,7 @@
         <a
             id="downloadButton"
             href="#"
-            download="clipped-video.webm"
-        >
+            download="clipped-video.mp4">
             Download Clip
         </a>
 
@@ -171,72 +171,100 @@
 
     <script>
 
+        const {
+            createFFmpeg,
+            fetchFile
+        } = FFmpeg;
+
+        const ffmpeg =
+            createFFmpeg({
+                log: true,
+
+                mainName: "main",
+
+                corePath:
+                    "https://unpkg.com/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js"
+            });
+
         const videoInput =
-            document.getElementById("videoInput");
+            document.getElementById(
+                "videoInput"
+            );
 
         const videoPreview =
-            document.getElementById("videoPreview");
+            document.getElementById(
+                "videoPreview"
+            );
 
         const startTime =
-            document.getElementById("startTime");
+            document.getElementById(
+                "startTime"
+            );
 
         const endTime =
-            document.getElementById("endTime");
+            document.getElementById(
+                "endTime"
+            );
 
         const durationText =
-            document.getElementById("durationText");
+            document.getElementById(
+                "durationText"
+            );
 
         const clipButton =
-            document.getElementById("clipButton");
+            document.getElementById(
+                "clipButton"
+            );
 
         const downloadButton =
-            document.getElementById("downloadButton");
+            document.getElementById(
+                "downloadButton"
+            );
 
         const progressContainer =
-            document.getElementById("progressContainer");
+            document.getElementById(
+                "progressContainer"
+            );
 
         const progressBar =
-            document.getElementById("progressBar");
+            document.getElementById(
+                "progressBar"
+            );
 
         const progressText =
-            document.getElementById("progressText");
+            document.getElementById(
+                "progressText"
+            );
 
         const status =
-            document.getElementById("status");
+            document.getElementById(
+                "status"
+            );
 
         let selectedFile = null;
 
-        let mediaRecorder = null;
+        let downloadUrl = null;
 
-        let recordedChunks = [];
-
-        let currentVideoURL = null;
-
-        let currentDownloadURL = null;
+        let ffmpegLoaded = false;
 
         videoInput.addEventListener(
             "change",
             function () {
 
-                const file = this.files[0];
+                const file =
+                    this.files[0];
 
                 if (!file) {
                     return;
                 }
 
-                selectedFile = file;
-
-                if (currentVideoURL) {
-                    URL.revokeObjectURL(
-                        currentVideoURL
-                    );
-                }
-
-                currentVideoURL =
-                    URL.createObjectURL(file);
+                selectedFile =
+                    file;
 
                 videoPreview.src =
-                    currentVideoURL;
+                    URL.createObjectURL(
+                        file
+                    );
 
                 videoPreview.style.display =
                     "block";
@@ -246,10 +274,10 @@
                 downloadButton.style.display =
                     "none";
 
-                status.textContent = "";
+                status.textContent =
+                    "";
 
                 resetProgress();
-
             }
         );
 
@@ -273,7 +301,6 @@
 
                 endTime.max =
                     duration;
-
             }
         );
 
@@ -292,14 +319,18 @@
                 "none";
         }
 
-        function updateProgress(value) {
+        function updateProgress(
+            value
+        ) {
 
             const percent =
                 Math.max(
                     0,
                     Math.min(
                         100,
-                        Math.round(value)
+                        Math.round(
+                            value
+                        )
                     )
                 );
 
@@ -315,6 +346,17 @@
             progressText.style.display =
                 "block";
         }
+
+        ffmpeg.setProgress(
+            function ({
+                ratio
+            }) {
+
+                updateProgress(
+                    ratio * 100
+                );
+            }
+        );
 
         clipButton.addEventListener(
             "click",
@@ -379,246 +421,125 @@
                     downloadButton.style.display =
                         "none";
 
+                    resetProgress();
+
                     status.textContent =
-                        "Preparing clip...";
+                        "Loading video engine...";
+
+                    if (!ffmpegLoaded) {
+
+                        await ffmpeg.load();
+
+                        ffmpegLoaded =
+                            true;
+                    }
+
+                    status.textContent =
+                        "Preparing video...";
 
                     updateProgress(0);
 
-                    recordedChunks = [];
+                    try {
 
-                    if (currentDownloadURL) {
-
-                        URL.revokeObjectURL(
-                            currentDownloadURL
+                        ffmpeg.FS(
+                            "unlink",
+                            "input.mp4"
                         );
 
-                        currentDownloadURL =
-                            null;
-                    }
+                    } catch (error) {}
 
-                    const stream =
-                        videoPreview.captureStream();
+                    try {
 
-                    const mimeTypes = [
-                        "video/webm;codecs=vp9",
-                        "video/webm;codecs=vp8",
-                        "video/webm"
-                    ];
-
-                    let supportedType = "";
-
-                    for (
-                        const type
-                        of mimeTypes
-                    ) {
-
-                        if (
-                            MediaRecorder
-                                .isTypeSupported(type)
-                        ) {
-
-                            supportedType =
-                                type;
-
-                            break;
-                        }
-                    }
-
-                    if (!supportedType) {
-
-                        throw new Error(
-                            "This browser does not support video recording."
-                        );
-                    }
-
-                    mediaRecorder =
-                        new MediaRecorder(
-                            stream,
-                            {
-                                mimeType:
-                                    supportedType
-                            }
+                        ffmpeg.FS(
+                            "unlink",
+                            "output.mp4"
                         );
 
-                    mediaRecorder.ondataavailable =
-                        function (event) {
+                    } catch (error) {}
 
-                            if (
-                                event.data &&
-                                event.data.size > 0
-                            ) {
-
-                                recordedChunks.push(
-                                    event.data
-                                );
-                            }
-                        };
-
-                    const recordingFinished =
-                        new Promise(
-                            function (resolve) {
-
-                                mediaRecorder.onstop =
-                                    resolve;
-
-                            }
-                        );
-
-                    status.textContent =
-                        "Seeking to start position...";
-
-                    await new Promise(
-                        function (resolve, reject) {
-
-                            const seekHandler =
-                                function () {
-
-                                    videoPreview
-                                        .removeEventListener(
-                                            "seeked",
-                                            seekHandler
-                                        );
-
-                                    resolve();
-                                };
-
-                            videoPreview
-                                .addEventListener(
-                                    "seeked",
-                                    seekHandler
-                                );
-
-                            videoPreview.currentTime =
-                                start;
-
-                            setTimeout(
-                                function () {
-
-                                    videoPreview
-                                        .removeEventListener(
-                                            "seeked",
-                                            seekHandler
-                                        );
-
-                                    if (
-                                        Math.abs(
-                                            videoPreview.currentTime -
-                                            start
-                                        ) < 1
-                                    ) {
-
-                                        resolve();
-
-                                    } else {
-
-                                        reject(
-                                            new Error(
-                                                "Unable to seek to the selected start time."
-                                            )
-                                        );
-
-                                    }
-
-                                },
-                                5000
-                            );
-
-                        }
+                    ffmpeg.FS(
+                        "writeFile",
+                        "input.mp4",
+                        await fetchFile(
+                            selectedFile
+                        )
                     );
 
-                    const clipDuration =
+                    const duration =
                         end - start;
 
-                    mediaRecorder.start(
+                    status.textContent =
+                        "Creating MP4 clip...";
+
+                    await ffmpeg.run(
+                        "-ss",
+                        String(start),
+
+                        "-i",
+                        "input.mp4",
+
+                        "-t",
+                        String(duration),
+
+                        "-map",
+                        "0:v:0",
+
+                        "-map",
+                        "0:a?",
+
+                        "-c:v",
+                        "libx264",
+
+                        "-preset",
+                        "ultrafast",
+
+                        "-c:a",
+                        "aac",
+
+                        "-movflags",
+                        "+faststart",
+
+                        "output.mp4"
+                    );
+
+                    updateProgress(
                         100
                     );
 
-                    status.textContent =
-                        "Creating clip...";
-
-                    await videoPreview.play();
-
-                    const startTimestamp =
-                        performance.now();
-
-                    await new Promise(
-                        function (resolve) {
-
-                            const progressTimer =
-                                setInterval(
-                                    function () {
-
-                                        const elapsed =
-                                            performance.now() -
-                                            startTimestamp;
-
-                                        const percent =
-                                            (
-                                                elapsed /
-                                                (clipDuration * 1000)
-                                            ) * 100;
-
-                                        updateProgress(
-                                            percent
-                                        );
-
-                                        if (
-                                            elapsed >=
-                                            clipDuration * 1000
-                                        ) {
-
-                                            clearInterval(
-                                                progressTimer
-                                            );
-
-                                            resolve();
-                                        }
-
-                                    },
-                                    100
-                                );
-
-                        }
-                    );
-
-                    videoPreview.pause();
-
-                    updateProgress(100);
-
-                    mediaRecorder.stop();
-
-                    await recordingFinished;
-
-                    if (
-                        recordedChunks.length === 0
-                    ) {
-
-                        throw new Error(
-                            "No video data was recorded."
+                    const data =
+                        ffmpeg.FS(
+                            "readFile",
+                            "output.mp4"
                         );
-                    }
 
                     const blob =
                         new Blob(
-                            recordedChunks,
+                            [data.buffer],
                             {
                                 type:
-                                    supportedType
+                                    "video/mp4"
                             }
                         );
 
-                    currentDownloadURL =
+                    if (downloadUrl) {
+
+                        URL.revokeObjectURL(
+                            downloadUrl
+                        );
+                    }
+
+                    downloadUrl =
                         URL.createObjectURL(
                             blob
                         );
 
                     downloadButton.href =
-                        currentDownloadURL;
+                        downloadUrl;
 
                     downloadButton.download =
                         "clipped-video-" +
                         Date.now() +
-                        ".webm";
+                        ".mp4";
 
                     downloadButton.style.display =
                         "inline-block";
@@ -629,7 +550,9 @@
                 }
                 catch (error) {
 
-                    console.error(error);
+                    console.error(
+                        error
+                    );
 
                     status.textContent =
                         "Error: " +
@@ -643,9 +566,7 @@
 
                     clipButton.disabled =
                         false;
-
                 }
-
             }
         );
 
