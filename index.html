@@ -18,6 +18,27 @@
             margin-top: 20px;
             background: black;
         }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        #durationText {
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -29,12 +50,40 @@
 
     <input type="file" id="videoInput" accept="video/*">
 
-    <video id="videoPreview" controls></video>
+    <video id="videoPreview" controls style="display:none;"></video>
+
+    <div class="controls">
+
+        <div>
+            <label>Start Time:</label>
+            <input type="number" id="startTime" value="0" min="0" step="0.1">
+            seconds
+        </div>
+
+        <div>
+            <label>End Time:</label>
+            <input type="number" id="endTime" value="0" min="0" step="0.1">
+            seconds
+        </div>
+
+        <div id="durationText"></div>
+
+        <button id="clipButton">✂️ Clip Video</button>
+
+    </div>
 
     <script>
+
         const videoInput = document.getElementById("videoInput");
         const videoPreview = document.getElementById("videoPreview");
 
+        const startTime = document.getElementById("startTime");
+        const endTime = document.getElementById("endTime");
+
+        const durationText = document.getElementById("durationText");
+        const clipButton = document.getElementById("clipButton");
+
+        // Video select hone par preview
         videoInput.addEventListener("change", function () {
 
             const file = this.files[0];
@@ -50,6 +99,51 @@
 
             videoPreview.load();
         });
+
+        // Video ki duration milne par
+        videoPreview.addEventListener("loadedmetadata", function () {
+
+            const duration = videoPreview.duration;
+
+            durationText.textContent =
+                "Video Duration: " + duration.toFixed(1) + " seconds";
+
+            endTime.value = duration.toFixed(1);
+
+            endTime.max = duration;
+            startTime.max = duration;
+        });
+
+        // Clip button
+        clipButton.addEventListener("click", function () {
+
+            const start = parseFloat(startTime.value);
+            const end = parseFloat(endTime.value);
+
+            if (isNaN(start) || isNaN(end)) {
+                alert("Start aur End time enter karo.");
+                return;
+            }
+
+            if (start < 0 || end <= start) {
+                alert("End Time, Start Time se zyada honi chahiye.");
+                return;
+            }
+
+            if (end > videoPreview.duration) {
+                alert("End Time video ki duration se zyada nahi ho sakti.");
+                return;
+            }
+
+            videoPreview.currentTime = start;
+
+            alert(
+                "Clip selection ready!\n\n" +
+                "Start: " + start + " seconds\n" +
+                "End: " + end + " seconds"
+            );
+        });
+
     </script>
 
 </body>
