@@ -14,6 +14,7 @@
             text-align: center;
             padding: 20px;
             margin: 0;
+            background: #f5f5f5;
         }
 
         #videoPreview {
@@ -51,6 +52,7 @@
 
         #clipButton:disabled {
             opacity: 0.6;
+            cursor: not-allowed;
         }
 
         #downloadButton {
@@ -145,7 +147,7 @@
         <div id="durationText"></div>
 
         <button id="clipButton">
-            Create MP4 Clip
+            Create High Quality MP4
         </button>
 
         <div id="progressContainer">
@@ -328,9 +330,7 @@
                     0,
                     Math.min(
                         100,
-                        Math.round(
-                            value
-                        )
+                        Math.round(value)
                     )
                 );
 
@@ -424,7 +424,7 @@
                     resetProgress();
 
                     status.textContent =
-                        "Loading video engine...";
+                        "Loading high quality video engine...";
 
                     if (!ffmpegLoaded) {
 
@@ -435,26 +435,22 @@
                     }
 
                     status.textContent =
-                        "Preparing video...";
+                        "Preparing source video...";
 
                     updateProgress(0);
 
                     try {
-
                         ffmpeg.FS(
                             "unlink",
                             "input.mp4"
                         );
-
                     } catch (error) {}
 
                     try {
-
                         ffmpeg.FS(
                             "unlink",
                             "output.mp4"
                         );
-
                     } catch (error) {}
 
                     ffmpeg.FS(
@@ -469,9 +465,10 @@
                         end - start;
 
                     status.textContent =
-                        "Creating MP4 clip...";
+                        "Encoding high quality MP4...";
 
                     await ffmpeg.run(
+
                         "-ss",
                         String(start),
 
@@ -491,10 +488,19 @@
                         "libx264",
 
                         "-preset",
-                        "ultrafast",
+                        "medium",
+
+                        "-crf",
+                        "18",
+
+                        "-pix_fmt",
+                        "yuv420p",
 
                         "-c:a",
                         "aac",
+
+                        "-b:a",
+                        "192k",
 
                         "-movflags",
                         "+faststart",
@@ -502,9 +508,10 @@
                         "output.mp4"
                     );
 
-                    updateProgress(
-                        100
-                    );
+                    updateProgress(100);
+
+                    status.textContent =
+                        "Finalizing video...";
 
                     const data =
                         ffmpeg.FS(
