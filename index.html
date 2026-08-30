@@ -14,7 +14,6 @@
             text-align: center;
             padding: 20px;
             margin: 0;
-            background: #f5f5f5;
         }
 
         #videoPreview {
@@ -52,7 +51,6 @@
 
         #clipButton:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
         }
 
         #downloadButton {
@@ -147,7 +145,7 @@
         <div id="durationText"></div>
 
         <button id="clipButton">
-            Create High Quality MP4
+            Create MP4 Clip
         </button>
 
         <div id="progressContainer">
@@ -424,7 +422,7 @@
                     resetProgress();
 
                     status.textContent =
-                        "Loading high quality video engine...";
+                        "Loading video engine...";
 
                     if (!ffmpegLoaded) {
 
@@ -435,22 +433,26 @@
                     }
 
                     status.textContent =
-                        "Preparing source video...";
+                        "Preparing video...";
 
                     updateProgress(0);
 
                     try {
+
                         ffmpeg.FS(
                             "unlink",
                             "input.mp4"
                         );
+
                     } catch (error) {}
 
                     try {
+
                         ffmpeg.FS(
                             "unlink",
                             "output.mp4"
                         );
+
                     } catch (error) {}
 
                     ffmpeg.FS(
@@ -465,7 +467,7 @@
                         end - start;
 
                     status.textContent =
-                        "Encoding high quality MP4...";
+                        "Creating MP4 clip...";
 
                     await ffmpeg.run(
 
@@ -488,19 +490,10 @@
                         "libx264",
 
                         "-preset",
-                        "medium",
-
-                        "-crf",
-                        "18",
-
-                        "-pix_fmt",
-                        "yuv420p",
+                        "ultrafast",
 
                         "-c:a",
                         "aac",
-
-                        "-b:a",
-                        "192k",
 
                         "-movflags",
                         "+faststart",
