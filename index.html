@@ -7,7 +7,6 @@
     <title>Free Video Clipper</title>
 
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-    <script src="https://unpkg.com/@ffmpeg/util@0.11.0/dist/util.min.js"></script>
 
     <style>
         body {
@@ -50,11 +49,16 @@
             background: green;
             color: white;
             display: none;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 15px;
         }
 
         #status {
             margin-top: 20px;
             font-weight: bold;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -73,23 +77,41 @@
 
         <div>
             <label>Start Time:</label>
-            <input type="number" id="startTime" value="0" min="0" step="0.1">
+            <input
+                type="number"
+                id="startTime"
+                value="0"
+                min="0"
+                step="0.1"
+            >
             seconds
         </div>
 
         <div>
             <label>End Time:</label>
-            <input type="number" id="endTime" value="0" min="0" step="0.1">
+            <input
+                type="number"
+                id="endTime"
+                value="0"
+                min="0"
+                step="0.1"
+            >
             seconds
         </div>
 
         <div id="durationText"></div>
 
-        <button id="clipButton">✂️ Create Clip</button>
+        <button id="clipButton">
+            Create Clip
+        </button>
 
         <br>
 
-        <a id="downloadButton" download="clipped-video.mp4">
+        <a
+            id="downloadButton"
+            href="#"
+            download="clipped-video.mp4"
+        >
             Download Clip
         </a>
 
@@ -105,14 +127,23 @@
             log: true
         });
 
-        const videoInput = document.getElementById("videoInput");
-        const videoPreview = document.getElementById("videoPreview");
+        const videoInput =
+            document.getElementById("videoInput");
 
-        const startTime = document.getElementById("startTime");
-        const endTime = document.getElementById("endTime");
+        const videoPreview =
+            document.getElementById("videoPreview");
 
-        const durationText = document.getElementById("durationText");
-        const clipButton = document.getElementById("clipButton");
+        const startTime =
+            document.getElementById("startTime");
+
+        const endTime =
+            document.getElementById("endTime");
+
+        const durationText =
+            document.getElementById("durationText");
+
+        const clipButton =
+            document.getElementById("clipButton");
 
         const downloadButton =
             document.getElementById("downloadButton");
@@ -122,136 +153,179 @@
 
         let selectedFile = null;
 
-        videoInput.addEventListener("change", function () {
+        videoInput.addEventListener(
+            "change",
+            function () {
 
-            const file = this.files[0];
+                const file = this.files[0];
 
-            if (!file) {
-                return;
-            }
-
-            selectedFile = file;
-
-            const videoURL = URL.createObjectURL(file);
-
-            videoPreview.src = videoURL;
-            videoPreview.style.display = "block";
-
-            videoPreview.load();
-
-            downloadButton.style.display = "none";
-            status.textContent = "";
-        });
-
-        videoPreview.addEventListener("loadedmetadata", function () {
-
-            const duration = videoPreview.duration;
-
-            durationText.textContent =
-                "Video Duration: " +
-                duration.toFixed(1) +
-                " seconds";
-
-            endTime.value = duration.toFixed(1);
-
-            endTime.max = duration;
-            startTime.max = duration;
-        });
-
-        clipButton.addEventListener("click", async function () {
-
-            if (!selectedFile) {
-                alert("Pehle video upload karo.");
-                return;
-            }
-
-            const start = parseFloat(startTime.value);
-            const end = parseFloat(endTime.value);
-
-            if (isNaN(start) || isNaN(end)) {
-                alert("Start aur End time enter karo.");
-                return;
-            }
-
-            if (start < 0 || end <= start) {
-                alert("End Time, Start Time se zyada honi chahiye.");
-                return;
-            }
-
-            if (end > videoPreview.duration) {
-                alert("End Time video ki duration se zyada hai.");
-                return;
-            }
-
-            try {
-
-                clipButton.disabled = true;
-
-                status.textContent =
-                    "Video engine load ho raha hai...";
-
-                if (!ffmpeg.isLoaded()) {
-                    await ffmpeg.load();
+                if (!file) {
+                    return;
                 }
 
-                status.textContent =
-                    "Video clip ban rahi hai...";
+                selectedFile = file;
 
-                ffmpeg.FS(
-                    "writeFile",
-                    "input.mp4",
-                    await fetchFile(selectedFile)
-                );
+                const videoURL =
+                    URL.createObjectURL(file);
 
-                const duration = end - start;
+                videoPreview.src = videoURL;
 
-                await ffmpeg.run(
-                    "-ss",
-                    String(start),
-                    "-i",
-                    "input.mp4",
-                    "-t",
-                    String(duration),
-                    "-c",
-                    "copy",
-                    "output.mp4"
-                );
+                videoPreview.style.display =
+                    "block";
 
-                const data =
+                videoPreview.load();
+
+                downloadButton.style.display =
+                    "none";
+
+                status.textContent = "";
+            }
+        );
+
+        videoPreview.addEventListener(
+            "loadedmetadata",
+            function () {
+
+                const duration =
+                    videoPreview.duration;
+
+                durationText.textContent =
+                    "Video Duration: " +
+                    duration.toFixed(1) +
+                    " seconds";
+
+                endTime.value =
+                    duration.toFixed(1);
+
+                endTime.max =
+                    duration;
+
+                startTime.max =
+                    duration;
+            }
+        );
+
+        clipButton.addEventListener(
+            "click",
+            async function () {
+
+                if (!selectedFile) {
+
+                    status.textContent =
+                        "Error: Please upload a video first.";
+
+                    return;
+                }
+
+                const start =
+                    parseFloat(startTime.value);
+
+                const end =
+                    parseFloat(endTime.value);
+
+                if (isNaN(start) ||
+                    isNaN(end)) {
+
+                    status.textContent =
+                        "Error: Enter valid start and end times.";
+
+                    return;
+                }
+
+                if (start < 0 ||
+                    end <= start) {
+
+                    status.textContent =
+                        "Error: End time must be greater than start time.";
+
+                    return;
+                }
+
+                if (end >
+                    videoPreview.duration) {
+
+                    status.textContent =
+                        "Error: End time cannot exceed video duration.";
+
+                    return;
+                }
+
+                try {
+
+                    clipButton.disabled = true;
+
+                    status.textContent =
+                        "Loading video engine...";
+
+                    if (!ffmpeg.isLoaded()) {
+                        await ffmpeg.load();
+                    }
+
+                    status.textContent =
+                        "Creating video clip...";
+
                     ffmpeg.FS(
-                        "readFile",
+                        "writeFile",
+                        "input.mp4",
+                        await fetchFile(selectedFile)
+                    );
+
+                    const clipDuration =
+                        end - start;
+
+                    await ffmpeg.run(
+                        "-ss",
+                        String(start),
+                        "-i",
+                        "input.mp4",
+                        "-t",
+                        String(clipDuration),
+                        "-c",
+                        "copy",
                         "output.mp4"
                     );
 
-                const blob =
-                    new Blob(
-                        [data.buffer],
-                        { type: "video/mp4" }
-                    );
+                    const data =
+                        ffmpeg.FS(
+                            "readFile",
+                            "output.mp4"
+                        );
 
-                const url =
-                    URL.createObjectURL(blob);
+                    const blob =
+                        new Blob(
+                            [data.buffer],
+                            {
+                                type: "video/mp4"
+                            }
+                        );
 
-                downloadButton.href = url;
-                downloadButton.style.display = "inline-block";
+                    const url =
+                        URL.createObjectURL(blob);
 
-                status.textContent =
-                    "✅ Clip ready hai! Download Clip par click karo.";
+                    downloadButton.href = url;
 
-            } catch (error) {
+                    downloadButton.style.display =
+                        "inline-block";
 
-                console.error(error);
+                    status.textContent =
+                        "Clip created successfully.";
 
-                status.textContent =
-                    "❌ Clip banane mein error aya. Console/error screenshot bhejo.";
+                } catch (error) {
 
-            } finally {
+                    console.error(error);
 
-                clipButton.disabled = false;
+                    status.textContent =
+                        "Error: " +
+                        (error.message || error);
+
+                } finally {
+
+                    clipButton.disabled =
+                        false;
+                }
 
             }
-
-        });
+        );
 
     </script>
 
