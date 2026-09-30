@@ -2,11 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Video Clipper</title>
 
     <style>
@@ -21,7 +17,6 @@
             --accent: #ff6b2c;
             --accent-hover: #ff7d45;
             --success: #22c55e;
-            --warning: #f59e0b;
             --danger: #ef4444;
         }
 
@@ -37,7 +32,6 @@
             color: var(--text);
             font-family:
                 Inter,
-                ui-sans-serif,
                 system-ui,
                 -apple-system,
                 BlinkMacSystemFont,
@@ -50,17 +44,12 @@
         }
 
         button,
-        input,
-        select {
+        input {
             font: inherit;
         }
 
         button {
             border: 0;
-        }
-
-        .app {
-            min-height: 100vh;
         }
 
         .screen {
@@ -72,14 +61,12 @@
             display: flex;
         }
 
-        /* --------------------------------
-           HOME
-        -------------------------------- */
+        /* HOME */
 
         #homeScreen {
             align-items: center;
             justify-content: center;
-            padding: 32px 20px;
+            padding: 30px 20px;
         }
 
         .home-container {
@@ -88,58 +75,48 @@
         }
 
         .brand {
-            margin-bottom: 10px;
-            font-size: clamp(28px, 5vw, 42px);
+            margin-bottom: 8px;
+            font-size: clamp(30px, 5vw, 44px);
             font-weight: 800;
             letter-spacing: -1.5px;
         }
 
         .tagline {
-            margin: 0 0 38px;
+            margin: 0 0 36px;
             color: var(--muted);
-            font-size: 16px;
         }
 
         .upload-card {
-            position: relative;
-            display: flex;
             min-height: 330px;
+            display: flex;
             align-items: center;
             justify-content: center;
             border: 1px dashed #4a4a52;
             border-radius: 20px;
             background: var(--surface);
-            transition:
-                border-color 0.2s ease,
-                background 0.2s ease;
+            transition: 0.2s ease;
         }
 
-        .upload-card:hover,
         .upload-card.drag-over {
             border-color: var(--accent);
-            background: #1d1a18;
-        }
-
-        .upload-content {
-            padding: 30px;
+            background: #211914;
         }
 
         .upload-icon {
             width: 64px;
             height: 64px;
-            margin: 0 auto 22px;
+            margin: 0 auto 20px;
             display: grid;
             place-items: center;
             border-radius: 18px;
             background: var(--surface-2);
             color: var(--accent);
-            font-size: 30px;
+            font-size: 32px;
         }
 
         .upload-title {
             margin: 0 0 8px;
             font-size: 22px;
-            font-weight: 700;
         }
 
         .upload-text {
@@ -147,43 +124,8 @@
             color: var(--muted);
         }
 
-        .primary-button {
-            min-height: 46px;
-            padding: 0 22px;
-            border-radius: 10px;
-            background: var(--accent);
-            color: #ffffff;
-            font-weight: 700;
-            cursor: pointer;
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease;
-        }
-
-        .primary-button:hover {
-            background: var(--accent-hover);
-        }
-
-        .primary-button:active {
-            transform: translateY(1px);
-        }
-
-        .secondary-button {
-            min-height: 44px;
-            padding: 0 18px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--surface-2);
-            color: var(--text);
-            cursor: pointer;
-        }
-
-        .secondary-button:hover {
-            background: var(--surface-3);
-        }
-
-        .supported-formats {
-            margin-top: 22px;
+        .supported {
+            margin-top: 20px;
             color: #71717a;
             font-size: 13px;
         }
@@ -192,22 +134,47 @@
             display: none;
         }
 
-        /* --------------------------------
-           EDITOR
-        -------------------------------- */
+        .primary-button,
+        .secondary-button {
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .primary-button {
+            background: var(--accent);
+            color: white;
+        }
+
+        .primary-button:hover {
+            background: var(--accent-hover);
+        }
+
+        .secondary-button {
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .secondary-button:hover {
+            background: var(--surface-3);
+        }
+
+        /* EDITOR */
 
         #editorScreen {
             flex-direction: column;
-            background: var(--bg);
         }
 
         .topbar {
-            height: 64px;
+            height: 62px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 18px;
             border-bottom: 1px solid var(--border);
             background: var(--surface);
         }
@@ -226,7 +193,7 @@
             place-items: center;
             border-radius: 9px;
             background: transparent;
-            color: var(--text);
+            color: white;
             font-size: 22px;
             cursor: pointer;
         }
@@ -242,81 +209,80 @@
 
         .export-button {
             min-height: 40px;
-            padding: 0 17px;
+            padding: 0 18px;
             border-radius: 9px;
             background: var(--accent);
-            color: #ffffff;
-            font-size: 14px;
+            color: white;
             font-weight: 700;
             cursor: pointer;
         }
 
         .editor-body {
             flex: 1;
+            min-height: 0;
             display: grid;
             grid-template-columns: minmax(0, 1fr) 300px;
-            min-height: 0;
         }
 
         .workspace {
             min-width: 0;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         .preview-area {
             flex: 1;
-            min-height: 420px;
+            min-height: 350px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 28px;
+            padding: 24px;
             background:
                 radial-gradient(
                     circle at center,
                     #1a1a1d 0,
-                    #101011 55%,
+                    #101011 60%,
                     #0f0f10 100%
                 );
         }
 
         .preview-frame {
             position: relative;
-            width: min(820px, 100%);
+            width: min(900px, 100%);
             height: 100%;
-            max-height: 570px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .preview-placeholder {
-            width: min(820px, 100%);
-            height: min(470px, 100%);
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: min(540px, 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
             border-radius: 14px;
             background: #050505;
-            color: #52525b;
-            overflow: hidden;
         }
 
-        .preview-placeholder video {
-            width: 100%;
-            height: 100%;
+        #videoPreview {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
             object-fit: contain;
-            display: none;
         }
 
         .preview-empty {
-            text-align: center;
-        }
-
-        .preview-empty-icon {
-            margin-bottom: 12px;
-            font-size: 36px;
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            color: #52525b;
+            pointer-events: none;
         }
 
         .crop-guide {
@@ -327,8 +293,7 @@
             height: 82%;
             transform: translate(-50%, -50%);
             border: 2px solid var(--accent);
-            box-shadow:
-                0 0 0 9999px rgba(0, 0, 0, 0.36);
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
             pointer-events: none;
             display: none;
         }
@@ -338,8 +303,7 @@
         }
 
         .player-controls {
-            flex-shrink: 0;
-            padding: 14px 24px 18px;
+            padding: 12px 22px 15px;
             border-top: 1px solid var(--border);
             background: var(--surface);
         }
@@ -358,40 +322,36 @@
             place-items: center;
             border-radius: 50%;
             background: var(--surface-3);
-            color: var(--text);
+            color: white;
             cursor: pointer;
         }
 
         .time-display {
-            min-width: 110px;
+            min-width: 120px;
             color: var(--muted);
             font-size: 13px;
             text-align: center;
         }
 
-        /* --------------------------------
-           TIMELINE
-        -------------------------------- */
+        /* TIMELINE */
 
         .timeline-panel {
-            flex-shrink: 0;
-            padding: 18px 24px 22px;
+            padding: 16px 22px 20px;
             border-top: 1px solid var(--border);
             background: #141416;
         }
 
         .timeline-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
 
         .section-label {
             color: var(--muted);
             font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.7px;
             text-transform: uppercase;
         }
 
@@ -402,10 +362,11 @@
 
         .timeline {
             position: relative;
-            height: 74px;
-            border-radius: 10px;
-            background: #09090a;
+            height: 76px;
+            border-radius: 9px;
+            background: #080809;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .thumbnail-strip {
@@ -415,11 +376,11 @@
             gap: 2px;
             overflow: hidden;
             border-radius: 5px;
+            pointer-events: none;
         }
 
         .thumbnail {
             flex: 1;
-            min-width: 30px;
             background:
                 linear-gradient(
                     135deg,
@@ -432,8 +393,8 @@
             position: absolute;
             top: 7px;
             bottom: 7px;
-            left: 14%;
-            right: 14%;
+            left: 0;
+            right: 0;
             border: 2px solid var(--accent);
             border-radius: 7px;
             pointer-events: none;
@@ -443,18 +404,19 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 14px;
+            width: 12px;
+            z-index: 4;
             background: var(--accent);
             cursor: ew-resize;
         }
 
         .timeline-handle.start {
-            left: 13%;
+            left: 0;
             border-radius: 7px 0 0 7px;
         }
 
         .timeline-handle.end {
-            right: 13%;
+            right: 0;
             border-radius: 0 7px 7px 0;
         }
 
@@ -462,9 +424,10 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            left: 35%;
+            left: 0;
             width: 2px;
-            background: #ffffff;
+            z-index: 5;
+            background: white;
             pointer-events: none;
         }
 
@@ -475,32 +438,98 @@
             left: 50%;
             width: 9px;
             height: 9px;
-            transform: translate(-50%, -1px);
+            transform: translateX(-50%);
             border-radius: 50%;
-            background: #ffffff;
+            background: white;
         }
 
-        /* --------------------------------
-           SIDE PANEL
-        -------------------------------- */
+        /* SIDE PANEL */
 
         .side-panel {
-            display: flex;
-            flex-direction: column;
+            overflow-y: auto;
             border-left: 1px solid var(--border);
             background: var(--surface);
-            overflow-y: auto;
         }
 
         .side-section {
-            padding: 20px;
+            padding: 18px;
             border-bottom: 1px solid var(--border);
         }
 
-        .side-section-title {
-            margin-bottom: 13px;
+        .side-title {
+            margin-bottom: 12px;
             font-size: 13px;
             font-weight: 700;
+        }
+
+        .metadata {
+            display: grid;
+            gap: 8px;
+        }
+
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .metadata-value {
+            max-width: 170px;
+            overflow: hidden;
+            color: white;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .trim-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .time-input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .time-input {
+            width: 100%;
+            height: 40px;
+            padding: 0 9px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            background: var(--surface-2);
+            color: white;
+        }
+
+        .time-input:focus {
+            border-color: var(--accent);
+        }
+
+        .trim-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .small-button {
+            min-height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .small-button:hover {
+            background: var(--surface-3);
         }
 
         .ratio-grid {
@@ -510,75 +539,62 @@
         }
 
         .ratio-button {
-            min-height: 54px;
+            min-height: 48px;
             border: 1px solid var(--border);
             border-radius: 8px;
             background: var(--surface-2);
             color: var(--muted);
             cursor: pointer;
-            font-size: 12px;
-        }
-
-        .ratio-button:hover {
-            border-color: #55555d;
-            color: var(--text);
+            font-size: 11px;
         }
 
         .ratio-button.active {
             border-color: var(--accent);
             background: #241914;
-            color: var(--text);
+            color: white;
         }
 
         .ratio-button.disabled {
-            opacity: 0.4;
+            opacity: 0.35;
             cursor: not-allowed;
         }
 
         .reframe-controls {
             display: none;
+            margin-top: 14px;
         }
 
         .reframe-controls.active {
             display: block;
         }
 
-        .control-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .control-label {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
         .direction-grid {
             display: grid;
-            grid-template-columns: repeat(3, 38px);
+            grid-template-columns: repeat(3, 36px);
             justify-content: center;
             gap: 5px;
-            margin-top: 12px;
+            margin-top: 10px;
         }
 
         .direction-button {
-            width: 38px;
+            width: 36px;
             height: 34px;
             border-radius: 7px;
             background: var(--surface-2);
-            color: var(--text);
+            color: white;
             cursor: pointer;
-        }
-
-        .direction-button:hover {
-            background: var(--surface-3);
         }
 
         .direction-empty {
             visibility: hidden;
+        }
+
+        .zoom-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 12px;
         }
 
         .range-input {
@@ -588,8 +604,8 @@
 
         .reset-button {
             width: 100%;
-            min-height: 38px;
-            margin-top: 12px;
+            min-height: 36px;
+            margin-top: 10px;
             border: 1px solid var(--border);
             border-radius: 8px;
             background: transparent;
@@ -597,20 +613,14 @@
             cursor: pointer;
         }
 
-        .reset-button:hover {
-            color: var(--text);
-            background: var(--surface-2);
-        }
-
         .tracking-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
         }
 
         .tracking-description {
-            margin-top: 6px;
             color: #71717a;
             font-size: 11px;
             line-height: 1.5;
@@ -634,8 +644,8 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: #ffffff;
-            transition: transform 0.2s ease;
+            background: white;
+            transition: transform 0.2s;
         }
 
         .toggle.active {
@@ -646,45 +656,25 @@
             transform: translateX(20px);
         }
 
-        .history-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
+        /* EXPORT */
 
-        .history-button {
-            min-height: 38px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--surface-2);
-            color: var(--muted);
-            cursor: pointer;
-        }
-
-        .history-button:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-        }
-
-        /* --------------------------------
-           EXPORT
-        -------------------------------- */
-
-        #exportScreen {
+        #exportScreen,
+        #successScreen {
             align-items: center;
             justify-content: center;
             padding: 30px 20px;
         }
 
-        .export-container {
-            width: min(760px, 100%);
+        .export-container,
+        .state-card {
+            width: min(700px, 100%);
         }
 
         .export-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .export-header h1 {
@@ -693,65 +683,49 @@
         }
 
         .export-preview {
-            min-height: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            background: #050505;
-            overflow: hidden;
-        }
-
-        .export-preview-inner {
-            width: 180px;
-            height: 260px;
-            border-radius: 8px;
-            background:
-                linear-gradient(
-                    135deg,
-                    #29292e,
-                    #111113
-                );
+            min-height: 260px;
             display: grid;
             place-items: center;
-            color: #52525b;
+            border-radius: 14px;
+            background: #050505;
         }
 
         .export-options {
-            margin-top: 18px;
-            padding: 20px;
+            margin-top: 16px;
+            padding: 18px;
             border: 1px solid var(--border);
             border-radius: 14px;
             background: var(--surface);
         }
 
         .option-group + .option-group {
-            margin-top: 20px;
+            margin-top: 18px;
         }
 
         .option-title {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: var(--muted);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
         }
 
         .option-list {
             display: grid;
-            gap: 8px;
+            gap: 7px;
         }
 
         .option {
+            min-height: 42px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            min-height: 44px;
-            padding: 0 12px;
+            gap: 9px;
+            padding: 0 11px;
             border: 1px solid var(--border);
             border-radius: 8px;
             background: var(--surface-2);
             cursor: pointer;
+            font-size: 13px;
         }
 
         .option.selected {
@@ -765,27 +739,14 @@
         .export-actions {
             display: flex;
             gap: 10px;
-            margin-top: 18px;
+            margin-top: 16px;
         }
 
         .export-actions button {
             flex: 1;
         }
 
-        /* --------------------------------
-           EXPORTING
-        -------------------------------- */
-
-        #exportingScreen,
-        #successScreen,
-        #errorScreen {
-            align-items: center;
-            justify-content: center;
-            padding: 30px 20px;
-        }
-
         .state-card {
-            width: min(520px, 100%);
             padding: 34px;
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -796,7 +757,7 @@
         .state-icon {
             width: 58px;
             height: 58px;
-            margin: 0 auto 18px;
+            margin: 0 auto 16px;
             display: grid;
             place-items: center;
             border-radius: 50%;
@@ -808,44 +769,13 @@
             color: var(--success);
         }
 
-        .state-icon.error {
-            color: var(--danger);
-        }
-
         .state-card h2 {
             margin: 0 0 8px;
-            font-size: 21px;
         }
 
         .state-card p {
             margin: 0;
             color: var(--muted);
-            line-height: 1.5;
-        }
-
-        .progress-wrapper {
-            margin: 28px 0 10px;
-        }
-
-        .progress-track {
-            height: 8px;
-            border-radius: 999px;
-            background: var(--surface-2);
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0;
-            height: 100%;
-            border-radius: inherit;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        .progress-value {
-            margin-top: 10px;
-            color: var(--muted);
-            font-size: 13px;
         }
 
         .state-actions {
@@ -858,9 +788,7 @@
             flex: 1;
         }
 
-        /* --------------------------------
-           RESPONSIVE
-        -------------------------------- */
+        /* RESPONSIVE */
 
         @media (max-width: 900px) {
             .editor-body {
@@ -872,75 +800,36 @@
                 border-left: 0;
             }
 
-            .side-section {
-                padding: 16px 20px;
-            }
-
             .preview-area {
-                min-height: 360px;
+                min-height: 330px;
             }
         }
 
         @media (max-width: 600px) {
-            #homeScreen {
-                padding: 20px 14px;
-            }
-
-            .upload-card {
-                min-height: 270px;
-            }
-
             .topbar {
-                height: 58px;
-                padding: 0 12px;
-            }
-
-            .editor-title {
-                font-size: 14px;
-            }
-
-            .export-button {
-                padding: 0 12px;
+                padding: 0 10px;
             }
 
             .preview-area {
-                min-height: 280px;
-                padding: 16px;
+                min-height: 260px;
+                padding: 12px;
             }
 
-            .preview-placeholder {
+            .video-container {
                 height: 280px;
             }
 
-            .player-controls {
-                padding: 12px 14px 14px;
-            }
-
             .timeline-panel {
-                padding: 14px;
+                padding: 13px;
             }
 
-            .side-panel {
-                max-height: none;
+            .side-section {
+                padding: 15px;
             }
 
-            .ratio-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-
-            .ratio-button {
-                min-height: 48px;
-                padding: 0 4px;
-                font-size: 10px;
-            }
-
-            .export-actions,
-            .state-actions {
+            .state-actions,
+            .export-actions {
                 flex-direction: column;
-            }
-
-            .export-preview {
-                min-height: 260px;
             }
         }
     </style>
@@ -948,142 +837,117 @@
 
 <body>
 
-<div class="app">
+<div id="homeScreen" class="screen active">
 
-    <!-- ================================
-         HOME
-    ================================= -->
+    <div class="home-container">
 
-    <section
-        id="homeScreen"
-        class="screen active"
-    >
-        <div class="home-container">
+        <div class="brand">
+            Free Video Clipper
+        </div>
 
-            <div class="brand">
-                Free Video Clipper
-            </div>
+        <p class="tagline">
+            Turn long videos into precise short clips.
+        </p>
 
-            <p class="tagline">
-                Turn long videos into precise short clips.
-            </p>
+        <div id="uploadCard" class="upload-card">
 
-            <div
-                id="uploadCard"
-                class="upload-card"
-            >
-                <div class="upload-content">
+            <div>
 
-                    <div class="upload-icon">
-                        +
-                    </div>
-
-                    <h2 class="upload-title">
-                        Add a video
-                    </h2>
-
-                    <p class="upload-text">
-                        Choose a video from your device to start editing.
-                    </p>
-
-                    <button
-                        id="browseButton"
-                        class="primary-button"
-                        type="button"
-                    >
-                        Browse Video
-                    </button>
-
-                    <div class="supported-formats">
-                        MP4 · MOV · WEBM · MKV · AVI
-                    </div>
-
+                <div class="upload-icon">
+                    +
                 </div>
-            </div>
 
-            <input
-                id="videoInput"
-                type="file"
-                accept="video/*"
-            >
+                <h2 class="upload-title">
+                    Add a video
+                </h2>
+
+                <p class="upload-text">
+                    Choose a video from your device to start editing.
+                </p>
+
+                <button
+                    id="browseButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    Browse Video
+                </button>
+
+                <div class="supported">
+                    MP4 · MOV · WEBM · MKV · AVI
+                </div>
+
+            </div>
 
         </div>
-    </section>
+
+        <input
+            id="videoInput"
+            type="file"
+            accept="video/*"
+        >
+
+    </div>
+
+</div>
 
 
-    <!-- ================================
-         EDITOR
-    ================================= -->
+<div id="editorScreen" class="screen">
 
-    <section
-        id="editorScreen"
-        class="screen"
-    >
+    <header class="topbar">
 
-        <header class="topbar">
+        <div class="topbar-left">
 
-            <div class="topbar-left">
+            <button
+                id="closeEditorButton"
+                class="icon-button"
+                type="button"
+            >
+                ×
+            </button>
 
-                <button
-                    id="closeEditorButton"
-                    class="icon-button"
-                    type="button"
-                    aria-label="Close editor"
-                >
-                    ×
-                </button>
-
-                <div class="editor-title">
-                    Video Editor
-                </div>
-
+            <div class="editor-title">
+                Video Editor
             </div>
 
-            <div class="topbar-right">
+        </div>
 
-                <button
-                    id="exportTopButton"
-                    class="export-button"
-                    type="button"
-                >
-                    Export
-                </button>
+        <div class="topbar-right">
 
-            </div>
+            <button
+                id="exportButton"
+                class="export-button"
+                type="button"
+            >
+                Export
+            </button>
 
-        </header>
+        </div>
+
+    </header>
 
 
-        <div class="editor-body">
+    <div class="editor-body">
 
-            <main class="workspace">
+        <main class="workspace">
 
-                <div class="preview-area">
+            <div class="preview-area">
 
-                    <div class="preview-frame">
+                <div class="preview-frame">
+
+                    <div class="video-container">
+
+                        <video
+                            id="videoPreview"
+                            playsinline
+                            preload="metadata"
+                        ></video>
 
                         <div
-                            id="previewPlaceholder"
-                            class="preview-placeholder"
+                            id="previewEmpty"
+                            class="preview-empty"
                         >
-
-                            <div class="preview-empty">
-
-                                <div class="preview-empty-icon">
-                                    ▶
-                                </div>
-
-                                <div>
-                                    Video preview
-                                </div>
-
-                            </div>
-
-                            <video
-                                id="videoPreview"
-                                playsinline
-                            ></video>
-
+                            Video preview
                         </div>
 
                         <div
@@ -1095,751 +959,603 @@
 
                 </div>
 
-
-                <div class="player-controls">
-
-                    <div class="player-row">
-
-                        <button
-                            id="playButton"
-                            class="play-button"
-                            type="button"
-                            aria-label="Play"
-                        >
-                            ▶
-                        </button>
-
-                        <div
-                            id="timeDisplay"
-                            class="time-display"
-                        >
-                            00:00 / 00:00
-                        </div>
-
-                    </div>
-
-                </div>
+            </div>
 
 
-                <div class="timeline-panel">
+            <div class="player-controls">
 
-                    <div class="timeline-header">
+                <div class="player-row">
 
-                        <div class="section-label">
-                            Timeline
-                        </div>
-
-                        <div
-                            id="timelineTime"
-                            class="timeline-time"
-                        >
-                            00:00
-                        </div>
-
-                    </div>
-
-                    <div
-                        id="timeline"
-                        class="timeline"
+                    <button
+                        id="playButton"
+                        class="play-button"
+                        type="button"
                     >
-
-                        <div
-                            id="thumbnailStrip"
-                            class="thumbnail-strip"
-                        >
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                            <div class="thumbnail"></div>
-                        </div>
-
-                        <div
-                            id="selection"
-                            class="selection"
-                        ></div>
-
-                        <div
-                            id="startHandle"
-                            class="timeline-handle start"
-                        ></div>
-
-                        <div
-                            id="endHandle"
-                            class="timeline-handle end"
-                        ></div>
-
-                        <div
-                            id="playhead"
-                            class="playhead"
-                        ></div>
-
-                    </div>
-
-                </div>
-
-            </main>
-
-
-            <aside class="side-panel">
-
-                <!-- Aspect Ratio -->
-
-                <div class="side-section">
-
-                    <div class="side-section-title">
-                        Aspect Ratio
-                    </div>
-
-                    <div class="ratio-grid">
-
-                        <button
-                            class="ratio-button active"
-                            data-ratio="original"
-                            type="button"
-                        >
-                            Original
-                        </button>
-
-                        <button
-                            class="ratio-button"
-                            data-ratio="9:16"
-                            type="button"
-                        >
-                            9:16
-                        </button>
-
-                        <button
-                            class="ratio-button disabled"
-                            type="button"
-                            disabled
-                        >
-                            1:1
-                        </button>
-
-                        <button
-                            class="ratio-button disabled"
-                            type="button"
-                            disabled
-                        >
-                            4:5
-                        </button>
-
-                        <button
-                            class="ratio-button disabled"
-                            type="button"
-                            disabled
-                        >
-                            16:9
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Reframe -->
-
-                <div class="side-section">
-
-                    <div class="side-section-title">
-                        Reframe
-                    </div>
+                        ▶
+                    </button>
 
                     <div
-                        id="reframeControls"
-                        class="reframe-controls"
+                        id="timeDisplay"
+                        class="time-display"
                     >
+                        00:00 / 00:00
+                    </div>
 
-                        <div class="control-row">
-                            <span class="control-label">
-                                Position
-                            </span>
-                        </div>
+                </div>
 
-                        <div class="direction-grid">
+            </div>
 
-                            <button
-                                class="direction-button direction-empty"
-                                type="button"
-                            >
-                            </button>
 
-                            <button
-                                id="moveUp"
-                                class="direction-button"
-                                type="button"
-                                aria-label="Move up"
-                            >
-                                ↑
-                            </button>
+            <div class="timeline-panel">
 
-                            <button
-                                class="direction-button direction-empty"
-                                type="button"
-                            >
-                            </button>
+                <div class="timeline-header">
 
-                            <button
-                                id="moveLeft"
-                                class="direction-button"
-                                type="button"
-                                aria-label="Move left"
-                            >
-                                ←
-                            </button>
-
-                            <button
-                                id="moveCenter"
-                                class="direction-button"
-                                type="button"
-                                aria-label="Center"
-                            >
-                                •
-                            </button>
-
-                            <button
-                                id="moveRight"
-                                class="direction-button"
-                                type="button"
-                                aria-label="Move right"
-                            >
-                                →
-                            </button>
-
-                            <button
-                                class="direction-button direction-empty"
-                                type="button"
-                            >
-                            </button>
-
-                            <button
-                                id="moveDown"
-                                class="direction-button"
-                                type="button"
-                                aria-label="Move down"
-                            >
-                                ↓
-                            </button>
-
-                            <button
-                                class="direction-button direction-empty"
-                                type="button"
-                            >
-                            </button>
-
-                        </div>
-
-                        <div class="control-row">
-
-                            <span class="control-label">
-                                Zoom
-                            </span>
-
-                            <span
-                                id="zoomValue"
-                                class="control-label"
-                            >
-                                100%
-                            </span>
-
-                        </div>
-
-                        <input
-                            id="zoomRange"
-                            class="range-input"
-                            type="range"
-                            min="100"
-                            max="200"
-                            value="100"
-                        >
-
-                        <button
-                            id="resetReframeButton"
-                            class="reset-button"
-                            type="button"
-                        >
-                            Reset Reframe
-                        </button>
-
+                    <div class="section-label">
+                        Timeline
                     </div>
 
                     <div
-                        id="reframeDisabled"
-                        class="tracking-description"
+                        id="timelineTime"
+                        class="timeline-time"
                     >
-                        Select 9:16 to adjust the crop position.
+                        00:00
                     </div>
-
-                </div>
-
-
-                <!-- Face Tracking -->
-
-                <div class="side-section">
-
-                    <div class="tracking-row">
-
-                        <div>
-                            <div class="side-section-title">
-                                Auto Face Tracking
-                            </div>
-
-                            <div
-                                id="trackingDescription"
-                                class="tracking-description"
-                            >
-                                Automatically follow a detected face.
-                            </div>
-                        </div>
-
-                        <button
-                            id="trackingToggle"
-                            class="toggle"
-                            type="button"
-                            aria-label="Auto face tracking"
-                        ></button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Undo / Redo -->
-
-                <div class="side-section">
-
-                    <div class="side-section-title">
-                        History
-                    </div>
-
-                    <div class="history-row">
-
-                        <button
-                            id="undoButton"
-                            class="history-button"
-                            type="button"
-                            disabled
-                        >
-                            ↶ Undo
-                        </button>
-
-                        <button
-                            id="redoButton"
-                            class="history-button"
-                            type="button"
-                            disabled
-                        >
-                            Redo ↷
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </aside>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================
-         EXPORT
-    ================================= -->
-
-    <section
-        id="exportScreen"
-        class="screen"
-    >
-
-        <div class="export-container">
-
-            <div class="export-header">
-
-                <button
-                    id="backToEditorButton"
-                    class="icon-button"
-                    type="button"
-                    aria-label="Back to editor"
-                >
-                    ←
-                </button>
-
-                <h1>
-                    Export Video
-                </h1>
-
-            </div>
-
-            <div class="export-preview">
-
-                <div class="export-preview-inner">
-                    Preview
-                </div>
-
-            </div>
-
-            <div class="export-options">
-
-                <div class="option-group">
-
-                    <div class="option-title">
-                        Quality
-                    </div>
-
-                    <div class="option-list">
-
-                        <label class="option selected">
-
-                            <input
-                                type="radio"
-                                name="quality"
-                                value="original"
-                                checked
-                            >
-
-                            <span>
-                                Same as Original
-                            </span>
-
-                        </label>
-
-                        <label class="option">
-
-                            <input
-                                type="radio"
-                                name="quality"
-                                value="high"
-                            >
-
-                            <span>
-                                High Quality
-                            </span>
-
-                        </label>
-
-                    </div>
-
-                </div>
-
-
-                <div class="option-group">
-
-                    <div class="option-title">
-                        Resolution
-                    </div>
-
-                    <div class="option-list">
-
-                        <label class="option selected">
-
-                            <input
-                                type="radio"
-                                name="resolution"
-                                value="original"
-                                checked
-                            >
-
-                            <span>
-                                Original
-                            </span>
-
-                        </label>
-
-                        <label class="option">
-
-                            <input
-                                type="radio"
-                                name="resolution"
-                                value="1080p"
-                            >
-
-                            <span>
-                                1080p
-                            </span>
-
-                        </label>
-
-                        <label class="option">
-
-                            <input
-                                type="radio"
-                                name="resolution"
-                                value="720p"
-                            >
-
-                            <span>
-                                720p
-                            </span>
-
-                        </label>
-
-                    </div>
-
-                </div>
-
-
-                <div class="option-group">
-
-                    <div class="option-title">
-                        Format
-                    </div>
-
-                    <div class="option-list">
-
-                        <label class="option selected">
-
-                            <input
-                                type="radio"
-                                name="format"
-                                value="webm"
-                                checked
-                            >
-
-                            <span>
-                                WebM
-                            </span>
-
-                        </label>
-
-                        <label class="option">
-
-                            <input
-                                type="radio"
-                                name="format"
-                                value="mp4"
-                            >
-
-                            <span>
-                                MP4
-                            </span>
-
-                        </label>
-
-                        <label class="option">
-
-                            <input
-                                type="radio"
-                                name="format"
-                                value="mov"
-                            >
-
-                            <span>
-                                MOV
-                            </span>
-
-                        </label>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="export-actions">
-
-                <button
-                    id="cancelExportButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Back
-                </button>
-
-                <button
-                    id="startExportButton"
-                    class="primary-button"
-                    type="button"
-                >
-                    Export Video
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================
-         EXPORTING
-    ================================= -->
-
-    <section
-        id="exportingScreen"
-        class="screen"
-    >
-
-        <div class="state-card">
-
-            <div class="state-icon">
-                ↻
-            </div>
-
-            <h2>
-                Exporting video
-            </h2>
-
-            <p>
-                Preparing your selected clip.
-            </p>
-
-            <div class="progress-wrapper">
-
-                <div class="progress-track">
-
-                    <div
-                        id="exportProgressBar"
-                        class="progress-bar"
-                    ></div>
 
                 </div>
 
                 <div
-                    id="exportProgressValue"
-                    class="progress-value"
+                    id="timeline"
+                    class="timeline"
                 >
-                    0%
+
+                    <div class="thumbnail-strip">
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                        <div class="thumbnail"></div>
+                    </div>
+
+                    <div
+                        id="selection"
+                        class="selection"
+                    ></div>
+
+                    <div
+                        id="startHandle"
+                        class="timeline-handle start"
+                    ></div>
+
+                    <div
+                        id="endHandle"
+                        class="timeline-handle end"
+                    ></div>
+
+                    <div
+                        id="playhead"
+                        class="playhead"
+                    ></div>
+
                 </div>
 
             </div>
 
+        </main>
+
+
+        <aside class="side-panel">
+
+            <div class="side-section">
+
+                <div class="side-title">
+                    Video Information
+                </div>
+
+                <div class="metadata">
+
+                    <div class="metadata-row">
+                        <span>File</span>
+                        <span
+                            id="fileName"
+                            class="metadata-value"
+                        >
+                            —
+                        </span>
+                    </div>
+
+                    <div class="metadata-row">
+                        <span>Duration</span>
+                        <span
+                            id="durationInfo"
+                            class="metadata-value"
+                        >
+                            —
+                        </span>
+                    </div>
+
+                    <div class="metadata-row">
+                        <span>Resolution</span>
+                        <span
+                            id="resolutionInfo"
+                            class="metadata-value"
+                        >
+                            —
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="side-section">
+
+                <div class="side-title">
+                    Trim
+                </div>
+
+                <div class="trim-grid">
+
+                    <div class="time-input-group">
+
+                        <label for="startTimeInput">
+                            Start
+                        </label>
+
+                        <input
+                            id="startTimeInput"
+                            class="time-input"
+                            type="text"
+                            value="00:00"
+                            inputmode="numeric"
+                        >
+
+                    </div>
+
+                    <div class="time-input-group">
+
+                        <label for="endTimeInput">
+                            End
+                        </label>
+
+                        <input
+                            id="endTimeInput"
+                            class="time-input"
+                            type="text"
+                            value="00:00"
+                            inputmode="numeric"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="trim-actions">
+
+                    <button
+                        id="setStartButton"
+                        class="small-button"
+                        type="button"
+                    >
+                        Set Start
+                    </button>
+
+                    <button
+                        id="setEndButton"
+                        class="small-button"
+                        type="button"
+                    >
+                        Set End
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="side-section">
+
+                <div class="side-title">
+                    Aspect Ratio
+                </div>
+
+                <div class="ratio-grid">
+
+                    <button
+                        class="ratio-button active"
+                        data-ratio="original"
+                        type="button"
+                    >
+                        Original
+                    </button>
+
+                    <button
+                        class="ratio-button"
+                        data-ratio="9:16"
+                        type="button"
+                    >
+                        9:16
+                    </button>
+
+                    <button
+                        class="ratio-button disabled"
+                        type="button"
+                        disabled
+                    >
+                        1:1
+                    </button>
+
+                    <button
+                        class="ratio-button disabled"
+                        type="button"
+                        disabled
+                    >
+                        4:5
+                    </button>
+
+                    <button
+                        class="ratio-button disabled"
+                        type="button"
+                        disabled
+                    >
+                        16:9
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="reframeControls"
+                    class="reframe-controls"
+                >
+
+                    <div class="tracking-description">
+                        Reframe controls are ready for Phase 3.
+                    </div>
+
+                    <div class="direction-grid">
+
+                        <button
+                            class="direction-button direction-empty"
+                            type="button"
+                        ></button>
+
+                        <button
+                            id="moveUp"
+                            class="direction-button"
+                            type="button"
+                        >
+                            ↑
+                        </button>
+
+                        <button
+                            class="direction-button direction-empty"
+                            type="button"
+                        ></button>
+
+                        <button
+                            id="moveLeft"
+                            class="direction-button"
+                            type="button"
+                        >
+                            ←
+                        </button>
+
+                        <button
+                            id="moveCenter"
+                            class="direction-button"
+                            type="button"
+                        >
+                            •
+                        </button>
+
+                        <button
+                            id="moveRight"
+                            class="direction-button"
+                            type="button"
+                        >
+                            →
+                        </button>
+
+                        <button
+                            class="direction-button direction-empty"
+                            type="button"
+                        ></button>
+
+                        <button
+                            id="moveDown"
+                            class="direction-button"
+                            type="button"
+                        >
+                            ↓
+                        </button>
+
+                        <button
+                            class="direction-button direction-empty"
+                            type="button"
+                        ></button>
+
+                    </div>
+
+                    <div class="zoom-row">
+                        <span>Zoom</span>
+                        <span id="zoomValue">100%</span>
+                    </div>
+
+                    <input
+                        id="zoomRange"
+                        class="range-input"
+                        type="range"
+                        min="100"
+                        max="200"
+                        value="100"
+                    >
+
+                    <button
+                        id="resetReframeButton"
+                        class="reset-button"
+                        type="button"
+                    >
+                        Reset Reframe
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="side-section">
+
+                <div class="tracking-row">
+
+                    <div>
+
+                        <div class="side-title">
+                            Auto Face Tracking
+                        </div>
+
+                        <div
+                            id="trackingDescription"
+                            class="tracking-description"
+                        >
+                            UI only. Tracking will be implemented later.
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="trackingToggle"
+                        class="toggle"
+                        type="button"
+                    ></button>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<div id="exportScreen" class="screen">
+
+    <div class="export-container">
+
+        <div class="export-header">
+
             <button
-                id="cancelProcessingButton"
+                id="backToEditorButton"
+                class="icon-button"
+                type="button"
+            >
+                ←
+            </button>
+
+            <h1>
+                Export Video
+            </h1>
+
+        </div>
+
+        <div class="export-preview">
+            Export preview
+        </div>
+
+        <div class="export-options">
+
+            <div class="option-group">
+
+                <div class="option-title">
+                    Quality
+                </div>
+
+                <div class="option-list">
+
+                    <label class="option selected">
+                        <input
+                            type="radio"
+                            name="quality"
+                            checked
+                        >
+                        Same as Original
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="quality"
+                        >
+                        High Quality
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="option-group">
+
+                <div class="option-title">
+                    Resolution
+                </div>
+
+                <div class="option-list">
+
+                    <label class="option selected">
+                        <input
+                            type="radio"
+                            name="resolution"
+                            checked
+                        >
+                        Original
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="resolution"
+                        >
+                        1080p
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="resolution"
+                        >
+                        720p
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="option-group">
+
+                <div class="option-title">
+                    Format
+                </div>
+
+                <div class="option-list">
+
+                    <label class="option selected">
+                        <input
+                            type="radio"
+                            name="format"
+                            checked
+                        >
+                        WebM
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="format"
+                        >
+                        MP4
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="format"
+                        >
+                        MOV
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="export-actions">
+
+            <button
+                id="cancelExportButton"
                 class="secondary-button"
                 type="button"
             >
-                Cancel
+                Back
+            </button>
+
+            <button
+                id="startExportButton"
+                class="primary-button"
+                type="button"
+            >
+                Export Video
             </button>
 
         </div>
 
-    </section>
+    </div>
+
+</div>
 
 
-    <!-- ================================
-         SUCCESS
-    ================================= -->
+<div id="successScreen" class="screen">
 
-    <section
-        id="successScreen"
-        class="screen"
-    >
+    <div class="state-card">
 
-        <div class="state-card">
+        <div class="state-icon success">
+            ✓
+        </div>
 
-            <div class="state-icon success">
-                ✓
-            </div>
+        <h2>
+            Export Ready
+        </h2>
 
-            <h2>
-                Video exported
-            </h2>
+        <p>
+            Real video encoding will be connected in the export phase.
+        </p>
 
-            <p>
-                Your clip is ready.
-            </p>
+        <div class="state-actions">
 
-            <div class="state-actions">
+            <button
+                id="editAgainButton"
+                class="primary-button"
+                type="button"
+            >
+                Edit Again
+            </button>
 
-                <button
-                    id="downloadButton"
-                    class="primary-button"
-                    type="button"
-                >
-                    Download Video
-                </button>
-
-                <button
-                    id="editAgainButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Edit Again
-                </button>
-
-                <button
-                    id="newVideoButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    New Video
-                </button>
-
-            </div>
+            <button
+                id="newVideoButton"
+                class="secondary-button"
+                type="button"
+            >
+                New Video
+            </button>
 
         </div>
 
-    </section>
-
-
-    <!-- ================================
-         ERROR
-    ================================= -->
-
-    <section
-        id="errorScreen"
-        class="screen"
-    >
-
-        <div class="state-card">
-
-            <div class="state-icon error">
-                !
-            </div>
-
-            <h2>
-                Something went wrong
-            </h2>
-
-            <p>
-                The video could not be processed.
-                Please try again.
-            </p>
-
-            <div class="state-actions">
-
-                <button
-                    id="retryButton"
-                    class="primary-button"
-                    type="button"
-                >
-                    Try Again
-                </button>
-
-                <button
-                    id="errorBackButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Back to Editor
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
+    </div>
 
 </div>
 
 
 <script>
-    const screens = {
-        home: document.getElementById("homeScreen"),
-        editor: document.getElementById("editorScreen"),
-        export: document.getElementById("exportScreen"),
-        exporting: document.getElementById("exportingScreen"),
-        success: document.getElementById("successScreen"),
-        error: document.getElementById("errorScreen")
-    };
+    const homeScreen =
+        document.getElementById("homeScreen");
+
+    const editorScreen =
+        document.getElementById("editorScreen");
+
+    const exportScreen =
+        document.getElementById("exportScreen");
+
+    const successScreen =
+        document.getElementById("successScreen");
 
     const videoInput =
         document.getElementById("videoInput");
@@ -1847,14 +1563,11 @@
     const uploadCard =
         document.getElementById("uploadCard");
 
-    const browseButton =
-        document.getElementById("browseButton");
-
     const videoPreview =
         document.getElementById("videoPreview");
 
-    const previewPlaceholder =
-        document.getElementById("previewPlaceholder");
+    const previewEmpty =
+        document.getElementById("previewEmpty");
 
     const playButton =
         document.getElementById("playButton");
@@ -1865,20 +1578,35 @@
     const timelineTime =
         document.getElementById("timelineTime");
 
+    const timeline =
+        document.getElementById("timeline");
+
+    const playhead =
+        document.getElementById("playhead");
+
+    const selection =
+        document.getElementById("selection");
+
+    const startHandle =
+        document.getElementById("startHandle");
+
+    const endHandle =
+        document.getElementById("endHandle");
+
+    const startTimeInput =
+        document.getElementById("startTimeInput");
+
+    const endTimeInput =
+        document.getElementById("endTimeInput");
+
     const cropGuide =
         document.getElementById("cropGuide");
 
     const reframeControls =
         document.getElementById("reframeControls");
 
-    const reframeDisabled =
-        document.getElementById("reframeDisabled");
-
     const trackingToggle =
         document.getElementById("trackingToggle");
-
-    const trackingDescription =
-        document.getElementById("trackingDescription");
 
     const zoomRange =
         document.getElementById("zoomRange");
@@ -1886,27 +1614,31 @@
     const zoomValue =
         document.getElementById("zoomValue");
 
-    const exportProgressBar =
-        document.getElementById("exportProgressBar");
-
-    const exportProgressValue =
-        document.getElementById("exportProgressValue");
-
     let selectedFile = null;
+    let objectUrl = null;
+
+    let duration = 0;
+    let trimStart = 0;
+    let trimEnd = 0;
+
+    let draggingHandle = null;
     let selectedRatio = "original";
-    let trackingEnabled = false;
+
     let zoom = 100;
-    let progressTimer = null;
+    let trackingEnabled = false;
 
 
-    function showScreen(name) {
-        Object.values(screens).forEach(
-            function (screen) {
-                screen.classList.remove("active");
-            }
-        );
+    function showScreen(screen) {
+        [
+            homeScreen,
+            editorScreen,
+            exportScreen,
+            successScreen
+        ].forEach(function (item) {
+            item.classList.remove("active");
+        });
 
-        screens[name].classList.add("active");
+        screen.classList.add("active");
     }
 
 
@@ -1915,27 +1647,185 @@
             return "00:00";
         }
 
-        const totalSeconds =
-            Math.max(0, Math.floor(seconds));
+        seconds = Math.max(
+            0,
+            Math.floor(seconds)
+        );
 
         const minutes =
-            Math.floor(totalSeconds / 60);
+            Math.floor(seconds / 60);
 
-        const remainingSeconds =
-            totalSeconds % 60;
+        const remaining =
+            seconds % 60;
 
         return (
             String(minutes).padStart(2, "0") +
             ":" +
-            String(remainingSeconds).padStart(2, "0")
+            String(remaining).padStart(2, "0")
         );
     }
 
 
-    browseButton.addEventListener(
-        "click",
+    function parseTime(value) {
+        const text =
+            String(value).trim();
+
+        if (!text) {
+            return NaN;
+        }
+
+        if (text.includes(":")) {
+            const parts =
+                text.split(":");
+
+            if (parts.length !== 2) {
+                return NaN;
+            }
+
+            const minutes =
+                Number(parts[0]);
+
+            const seconds =
+                Number(parts[1]);
+
+            if (
+                !Number.isFinite(minutes) ||
+                !Number.isFinite(seconds)
+            ) {
+                return NaN;
+            }
+
+            return (
+                minutes * 60 +
+                seconds
+            );
+        }
+
+        const number =
+            Number(text);
+
+        return Number.isFinite(number)
+            ? number
+            : NaN;
+    }
+
+
+    function updateTimeUI() {
+        const current =
+            videoPreview.currentTime || 0;
+
+        timeDisplay.textContent =
+            formatTime(current) +
+            " / " +
+            formatTime(duration);
+
+        timelineTime.textContent =
+            formatTime(current);
+
+        if (duration > 0) {
+            const percentage =
+                (current / duration) * 100;
+
+            playhead.style.left =
+                percentage + "%";
+        }
+    }
+
+
+    function updateTrimUI() {
+        if (duration <= 0) {
+            return;
+        }
+
+        const startPercent =
+            (trimStart / duration) * 100;
+
+        const endPercent =
+            (trimEnd / duration) * 100;
+
+        startHandle.style.left =
+            startPercent + "%";
+
+        endHandle.style.right =
+            (100 - endPercent) + "%";
+
+        selection.style.left =
+            startPercent + "%";
+
+        selection.style.right =
+            (100 - endPercent) + "%";
+
+        startTimeInput.value =
+            formatTime(trimStart);
+
+        endTimeInput.value =
+            formatTime(trimEnd);
+    }
+
+
+    function setCurrentTime(time) {
+        if (!Number.isFinite(time)) {
+            return;
+        }
+
+        const safeTime =
+            Math.min(
+                Math.max(time, trimStart),
+                trimEnd
+            );
+
+        videoPreview.currentTime =
+            safeTime;
+
+        updateTimeUI();
+    }
+
+
+    function openVideo(file) {
+        if (!file.type.startsWith("video/")) {
+            return;
+        }
+
+        selectedFile = file;
+
+        if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+        }
+
+        objectUrl =
+            URL.createObjectURL(file);
+
+        videoPreview.src =
+            objectUrl;
+
+        videoPreview.load();
+
+        previewEmpty.style.display =
+            "none";
+
+        showScreen(editorScreen);
+    }
+
+
+    document
+        .getElementById("browseButton")
+        .addEventListener(
+            "click",
+            function () {
+                videoInput.click();
+            }
+        );
+
+
+    videoInput.addEventListener(
+        "change",
         function () {
-            videoInput.click();
+            const file =
+                this.files[0];
+
+            if (file) {
+                openVideo(file);
+            }
         }
     );
 
@@ -1944,7 +1834,10 @@
         "dragover",
         function (event) {
             event.preventDefault();
-            uploadCard.classList.add("drag-over");
+
+            uploadCard.classList.add(
+                "drag-over"
+            );
         }
     );
 
@@ -1971,59 +1864,43 @@
             const file =
                 event.dataTransfer.files[0];
 
-            if (!file) {
-                return;
+            if (file) {
+                openVideo(file);
             }
-
-            if (!file.type.startsWith("video/")) {
-                return;
-            }
-
-            selectedFile = file;
-
-            openEditorWithVideo(file);
         }
     );
-
-
-    videoInput.addEventListener(
-        "change",
-        function () {
-            const file = this.files[0];
-
-            if (!file) {
-                return;
-            }
-
-            selectedFile = file;
-
-            openEditorWithVideo(file);
-        }
-    );
-
-
-    function openEditorWithVideo(file) {
-        const objectUrl =
-            URL.createObjectURL(file);
-
-        videoPreview.src = objectUrl;
-
-        videoPreview.style.display = "block";
-
-        previewPlaceholder
-            .querySelector(".preview-empty")
-            .style.display = "none";
-
-        videoPreview.load();
-
-        showScreen("editor");
-    }
 
 
     videoPreview.addEventListener(
         "loadedmetadata",
         function () {
-            updatePlayerTime();
+            duration =
+                videoPreview.duration || 0;
+
+            trimStart = 0;
+            trimEnd = duration;
+
+            document.getElementById(
+                "fileName"
+            ).textContent =
+                selectedFile
+                    ? selectedFile.name
+                    : "—";
+
+            document.getElementById(
+                "durationInfo"
+            ).textContent =
+                formatTime(duration);
+
+            document.getElementById(
+                "resolutionInfo"
+            ).textContent =
+                videoPreview.videoWidth +
+                " × " +
+                videoPreview.videoHeight;
+
+            updateTrimUI();
+            updateTimeUI();
         }
     );
 
@@ -2031,7 +1908,7 @@
     videoPreview.addEventListener(
         "timeupdate",
         function () {
-            updatePlayerTime();
+            updateTimeUI();
         }
     );
 
@@ -2039,7 +1916,8 @@
     videoPreview.addEventListener(
         "play",
         function () {
-            playButton.textContent = "❚❚";
+            playButton.textContent =
+                "❚❚";
         }
     );
 
@@ -2047,7 +1925,17 @@
     videoPreview.addEventListener(
         "pause",
         function () {
-            playButton.textContent = "▶";
+            playButton.textContent =
+                "▶";
+        }
+    );
+
+
+    videoPreview.addEventListener(
+        "ended",
+        function () {
+            playButton.textContent =
+                "▶";
         }
     );
 
@@ -2056,6 +1944,14 @@
         "click",
         function () {
             if (videoPreview.paused) {
+                if (
+                    videoPreview.currentTime >=
+                    trimEnd
+                ) {
+                    videoPreview.currentTime =
+                        trimStart;
+                }
+
                 videoPreview.play();
             } else {
                 videoPreview.pause();
@@ -2064,43 +1960,317 @@
     );
 
 
-    function updatePlayerTime() {
-        const current =
-            videoPreview.currentTime || 0;
+    timeline.addEventListener(
+        "click",
+        function (event) {
+            if (
+                event.target === startHandle ||
+                event.target === endHandle
+            ) {
+                return;
+            }
 
-        const duration =
-            videoPreview.duration || 0;
+            if (duration <= 0) {
+                return;
+            }
 
-        const text =
-            formatTime(current) +
-            " / " +
-            formatTime(duration);
+            const rect =
+                timeline.getBoundingClientRect();
 
-        timeDisplay.textContent = text;
-        timelineTime.textContent =
-            formatTime(current);
+            const position =
+                (event.clientX - rect.left) /
+                rect.width;
 
-        if (duration > 0) {
-            const percentage =
-                (current / duration) * 100;
+            const time =
+                position * duration;
 
-            document.getElementById(
-                "playhead"
-            ).style.left =
-                percentage + "%";
+            setCurrentTime(time);
         }
+    );
+
+
+    function startHandleDrag(event) {
+        event.preventDefault();
+
+        draggingHandle = "start";
+
+        document.addEventListener(
+            "pointermove",
+            handleTimelineDrag
+        );
+
+        document.addEventListener(
+            "pointerup",
+            stopTimelineDrag,
+            { once: true }
+        );
     }
 
 
+    function endHandleDrag(event) {
+        event.preventDefault();
+
+        draggingHandle = "end";
+
+        document.addEventListener(
+            "pointermove",
+            handleTimelineDrag
+        );
+
+        document.addEventListener(
+            "pointerup",
+            stopTimelineDrag,
+            { once: true }
+        );
+    }
+
+
+    function handleTimelineDrag(event) {
+        if (
+            !draggingHandle ||
+            duration <= 0
+        ) {
+            return;
+        }
+
+        const rect =
+            timeline.getBoundingClientRect();
+
+        let percentage =
+            (event.clientX - rect.left) /
+            rect.width;
+
+        percentage =
+            Math.min(
+                1,
+                Math.max(0, percentage)
+            );
+
+        const time =
+            percentage * duration;
+
+        const minimumGap =
+            Math.min(0.1, duration / 100);
+
+        if (draggingHandle === "start") {
+            trimStart =
+                Math.min(
+                    time,
+                    trimEnd - minimumGap
+                );
+
+            trimStart =
+                Math.max(
+                    0,
+                    trimStart
+                );
+
+            if (
+                videoPreview.currentTime <
+                trimStart
+            ) {
+                videoPreview.currentTime =
+                    trimStart;
+            }
+        }
+
+        if (draggingHandle === "end") {
+            trimEnd =
+                Math.max(
+                    time,
+                    trimStart + minimumGap
+                );
+
+            trimEnd =
+                Math.min(
+                    duration,
+                    trimEnd
+                );
+
+            if (
+                videoPreview.currentTime >
+                trimEnd
+            ) {
+                videoPreview.currentTime =
+                    trimEnd;
+            }
+        }
+
+        updateTrimUI();
+        updateTimeUI();
+    }
+
+
+    function stopTimelineDrag() {
+        draggingHandle = null;
+
+        document.removeEventListener(
+            "pointermove",
+            handleTimelineDrag
+        );
+    }
+
+
+    startHandle.addEventListener(
+        "pointerdown",
+        startHandleDrag
+    );
+
+
+    endHandle.addEventListener(
+        "pointerdown",
+        endHandleDrag
+    );
+
+
+    startTimeInput.addEventListener(
+        "change",
+        function () {
+            const value =
+                parseTime(this.value);
+
+            if (
+                !Number.isFinite(value)
+            ) {
+                updateTrimUI();
+                return;
+            }
+
+            trimStart =
+                Math.min(
+                    Math.max(0, value),
+                    trimEnd - 0.1
+                );
+
+            trimStart =
+                Math.max(
+                    0,
+                    trimStart
+                );
+
+            updateTrimUI();
+
+            if (
+                videoPreview.currentTime <
+                trimStart
+            ) {
+                videoPreview.currentTime =
+                    trimStart;
+            }
+
+            updateTimeUI();
+        }
+    );
+
+
+    endTimeInput.addEventListener(
+        "change",
+        function () {
+            const value =
+                parseTime(this.value);
+
+            if (
+                !Number.isFinite(value)
+            ) {
+                updateTrimUI();
+                return;
+            }
+
+            trimEnd =
+                Math.max(
+                    trimStart + 0.1,
+                    Math.min(
+                        duration,
+                        value
+                    )
+                );
+
+            updateTrimUI();
+
+            if (
+                videoPreview.currentTime >
+                trimEnd
+            ) {
+                videoPreview.currentTime =
+                    trimEnd;
+            }
+
+            updateTimeUI();
+        }
+    );
+
+
     document
-        .querySelectorAll(".ratio-button:not(.disabled)")
+        .getElementById("setStartButton")
+        .addEventListener(
+            "click",
+            function () {
+                const current =
+                    videoPreview.currentTime || 0;
+
+                if (
+                    current < trimEnd
+                ) {
+                    trimStart =
+                        current;
+
+                    updateTrimUI();
+                }
+            }
+        );
+
+
+    document
+        .getElementById("setEndButton")
+        .addEventListener(
+            "click",
+            function () {
+                const current =
+                    videoPreview.currentTime || 0;
+
+                if (
+                    current > trimStart
+                ) {
+                    trimEnd =
+                        current;
+
+                    updateTrimUI();
+                }
+            }
+        );
+
+
+    videoPreview.addEventListener(
+        "timeupdate",
+        function () {
+            if (
+                videoPreview.currentTime >=
+                trimEnd
+            ) {
+                videoPreview.pause();
+
+                videoPreview.currentTime =
+                    trimEnd;
+
+                updateTimeUI();
+            }
+        }
+    );
+
+
+    document
+        .querySelectorAll(
+            ".ratio-button:not(.disabled)"
+        )
         .forEach(
             function (button) {
                 button.addEventListener(
                     "click",
                     function () {
                         document
-                            .querySelectorAll(".ratio-button")
+                            .querySelectorAll(
+                                ".ratio-button"
+                            )
                             .forEach(
                                 function (item) {
                                     item.classList.remove(
@@ -2109,7 +2279,9 @@
                                 }
                             );
 
-                        button.classList.add("active");
+                        button.classList.add(
+                            "active"
+                        );
 
                         selectedRatio =
                             button.dataset.ratio;
@@ -2125,9 +2297,6 @@
                             reframeControls.classList.add(
                                 "active"
                             );
-
-                            reframeDisabled.style.display =
-                                "none";
                         } else {
                             cropGuide.classList.remove(
                                 "active"
@@ -2136,33 +2305,11 @@
                             reframeControls.classList.remove(
                                 "active"
                             );
-
-                            reframeDisabled.style.display =
-                                "block";
                         }
                     }
                 );
             }
         );
-
-
-    trackingToggle.addEventListener(
-        "click",
-        function () {
-            trackingEnabled =
-                !trackingEnabled;
-
-            trackingToggle.classList.toggle(
-                "active",
-                trackingEnabled
-            );
-
-            trackingDescription.textContent =
-                trackingEnabled
-                    ? "Tracking will follow a detected face."
-                    : "Automatically follow a detected face.";
-        }
-    );
 
 
     zoomRange.addEventListener(
@@ -2189,9 +2336,11 @@
             function () {
                 zoom = 100;
 
-                zoomRange.value = 100;
+                zoomRange.value =
+                    "100";
 
-                zoomValue.textContent = "100%";
+                zoomValue.textContent =
+                    "100%";
 
                 cropGuide.style.transform =
                     "translate(-50%, -50%) scale(1)";
@@ -2204,7 +2353,8 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginTop = "-10px";
+                cropGuide.style.marginTop =
+                    "-10px";
             }
         );
 
@@ -2214,7 +2364,8 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginTop = "10px";
+                cropGuide.style.marginTop =
+                    "10px";
             }
         );
 
@@ -2224,7 +2375,8 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginLeft = "-10px";
+                cropGuide.style.marginLeft =
+                    "-10px";
             }
         );
 
@@ -2234,7 +2386,8 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginLeft = "10px";
+                cropGuide.style.marginLeft =
+                    "10px";
             }
         );
 
@@ -2244,10 +2397,27 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginLeft = "0";
-                cropGuide.style.marginTop = "0";
+                cropGuide.style.marginLeft =
+                    "0";
+
+                cropGuide.style.marginTop =
+                    "0";
             }
         );
+
+
+    trackingToggle.addEventListener(
+        "click",
+        function () {
+            trackingEnabled =
+                !trackingEnabled;
+
+            trackingToggle.classList.toggle(
+                "active",
+                trackingEnabled
+            );
+        }
+    );
 
 
     document
@@ -2257,17 +2427,17 @@
             function () {
                 videoPreview.pause();
 
-                showScreen("home");
+                showScreen(homeScreen);
             }
         );
 
 
     document
-        .getElementById("exportTopButton")
+        .getElementById("exportButton")
         .addEventListener(
             "click",
             function () {
-                showScreen("export");
+                showScreen(exportScreen);
             }
         );
 
@@ -2277,7 +2447,7 @@
         .addEventListener(
             "click",
             function () {
-                showScreen("editor");
+                showScreen(editorScreen);
             }
         );
 
@@ -2287,7 +2457,7 @@
         .addEventListener(
             "click",
             function () {
-                showScreen("editor");
+                showScreen(editorScreen);
             }
         );
 
@@ -2297,69 +2467,7 @@
         .addEventListener(
             "click",
             function () {
-                startDemoExport();
-            }
-        );
-
-
-    function startDemoExport() {
-        showScreen("exporting");
-
-        let progress = 0;
-
-        exportProgressBar.style.width =
-            "0%";
-
-        exportProgressValue.textContent =
-            "0%";
-
-        clearInterval(progressTimer);
-
-        progressTimer =
-            setInterval(
-                function () {
-                    progress += 10;
-
-                    exportProgressBar.style.width =
-                        progress + "%";
-
-                    exportProgressValue.textContent =
-                        progress + "%";
-
-                    if (progress >= 100) {
-                        clearInterval(
-                            progressTimer
-                        );
-
-                        setTimeout(
-                            function () {
-                                showScreen(
-                                    "success"
-                                );
-                            },
-                            400
-                        );
-                    }
-                },
-                180
-            );
-    }
-
-
-    document
-        .getElementById("cancelProcessingButton")
-        .addEventListener(
-            "click",
-            function () {
-                clearInterval(progressTimer);
-
-                exportProgressBar.style.width =
-                    "0%";
-
-                exportProgressValue.textContent =
-                    "0%";
-
-                showScreen("export");
+                showScreen(successScreen);
             }
         );
 
@@ -2369,7 +2477,7 @@
         .addEventListener(
             "click",
             function () {
-                showScreen("editor");
+                showScreen(editorScreen);
             }
         );
 
@@ -2379,49 +2487,31 @@
         .addEventListener(
             "click",
             function () {
+                if (objectUrl) {
+                    URL.revokeObjectURL(
+                        objectUrl
+                    );
+                }
+
+                objectUrl = null;
                 selectedFile = null;
 
                 videoInput.value = "";
 
                 videoPreview.pause();
-
                 videoPreview.removeAttribute(
                     "src"
                 );
-
                 videoPreview.load();
 
-                showScreen("home");
-            }
-        );
+                duration = 0;
+                trimStart = 0;
+                trimEnd = 0;
 
+                previewEmpty.style.display =
+                    "grid";
 
-    document
-        .getElementById("downloadButton")
-        .addEventListener(
-            "click",
-            function () {
-                showScreen("success");
-            }
-        );
-
-
-    document
-        .getElementById("retryButton")
-        .addEventListener(
-            "click",
-            function () {
-                showScreen("export");
-            }
-        );
-
-
-    document
-        .getElementById("errorBackButton")
-        .addEventListener(
-            "click",
-            function () {
-                showScreen("editor");
+                showScreen(homeScreen);
             }
         );
 
