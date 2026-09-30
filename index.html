@@ -102,6 +102,11 @@
             background: #211914;
         }
 
+        .upload-content {
+            width: 100%;
+            padding: 30px;
+        }
+
         .upload-icon {
             width: 64px;
             height: 64px;
@@ -267,6 +272,13 @@
             background: #050505;
         }
 
+        .video-container.reframing {
+            width: auto;
+            height: min(540px, 100%);
+            aspect-ratio: 9 / 16;
+            max-width: min(100%, 430px);
+        }
+
         #videoPreview {
             display: block;
             max-width: 100%;
@@ -274,6 +286,23 @@
             width: auto;
             height: auto;
             object-fit: contain;
+            transform-origin: center center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .video-container.reframing #videoPreview {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            object-fit: cover;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .video-container.reframing #videoPreview.dragging {
+            cursor: grabbing;
         }
 
         .preview-empty {
@@ -285,20 +314,22 @@
             pointer-events: none;
         }
 
-        .crop-guide {
+        .crop-label {
             position: absolute;
-            top: 50%;
+            top: 10px;
             left: 50%;
-            width: 28%;
-            height: 82%;
-            transform: translate(-50%, -50%);
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+            z-index: 10;
+            transform: translateX(-50%);
+            padding: 5px 9px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.65);
+            color: white;
+            font-size: 11px;
             pointer-events: none;
             display: none;
         }
 
-        .crop-guide.active {
+        .video-container.reframing .crop-label {
             display: block;
         }
 
@@ -367,6 +398,7 @@
             background: #080809;
             overflow: hidden;
             cursor: pointer;
+            touch-action: none;
         }
 
         .thumbnail-strip {
@@ -408,6 +440,7 @@
             z-index: 4;
             background: var(--accent);
             cursor: ew-resize;
+            touch-action: none;
         }
 
         .timeline-handle.start {
@@ -568,6 +601,13 @@
             display: block;
         }
 
+        .drag-hint {
+            margin: 0 0 12px;
+            color: #71717a;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
         .direction-grid {
             display: grid;
             grid-template-columns: repeat(3, 36px);
@@ -583,6 +623,10 @@
             background: var(--surface-2);
             color: white;
             cursor: pointer;
+        }
+
+        .direction-button:hover {
+            background: var(--surface-3);
         }
 
         .direction-empty {
@@ -611,6 +655,11 @@
             background: transparent;
             color: var(--muted);
             cursor: pointer;
+        }
+
+        .reset-button:hover {
+            background: var(--surface-2);
+            color: white;
         }
 
         .tracking-row {
@@ -688,6 +737,12 @@
             place-items: center;
             border-radius: 14px;
             background: #050505;
+            overflow: hidden;
+        }
+
+        .export-preview video {
+            max-width: 100%;
+            max-height: 400px;
         }
 
         .export-options {
@@ -744,6 +799,14 @@
 
         .export-actions button {
             flex: 1;
+        }
+
+        .export-note {
+            margin: 14px 0 0;
+            color: #71717a;
+            font-size: 11px;
+            line-height: 1.5;
+            text-align: center;
         }
 
         .state-card {
@@ -819,6 +882,11 @@
                 height: 280px;
             }
 
+            .video-container.reframing {
+                height: min(420px, 70vh);
+                max-width: 100%;
+            }
+
             .timeline-panel {
                 padding: 13px;
             }
@@ -837,32 +905,26 @@
 
 <body>
 
+<!-- HOME -->
+
 <div id="homeScreen" class="screen active">
-
     <div class="home-container">
-
-        <div class="brand">
-            Free Video Clipper
-        </div>
+        <div class="brand">FREE VIDEO CLIPPER</div>
 
         <p class="tagline">
-            Turn long videos into precise short clips.
+            Long video → Short clip
         </p>
 
         <div id="uploadCard" class="upload-card">
-
-            <div>
-
-                <div class="upload-icon">
-                    +
-                </div>
+            <div class="upload-content">
+                <div class="upload-icon">↑</div>
 
                 <h2 class="upload-title">
-                    Add a video
+                    Add your video
                 </h2>
 
                 <p class="upload-text">
-                    Choose a video from your device to start editing.
+                    Drag and drop a video here or browse from your device.
                 </p>
 
                 <button
@@ -874,34 +936,26 @@
                 </button>
 
                 <div class="supported">
-                    MP4 · MOV · WEBM · MKV · AVI
+                    Supports common browser video formats
                 </div>
-
             </div>
-
         </div>
-
-        <input
-            id="videoInput"
-            type="file"
-            accept="video/*"
-        >
-
     </div>
-
 </div>
 
+
+<!-- EDITOR -->
 
 <div id="editorScreen" class="screen">
 
     <header class="topbar">
 
         <div class="topbar-left">
-
             <button
                 id="closeEditorButton"
                 class="icon-button"
                 type="button"
+                aria-label="Close editor"
             >
                 ×
             </button>
@@ -909,11 +963,9 @@
             <div class="editor-title">
                 Video Editor
             </div>
-
         </div>
 
         <div class="topbar-right">
-
             <button
                 id="exportButton"
                 class="export-button"
@@ -921,7 +973,6 @@
             >
                 Export
             </button>
-
         </div>
 
     </header>
@@ -931,11 +982,14 @@
 
         <main class="workspace">
 
-            <div class="preview-area">
+            <section class="preview-area">
 
                 <div class="preview-frame">
 
-                    <div class="video-container">
+                    <div
+                        id="videoContainer"
+                        class="video-container"
+                    >
 
                         <video
                             id="videoPreview"
@@ -947,22 +1001,21 @@
                             id="previewEmpty"
                             class="preview-empty"
                         >
-                            Video preview
+                            No video loaded
                         </div>
 
-                        <div
-                            id="cropGuide"
-                            class="crop-guide"
-                        ></div>
+                        <div class="crop-label">
+                            9:16 Preview
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="player-controls">
+            <section class="player-controls">
 
                 <div class="player-row">
 
@@ -983,10 +1036,10 @@
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="timeline-panel">
+            <section class="timeline-panel">
 
                 <div class="timeline-header">
 
@@ -1008,18 +1061,10 @@
                     class="timeline"
                 >
 
-                    <div class="thumbnail-strip">
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                        <div class="thumbnail"></div>
-                    </div>
+                    <div
+                        id="thumbnailStrip"
+                        class="thumbnail-strip"
+                    ></div>
 
                     <div
                         id="selection"
@@ -1043,23 +1088,23 @@
 
                 </div>
 
-            </div>
+            </section>
 
         </main>
 
 
         <aside class="side-panel">
 
-            <div class="side-section">
+            <section class="side-section">
 
                 <div class="side-title">
-                    Video Information
+                    Video
                 </div>
 
                 <div class="metadata">
 
                     <div class="metadata-row">
-                        <span>File</span>
+                        <span>Name</span>
                         <span
                             id="fileName"
                             class="metadata-value"
@@ -1090,10 +1135,10 @@
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="side-section">
+            <section class="side-section">
 
                 <div class="side-title">
                     Trim
@@ -1117,6 +1162,7 @@
 
                     </div>
 
+
                     <div class="time-input-group">
 
                         <label for="endTimeInput">
@@ -1134,6 +1180,7 @@
                     </div>
 
                 </div>
+
 
                 <div class="trim-actions">
 
@@ -1155,10 +1202,10 @@
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="side-section">
+            <section class="side-section">
 
                 <div class="side-title">
                     Aspect Ratio
@@ -1168,7 +1215,7 @@
 
                     <button
                         class="ratio-button active"
-                        data-ratio="original"
+                        data-ratio="Original"
                         type="button"
                     >
                         Original
@@ -1214,21 +1261,27 @@
                     class="reframe-controls"
                 >
 
-                    <div class="tracking-description">
-                        Reframe controls are ready for Phase 3.
-                    </div>
+                    <p class="drag-hint">
+                        Drag the video directly inside the 9:16 preview
+                        to change its position.
+                    </p>
+
 
                     <div class="direction-grid">
 
                         <button
                             class="direction-button direction-empty"
                             type="button"
-                        ></button>
+                            tabindex="-1"
+                        >
+                            -
+                        </button>
 
                         <button
                             id="moveUp"
                             class="direction-button"
                             type="button"
+                            aria-label="Move up"
                         >
                             ↑
                         </button>
@@ -1236,12 +1289,17 @@
                         <button
                             class="direction-button direction-empty"
                             type="button"
-                        ></button>
+                            tabindex="-1"
+                        >
+                            -
+                        </button>
+
 
                         <button
                             id="moveLeft"
                             class="direction-button"
                             type="button"
+                            aria-label="Move left"
                         >
                             ←
                         </button>
@@ -1250,6 +1308,7 @@
                             id="moveCenter"
                             class="direction-button"
                             type="button"
+                            aria-label="Center"
                         >
                             •
                         </button>
@@ -1258,19 +1317,25 @@
                             id="moveRight"
                             class="direction-button"
                             type="button"
+                            aria-label="Move right"
                         >
                             →
                         </button>
 
+
                         <button
                             class="direction-button direction-empty"
                             type="button"
-                        ></button>
+                            tabindex="-1"
+                        >
+                            -
+                        </button>
 
                         <button
                             id="moveDown"
                             class="direction-button"
                             type="button"
+                            aria-label="Move down"
                         >
                             ↓
                         </button>
@@ -1278,13 +1343,22 @@
                         <button
                             class="direction-button direction-empty"
                             type="button"
-                        ></button>
+                            tabindex="-1"
+                        >
+                            -
+                        </button>
 
                     </div>
 
+
                     <div class="zoom-row">
+
                         <span>Zoom</span>
-                        <span id="zoomValue">100%</span>
+
+                        <span id="zoomValue">
+                            100%
+                        </span>
+
                     </div>
 
                     <input
@@ -1292,9 +1366,11 @@
                         class="range-input"
                         type="range"
                         min="100"
-                        max="200"
+                        max="250"
                         value="100"
+                        step="1"
                     >
+
 
                     <button
                         id="resetReframeButton"
@@ -1306,37 +1382,32 @@
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="side-section">
+            <section class="side-section">
+
+                <div class="side-title">
+                    Auto Face Tracking
+                </div>
 
                 <div class="tracking-row">
 
-                    <div>
-
-                        <div class="side-title">
-                            Auto Face Tracking
-                        </div>
-
-                        <div
-                            id="trackingDescription"
-                            class="tracking-description"
-                        >
-                            UI only. Tracking will be implemented later.
-                        </div>
-
+                    <div class="tracking-description">
+                        Automatic face tracking will be added
+                        in the advanced editing phase.
                     </div>
 
                     <button
                         id="trackingToggle"
                         class="toggle"
                         type="button"
+                        aria-label="Auto face tracking"
                     ></button>
 
                 </div>
 
-            </div>
+            </section>
 
         </aside>
 
@@ -1344,6 +1415,8 @@
 
 </div>
 
+
+<!-- EXPORT -->
 
 <div id="exportScreen" class="screen">
 
@@ -1365,9 +1438,17 @@
 
         </div>
 
+
         <div class="export-preview">
-            Export preview
+
+            <video
+                id="exportPreview"
+                playsinline
+                muted
+            ></video>
+
         </div>
+
 
         <div class="export-options">
 
@@ -1380,20 +1461,32 @@
                 <div class="option-list">
 
                     <label class="option selected">
+
                         <input
                             type="radio"
                             name="quality"
+                            value="original"
                             checked
                         >
-                        Same as Original
+
+                        <span>
+                            Same as Original
+                        </span>
+
                     </label>
 
                     <label class="option">
+
                         <input
                             type="radio"
                             name="quality"
+                            value="high"
                         >
-                        High Quality
+
+                        <span>
+                            High Quality
+                        </span>
+
                     </label>
 
                 </div>
@@ -1410,28 +1503,46 @@
                 <div class="option-list">
 
                     <label class="option selected">
+
                         <input
                             type="radio"
                             name="resolution"
+                            value="original"
                             checked
                         >
-                        Original
+
+                        <span>
+                            Original
+                        </span>
+
                     </label>
 
                     <label class="option">
+
                         <input
                             type="radio"
                             name="resolution"
+                            value="1080"
                         >
-                        1080p
+
+                        <span>
+                            1080p
+                        </span>
+
                     </label>
 
                     <label class="option">
+
                         <input
                             type="radio"
                             name="resolution"
+                            value="720"
                         >
-                        720p
+
+                        <span>
+                            720p
+                        </span>
+
                     </label>
 
                 </div>
@@ -1448,35 +1559,59 @@
                 <div class="option-list">
 
                     <label class="option selected">
+
                         <input
                             type="radio"
                             name="format"
+                            value="webm"
                             checked
                         >
-                        WebM
+
+                        <span>
+                            WebM
+                        </span>
+
                     </label>
 
                     <label class="option">
+
                         <input
                             type="radio"
                             name="format"
+                            value="mp4"
                         >
-                        MP4
+
+                        <span>
+                            MP4
+                        </span>
+
                     </label>
 
                     <label class="option">
+
                         <input
                             type="radio"
                             name="format"
+                            value="mov"
                         >
-                        MOV
+
+                        <span>
+                            MOV
+                        </span>
+
                     </label>
 
                 </div>
 
             </div>
 
+            <p class="export-note">
+                Export encoding will be connected in the export phase.
+                Current Phase 3 provides the complete reframe preview only.
+            </p>
+
         </div>
+
 
         <div class="export-actions">
 
@@ -1503,6 +1638,8 @@
 </div>
 
 
+<!-- SUCCESS PLACEHOLDER -->
+
 <div id="successScreen" class="screen">
 
     <div class="state-card">
@@ -1523,7 +1660,7 @@
 
             <button
                 id="editAgainButton"
-                class="primary-button"
+                class="secondary-button"
                 type="button"
             >
                 Edit Again
@@ -1531,7 +1668,7 @@
 
             <button
                 id="newVideoButton"
-                class="secondary-button"
+                class="primary-button"
                 type="button"
             >
                 New Video
@@ -1542,6 +1679,13 @@
     </div>
 
 </div>
+
+
+<input
+    id="videoInput"
+    type="file"
+    accept="video/*"
+>
 
 
 <script>
@@ -1557,14 +1701,17 @@
     const successScreen =
         document.getElementById("successScreen");
 
-    const videoInput =
-        document.getElementById("videoInput");
-
     const uploadCard =
         document.getElementById("uploadCard");
 
+    const videoInput =
+        document.getElementById("videoInput");
+
     const videoPreview =
         document.getElementById("videoPreview");
+
+    const videoContainer =
+        document.getElementById("videoContainer");
 
     const previewEmpty =
         document.getElementById("previewEmpty");
@@ -1575,14 +1722,11 @@
     const timeDisplay =
         document.getElementById("timeDisplay");
 
-    const timelineTime =
-        document.getElementById("timelineTime");
-
     const timeline =
         document.getElementById("timeline");
 
-    const playhead =
-        document.getElementById("playhead");
+    const thumbnailStrip =
+        document.getElementById("thumbnailStrip");
 
     const selection =
         document.getElementById("selection");
@@ -1593,26 +1737,33 @@
     const endHandle =
         document.getElementById("endHandle");
 
+    const playhead =
+        document.getElementById("playhead");
+
+    const timelineTime =
+        document.getElementById("timelineTime");
+
     const startTimeInput =
         document.getElementById("startTimeInput");
 
     const endTimeInput =
         document.getElementById("endTimeInput");
 
-    const cropGuide =
-        document.getElementById("cropGuide");
-
     const reframeControls =
         document.getElementById("reframeControls");
-
-    const trackingToggle =
-        document.getElementById("trackingToggle");
 
     const zoomRange =
         document.getElementById("zoomRange");
 
     const zoomValue =
         document.getElementById("zoomValue");
+
+    const trackingToggle =
+        document.getElementById("trackingToggle");
+
+    const exportPreview =
+        document.getElementById("exportPreview");
+
 
     let selectedFile = null;
     let objectUrl = null;
@@ -1621,22 +1772,32 @@
     let trimStart = 0;
     let trimEnd = 0;
 
-    let draggingHandle = null;
-    let selectedRatio = "original";
+    let selectedRatio = "Original";
 
     let zoom = 100;
+
+    let cropX = 0;
+    let cropY = 0;
+
+    let draggingHandle = null;
+
+    let draggingVideo = false;
+
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    let dragOriginX = 0;
+    let dragOriginY = 0;
+
     let trackingEnabled = false;
 
 
     function showScreen(screen) {
-        [
-            homeScreen,
-            editorScreen,
-            exportScreen,
-            successScreen
-        ].forEach(function (item) {
-            item.classList.remove("active");
-        });
+        document
+            .querySelectorAll(".screen")
+            .forEach(function (item) {
+                item.classList.remove("active");
+            });
 
         screen.classList.add("active");
     }
@@ -1647,28 +1808,26 @@
             return "00:00";
         }
 
-        seconds = Math.max(
-            0,
-            Math.floor(seconds)
-        );
+        const safeSeconds =
+            Math.max(0, seconds);
 
         const minutes =
-            Math.floor(seconds / 60);
+            Math.floor(safeSeconds / 60);
 
-        const remaining =
-            seconds % 60;
+        const remainingSeconds =
+            Math.floor(safeSeconds % 60);
 
         return (
             String(minutes).padStart(2, "0") +
             ":" +
-            String(remaining).padStart(2, "0")
+            String(remainingSeconds).padStart(2, "0")
         );
     }
 
 
     function parseTime(value) {
         const text =
-            String(value).trim();
+            String(value || "").trim();
 
         if (!text) {
             return NaN;
@@ -1781,8 +1940,34 @@
     }
 
 
+    function createTimelineThumbnails() {
+        thumbnailStrip.innerHTML = "";
+
+        const count = 18;
+
+        for (let index = 0; index < count; index++) {
+            const thumbnail =
+                document.createElement("div");
+
+            thumbnail.className =
+                "thumbnail";
+
+            thumbnailStrip.appendChild(
+                thumbnail
+            );
+        }
+    }
+
+
     function openVideo(file) {
-        if (!file.type.startsWith("video/")) {
+        if (!file) {
+            return;
+        }
+
+        if (
+            !file.type ||
+            !file.type.startsWith("video/")
+        ) {
             return;
         }
 
@@ -1803,7 +1988,300 @@
         previewEmpty.style.display =
             "none";
 
+        resetReframe(false);
+
+        createTimelineThumbnails();
+
         showScreen(editorScreen);
+    }
+
+
+    function resetReframe(updatePreview = true) {
+        zoom = 100;
+        cropX = 0;
+        cropY = 0;
+
+        zoomRange.value = "100";
+        zoomValue.textContent = "100%";
+
+        if (updatePreview) {
+            updateReframe();
+        }
+    }
+
+
+    function getBaseVideoSize() {
+        const viewportWidth =
+            videoContainer.clientWidth;
+
+        const viewportHeight =
+            videoContainer.clientHeight;
+
+        const sourceWidth =
+            videoPreview.videoWidth;
+
+        const sourceHeight =
+            videoPreview.videoHeight;
+
+        if (
+            !sourceWidth ||
+            !sourceHeight ||
+            !viewportWidth ||
+            !viewportHeight
+        ) {
+            return {
+                width: viewportWidth,
+                height: viewportHeight
+            };
+        }
+
+        const sourceRatio =
+            sourceWidth / sourceHeight;
+
+        const viewportRatio =
+            viewportWidth / viewportHeight;
+
+        let width;
+        let height;
+
+        if (sourceRatio > viewportRatio) {
+            height = viewportHeight;
+            width = height * sourceRatio;
+        } else {
+            width = viewportWidth;
+            height = width / sourceRatio;
+        }
+
+        return {
+            width,
+            height
+        };
+    }
+
+
+    function getCropLimits() {
+        const baseSize =
+            getBaseVideoSize();
+
+        const scale =
+            zoom / 100;
+
+        const scaledWidth =
+            baseSize.width * scale;
+
+        const scaledHeight =
+            baseSize.height * scale;
+
+        const maxX =
+            Math.max(
+                0,
+                (scaledWidth -
+                    videoContainer.clientWidth) / 2
+            );
+
+        const maxY =
+            Math.max(
+                0,
+                (scaledHeight -
+                    videoContainer.clientHeight) / 2
+            );
+
+        return {
+            maxX,
+            maxY
+        };
+    }
+
+
+    function clampCropPosition() {
+        const limits =
+            getCropLimits();
+
+        cropX =
+            Math.min(
+                limits.maxX,
+                Math.max(
+                    -limits.maxX,
+                    cropX
+                )
+            );
+
+        cropY =
+            Math.min(
+                limits.maxY,
+                Math.max(
+                    -limits.maxY,
+                    cropY
+                )
+            );
+    }
+
+
+    function updateReframe() {
+        if (
+            selectedRatio !== "9:16"
+        ) {
+            videoPreview.style.transform =
+                "translate(0px, 0px) scale(1)";
+
+            return;
+        }
+
+        clampCropPosition();
+
+        const scale =
+            zoom / 100;
+
+        videoPreview.style.transform =
+            "translate(" +
+            cropX +
+            "px, " +
+            cropY +
+            "px) scale(" +
+            scale +
+            ")";
+    }
+
+
+    function setRatio(ratio) {
+        selectedRatio = ratio;
+
+        document
+            .querySelectorAll(".ratio-button")
+            .forEach(function (button) {
+                button.classList.remove(
+                    "active"
+                );
+            });
+
+        const activeButton =
+            document.querySelector(
+                '.ratio-button[data-ratio="' +
+                ratio +
+                '"]'
+            );
+
+        if (activeButton) {
+            activeButton.classList.add(
+                "active"
+            );
+        }
+
+        if (ratio === "9:16") {
+            videoContainer.classList.add(
+                "reframing"
+            );
+
+            reframeControls.classList.add(
+                "active"
+            );
+
+            resetReframe(true);
+        } else {
+            videoContainer.classList.remove(
+                "reframing"
+            );
+
+            reframeControls.classList.remove(
+                "active"
+            );
+
+            videoPreview.style.transform =
+                "translate(0px, 0px) scale(1)";
+        }
+    }
+
+
+    function moveCrop(xAmount, yAmount) {
+        if (
+            selectedRatio !== "9:16"
+        ) {
+            return;
+        }
+
+        cropX += xAmount;
+        cropY += yAmount;
+
+        clampCropPosition();
+        updateReframe();
+    }
+
+
+    function startVideoDrag(event) {
+        if (
+            selectedRatio !== "9:16" ||
+            !videoPreview.src
+        ) {
+            return;
+        }
+
+        event.preventDefault();
+
+        draggingVideo = true;
+
+        dragStartX =
+            event.clientX;
+
+        dragStartY =
+            event.clientY;
+
+        dragOriginX =
+            cropX;
+
+        dragOriginY =
+            cropY;
+
+        videoPreview.classList.add(
+            "dragging"
+        );
+
+        videoPreview.setPointerCapture(
+            event.pointerId
+        );
+    }
+
+
+    function moveVideoDrag(event) {
+        if (!draggingVideo) {
+            return;
+        }
+
+        event.preventDefault();
+
+        cropX =
+            dragOriginX +
+            (event.clientX - dragStartX);
+
+        cropY =
+            dragOriginY +
+            (event.clientY - dragStartY);
+
+        clampCropPosition();
+        updateReframe();
+    }
+
+
+    function stopVideoDrag(event) {
+        if (!draggingVideo) {
+            return;
+        }
+
+        draggingVideo = false;
+
+        videoPreview.classList.remove(
+            "dragging"
+        );
+
+        if (
+            event &&
+            videoPreview.hasPointerCapture(
+                event.pointerId
+            )
+        ) {
+            videoPreview.releasePointerCapture(
+                event.pointerId
+            );
+        }
     }
 
 
@@ -1901,6 +2379,14 @@
 
             updateTrimUI();
             updateTimeUI();
+
+            resetReframe(false);
+
+            if (
+                selectedRatio === "9:16"
+            ) {
+                updateReframe();
+            }
         }
     );
 
@@ -1909,6 +2395,19 @@
         "timeupdate",
         function () {
             updateTimeUI();
+
+            if (
+                duration > 0 &&
+                videoPreview.currentTime >=
+                trimEnd
+            ) {
+                videoPreview.pause();
+
+                videoPreview.currentTime =
+                    trimEnd;
+
+                updateTimeUI();
+            }
         }
     );
 
@@ -1931,19 +2430,11 @@
     );
 
 
-    videoPreview.addEventListener(
-        "ended",
-        function () {
-            playButton.textContent =
-                "▶";
-        }
-    );
-
-
     playButton.addEventListener(
         "click",
         function () {
             if (videoPreview.paused) {
+
                 if (
                     videoPreview.currentTime >=
                     trimEnd
@@ -1953,6 +2444,7 @@
                 }
 
                 videoPreview.play();
+
             } else {
                 videoPreview.pause();
             }
@@ -1978,7 +2470,8 @@
                 timeline.getBoundingClientRect();
 
             const position =
-                (event.clientX - rect.left) /
+                (event.clientX -
+                    rect.left) /
                 rect.width;
 
             const time =
@@ -1987,42 +2480,6 @@
             setCurrentTime(time);
         }
     );
-
-
-    function startHandleDrag(event) {
-        event.preventDefault();
-
-        draggingHandle = "start";
-
-        document.addEventListener(
-            "pointermove",
-            handleTimelineDrag
-        );
-
-        document.addEventListener(
-            "pointerup",
-            stopTimelineDrag,
-            { once: true }
-        );
-    }
-
-
-    function endHandleDrag(event) {
-        event.preventDefault();
-
-        draggingHandle = "end";
-
-        document.addEventListener(
-            "pointermove",
-            handleTimelineDrag
-        );
-
-        document.addEventListener(
-            "pointerup",
-            stopTimelineDrag,
-            { once: true }
-        );
-    }
 
 
     function handleTimelineDrag(event) {
@@ -2037,26 +2494,36 @@
             timeline.getBoundingClientRect();
 
         let percentage =
-            (event.clientX - rect.left) /
+            (event.clientX -
+                rect.left) /
             rect.width;
 
         percentage =
             Math.min(
                 1,
-                Math.max(0, percentage)
+                Math.max(
+                    0,
+                    percentage
+                )
             );
 
         const time =
             percentage * duration;
 
         const minimumGap =
-            Math.min(0.1, duration / 100);
+            Math.min(
+                0.1,
+                duration / 100
+            );
 
-        if (draggingHandle === "start") {
+        if (
+            draggingHandle === "start"
+        ) {
             trimStart =
                 Math.min(
                     time,
-                    trimEnd - minimumGap
+                    trimEnd -
+                    minimumGap
                 );
 
             trimStart =
@@ -2074,11 +2541,14 @@
             }
         }
 
-        if (draggingHandle === "end") {
+        if (
+            draggingHandle === "end"
+        ) {
             trimEnd =
                 Math.max(
                     time,
-                    trimStart + minimumGap
+                    trimStart +
+                    minimumGap
                 );
 
             trimEnd =
@@ -2113,13 +2583,43 @@
 
     startHandle.addEventListener(
         "pointerdown",
-        startHandleDrag
+        function (event) {
+            event.preventDefault();
+
+            draggingHandle = "start";
+
+            document.addEventListener(
+                "pointermove",
+                handleTimelineDrag
+            );
+
+            document.addEventListener(
+                "pointerup",
+                stopTimelineDrag,
+                { once: true }
+            );
+        }
     );
 
 
     endHandle.addEventListener(
         "pointerdown",
-        endHandleDrag
+        function (event) {
+            event.preventDefault();
+
+            draggingHandle = "end";
+
+            document.addEventListener(
+                "pointermove",
+                handleTimelineDrag
+            );
+
+            document.addEventListener(
+                "pointerup",
+                stopTimelineDrag,
+                { once: true }
+            );
+        }
     );
 
 
@@ -2240,24 +2740,6 @@
         );
 
 
-    videoPreview.addEventListener(
-        "timeupdate",
-        function () {
-            if (
-                videoPreview.currentTime >=
-                trimEnd
-            ) {
-                videoPreview.pause();
-
-                videoPreview.currentTime =
-                    trimEnd;
-
-                updateTimeUI();
-            }
-        }
-    );
-
-
     document
         .querySelectorAll(
             ".ratio-button:not(.disabled)"
@@ -2267,45 +2749,9 @@
                 button.addEventListener(
                     "click",
                     function () {
-                        document
-                            .querySelectorAll(
-                                ".ratio-button"
-                            )
-                            .forEach(
-                                function (item) {
-                                    item.classList.remove(
-                                        "active"
-                                    );
-                                }
-                            );
-
-                        button.classList.add(
-                            "active"
+                        setRatio(
+                            button.dataset.ratio
                         );
-
-                        selectedRatio =
-                            button.dataset.ratio;
-
-                        if (
-                            selectedRatio ===
-                            "9:16"
-                        ) {
-                            cropGuide.classList.add(
-                                "active"
-                            );
-
-                            reframeControls.classList.add(
-                                "active"
-                            );
-                        } else {
-                            cropGuide.classList.remove(
-                                "active"
-                            );
-
-                            reframeControls.classList.remove(
-                                "active"
-                            );
-                        }
                     }
                 );
             }
@@ -2321,10 +2767,8 @@
             zoomValue.textContent =
                 zoom + "%";
 
-            cropGuide.style.transform =
-                "translate(-50%, -50%) scale(" +
-                zoom / 100 +
-                ")";
+            clampCropPosition();
+            updateReframe();
         }
     );
 
@@ -2334,16 +2778,7 @@
         .addEventListener(
             "click",
             function () {
-                zoom = 100;
-
-                zoomRange.value =
-                    "100";
-
-                zoomValue.textContent =
-                    "100%";
-
-                cropGuide.style.transform =
-                    "translate(-50%, -50%) scale(1)";
+                resetReframe(true);
             }
         );
 
@@ -2353,8 +2788,7 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginTop =
-                    "-10px";
+                moveCrop(0, 20);
             }
         );
 
@@ -2364,8 +2798,7 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginTop =
-                    "10px";
+                moveCrop(0, -20);
             }
         );
 
@@ -2375,8 +2808,7 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginLeft =
-                    "-10px";
+                moveCrop(20, 0);
             }
         );
 
@@ -2386,8 +2818,7 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginLeft =
-                    "10px";
+                moveCrop(-20, 0);
             }
         );
 
@@ -2397,13 +2828,36 @@
         .addEventListener(
             "click",
             function () {
-                cropGuide.style.marginLeft =
-                    "0";
+                cropX = 0;
+                cropY = 0;
 
-                cropGuide.style.marginTop =
-                    "0";
+                updateReframe();
             }
         );
+
+
+    videoPreview.addEventListener(
+        "pointerdown",
+        startVideoDrag
+    );
+
+
+    videoPreview.addEventListener(
+        "pointermove",
+        moveVideoDrag
+    );
+
+
+    videoPreview.addEventListener(
+        "pointerup",
+        stopVideoDrag
+    );
+
+
+    videoPreview.addEventListener(
+        "pointercancel",
+        stopVideoDrag
+    );
 
 
     trackingToggle.addEventListener(
@@ -2416,6 +2870,19 @@
                 "active",
                 trackingEnabled
             );
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        function () {
+            if (
+                selectedRatio === "9:16"
+            ) {
+                clampCropPosition();
+                updateReframe();
+            }
         }
     );
 
@@ -2437,6 +2904,9 @@
         .addEventListener(
             "click",
             function () {
+                exportPreview.src =
+                    videoPreview.src;
+
                 showScreen(exportScreen);
             }
         );
@@ -2487,6 +2957,7 @@
         .addEventListener(
             "click",
             function () {
+
                 if (objectUrl) {
                     URL.revokeObjectURL(
                         objectUrl
@@ -2499,17 +2970,58 @@
                 videoInput.value = "";
 
                 videoPreview.pause();
+
                 videoPreview.removeAttribute(
                     "src"
                 );
+
                 videoPreview.load();
+
+                exportPreview.removeAttribute(
+                    "src"
+                );
 
                 duration = 0;
                 trimStart = 0;
                 trimEnd = 0;
 
+                selectedRatio =
+                    "Original";
+
+                resetReframe(false);
+
+                videoContainer.classList.remove(
+                    "reframing"
+                );
+
+                reframeControls.classList.remove(
+                    "active"
+                );
+
+                document
+                    .querySelectorAll(
+                        ".ratio-button"
+                    )
+                    .forEach(
+                        function (button) {
+                            button.classList.remove(
+                                "active"
+                            );
+                        }
+                    );
+
+                document
+                    .querySelector(
+                        '.ratio-button[data-ratio="Original"]'
+                    )
+                    .classList.add(
+                        "active"
+                    );
+
                 previewEmpty.style.display =
                     "grid";
+
+                createTimelineThumbnails();
 
                 showScreen(homeScreen);
             }
@@ -2551,6 +3063,9 @@
                 );
             }
         );
+
+
+    createTimelineThumbnails();
 </script>
 
 </body>
