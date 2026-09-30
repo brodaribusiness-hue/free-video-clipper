@@ -2,575 +2,2466 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Free Video Clipper</title>
 
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-
     <style>
+        :root {
+            --bg: #0f0f10;
+            --surface: #18181b;
+            --surface-2: #222225;
+            --surface-3: #2b2b30;
+            --border: #34343a;
+            --text: #ffffff;
+            --muted: #a1a1aa;
+            --accent: #ff6b2c;
+            --accent-hover: #ff7d45;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
             margin: 0;
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
         }
 
-        #videoPreview {
-            width: 100%;
-            max-width: 700px;
-            margin-top: 20px;
-            background: black;
-        }
-
-        .controls {
-            margin-top: 20px;
-        }
-
-        input[type="number"] {
-            width: 100px;
-            padding: 8px;
-            margin: 5px;
+        body {
+            min-height: 100vh;
         }
 
         button,
-        a {
-            display: inline-block;
-            padding: 12px 20px;
-            margin-top: 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
+        input,
+        select {
+            font: inherit;
         }
 
-        #clipButton {
-            background: #222;
-            color: white;
+        button {
+            border: 0;
         }
 
-        #clipButton:disabled {
-            opacity: 0.6;
+        .app {
+            min-height: 100vh;
         }
 
-        #downloadButton {
-            background: green;
-            color: white;
+        .screen {
             display: none;
+            min-height: 100vh;
         }
 
-        #progressContainer {
-            width: 100%;
-            max-width: 500px;
-            height: 20px;
-            background: #ddd;
+        .screen.active {
+            display: flex;
+        }
+
+        /* --------------------------------
+           HOME
+        -------------------------------- */
+
+        #homeScreen {
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+        }
+
+        .home-container {
+            width: min(760px, 100%);
+            text-align: center;
+        }
+
+        .brand {
+            margin-bottom: 10px;
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .tagline {
+            margin: 0 0 38px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .upload-card {
+            position: relative;
+            display: flex;
+            min-height: 330px;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #4a4a52;
+            border-radius: 20px;
+            background: var(--surface);
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .upload-card:hover,
+        .upload-card.drag-over {
+            border-color: var(--accent);
+            background: #1d1a18;
+        }
+
+        .upload-content {
+            padding: 30px;
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 22px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            background: var(--surface-2);
+            color: var(--accent);
+            font-size: 30px;
+        }
+
+        .upload-title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .upload-text {
+            margin: 0 0 24px;
+            color: var(--muted);
+        }
+
+        .primary-button {
+            min-height: 46px;
+            padding: 0 22px;
             border-radius: 10px;
-            margin: 20px auto 10px;
+            background: var(--accent);
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .primary-button:hover {
+            background: var(--accent-hover);
+        }
+
+        .primary-button:active {
+            transform: translateY(1px);
+        }
+
+        .secondary-button {
+            min-height: 44px;
+            padding: 0 18px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--surface-2);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .secondary-button:hover {
+            background: var(--surface-3);
+        }
+
+        .supported-formats {
+            margin-top: 22px;
+            color: #71717a;
+            font-size: 13px;
+        }
+
+        #videoInput {
+            display: none;
+        }
+
+        /* --------------------------------
+           EDITOR
+        -------------------------------- */
+
+        #editorScreen {
+            flex-direction: column;
+            background: var(--bg);
+        }
+
+        .topbar {
+            height: 64px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .topbar-left,
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: transparent;
+            color: var(--text);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .icon-button:hover {
+            background: var(--surface-2);
+        }
+
+        .editor-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .export-button {
+            min-height: 40px;
+            padding: 0 17px;
+            border-radius: 9px;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .editor-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            min-height: 0;
+        }
+
+        .workspace {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            display: none;
         }
 
-        #progressBar {
-            width: 0%;
+        .preview-area {
+            flex: 1;
+            min-height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+            background:
+                radial-gradient(
+                    circle at center,
+                    #1a1a1d 0,
+                    #101011 55%,
+                    #0f0f10 100%
+                );
+        }
+
+        .preview-frame {
+            position: relative;
+            width: min(820px, 100%);
             height: 100%;
-            background: #2196f3;
-            transition: width 0.15s linear;
+            max-height: 570px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #progressText {
+        .preview-placeholder {
+            width: min(820px, 100%);
+            height: min(470px, 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: #050505;
+            color: #52525b;
+            overflow: hidden;
+        }
+
+        .preview-placeholder video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             display: none;
-            font-weight: bold;
         }
 
-        #status {
-            margin-top: 15px;
-            font-weight: bold;
-            word-break: break-word;
+        .preview-empty {
+            text-align: center;
+        }
+
+        .preview-empty-icon {
+            margin-bottom: 12px;
+            font-size: 36px;
+        }
+
+        .crop-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 28%;
+            height: 82%;
+            transform: translate(-50%, -50%);
+            border: 2px solid var(--accent);
+            box-shadow:
+                0 0 0 9999px rgba(0, 0, 0, 0.36);
+            pointer-events: none;
+            display: none;
+        }
+
+        .crop-guide.active {
+            display: block;
+        }
+
+        .player-controls {
+            flex-shrink: 0;
+            padding: 14px 24px 18px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .play-button {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--surface-3);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .time-display {
+            min-width: 110px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* --------------------------------
+           TIMELINE
+        -------------------------------- */
+
+        .timeline-panel {
+            flex-shrink: 0;
+            padding: 18px 24px 22px;
+            border-top: 1px solid var(--border);
+            background: #141416;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-label {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .timeline-time {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .timeline {
+            position: relative;
+            height: 74px;
+            border-radius: 10px;
+            background: #09090a;
+            overflow: hidden;
+        }
+
+        .thumbnail-strip {
+            position: absolute;
+            inset: 10px;
+            display: flex;
+            gap: 2px;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .thumbnail {
+            flex: 1;
+            min-width: 30px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #29292e,
+                    #18181b
+                );
+        }
+
+        .selection {
+            position: absolute;
+            top: 7px;
+            bottom: 7px;
+            left: 14%;
+            right: 14%;
+            border: 2px solid var(--accent);
+            border-radius: 7px;
+            pointer-events: none;
+        }
+
+        .timeline-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 14px;
+            background: var(--accent);
+            cursor: ew-resize;
+        }
+
+        .timeline-handle.start {
+            left: 13%;
+            border-radius: 7px 0 0 7px;
+        }
+
+        .timeline-handle.end {
+            right: 13%;
+            border-radius: 0 7px 7px 0;
+        }
+
+        .playhead {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 35%;
+            width: 2px;
+            background: #ffffff;
+            pointer-events: none;
+        }
+
+        .playhead::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 9px;
+            height: 9px;
+            transform: translate(-50%, -1px);
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
+        /* --------------------------------
+           SIDE PANEL
+        -------------------------------- */
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+            background: var(--surface);
+            overflow-y: auto;
+        }
+
+        .side-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .side-section-title {
+            margin-bottom: 13px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .ratio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+        }
+
+        .ratio-button {
+            min-height: 54px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .ratio-button:hover {
+            border-color: #55555d;
+            color: var(--text);
+        }
+
+        .ratio-button.active {
+            border-color: var(--accent);
+            background: #241914;
+            color: var(--text);
+        }
+
+        .ratio-button.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .reframe-controls {
+            display: none;
+        }
+
+        .reframe-controls.active {
+            display: block;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .control-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .direction-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 38px);
+            justify-content: center;
+            gap: 5px;
+            margin-top: 12px;
+        }
+
+        .direction-button {
+            width: 38px;
+            height: 34px;
+            border-radius: 7px;
+            background: var(--surface-2);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .direction-button:hover {
+            background: var(--surface-3);
+        }
+
+        .direction-empty {
+            visibility: hidden;
+        }
+
+        .range-input {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+
+        .reset-button {
+            width: 100%;
+            min-height: 38px;
+            margin-top: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .reset-button:hover {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .tracking-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .tracking-description {
+            margin-top: 6px;
+            color: #71717a;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+            border-radius: 999px;
+            background: #3f3f46;
+            cursor: pointer;
+        }
+
+        .toggle::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            transition: transform 0.2s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent);
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .history-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .history-button {
+            min-height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .history-button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        /* --------------------------------
+           EXPORT
+        -------------------------------- */
+
+        #exportScreen {
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .export-container {
+            width: min(760px, 100%);
+        }
+
+        .export-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .export-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .export-preview {
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: #050505;
+            overflow: hidden;
+        }
+
+        .export-preview-inner {
+            width: 180px;
+            height: 260px;
+            border-radius: 8px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #29292e,
+                    #111113
+                );
+            display: grid;
+            place-items: center;
+            color: #52525b;
+        }
+
+        .export-options {
+            margin-top: 18px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+
+        .option-group + .option-group {
+            margin-top: 20px;
+        }
+
+        .option-title {
+            margin-bottom: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .option-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 44px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-2);
+            cursor: pointer;
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+        }
+
+        .option input {
+            accent-color: var(--accent);
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .export-actions button {
+            flex: 1;
+        }
+
+        /* --------------------------------
+           EXPORTING
+        -------------------------------- */
+
+        #exportingScreen,
+        #successScreen,
+        #errorScreen {
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .state-card {
+            width: min(520px, 100%);
+            padding: 34px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--surface);
+            text-align: center;
+        }
+
+        .state-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--surface-2);
+            font-size: 25px;
+        }
+
+        .state-icon.success {
+            color: var(--success);
+        }
+
+        .state-icon.error {
+            color: var(--danger);
+        }
+
+        .state-card h2 {
+            margin: 0 0 8px;
+            font-size: 21px;
+        }
+
+        .state-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .progress-wrapper {
+            margin: 28px 0 10px;
+        }
+
+        .progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: var(--surface-2);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .progress-value {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .state-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .state-actions button {
+            flex: 1;
+        }
+
+        /* --------------------------------
+           RESPONSIVE
+        -------------------------------- */
+
+        @media (max-width: 900px) {
+            .editor-body {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                border-top: 1px solid var(--border);
+                border-left: 0;
+            }
+
+            .side-section {
+                padding: 16px 20px;
+            }
+
+            .preview-area {
+                min-height: 360px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #homeScreen {
+                padding: 20px 14px;
+            }
+
+            .upload-card {
+                min-height: 270px;
+            }
+
+            .topbar {
+                height: 58px;
+                padding: 0 12px;
+            }
+
+            .editor-title {
+                font-size: 14px;
+            }
+
+            .export-button {
+                padding: 0 12px;
+            }
+
+            .preview-area {
+                min-height: 280px;
+                padding: 16px;
+            }
+
+            .preview-placeholder {
+                height: 280px;
+            }
+
+            .player-controls {
+                padding: 12px 14px 14px;
+            }
+
+            .timeline-panel {
+                padding: 14px;
+            }
+
+            .side-panel {
+                max-height: none;
+            }
+
+            .ratio-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .ratio-button {
+                min-height: 48px;
+                padding: 0 4px;
+                font-size: 10px;
+            }
+
+            .export-actions,
+            .state-actions {
+                flex-direction: column;
+            }
+
+            .export-preview {
+                min-height: 260px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Free Video Clipper</h1>
+<div class="app">
 
-    <p>Upload your long video to start.</p>
+    <!-- ================================
+         HOME
+    ================================= -->
 
-    <input
-        type="file"
-        id="videoInput"
-        accept="video/*"
+    <section
+        id="homeScreen"
+        class="screen active"
+    >
+        <div class="home-container">
+
+            <div class="brand">
+                Free Video Clipper
+            </div>
+
+            <p class="tagline">
+                Turn long videos into precise short clips.
+            </p>
+
+            <div
+                id="uploadCard"
+                class="upload-card"
+            >
+                <div class="upload-content">
+
+                    <div class="upload-icon">
+                        +
+                    </div>
+
+                    <h2 class="upload-title">
+                        Add a video
+                    </h2>
+
+                    <p class="upload-text">
+                        Choose a video from your device to start editing.
+                    </p>
+
+                    <button
+                        id="browseButton"
+                        class="primary-button"
+                        type="button"
+                    >
+                        Browse Video
+                    </button>
+
+                    <div class="supported-formats">
+                        MP4 · MOV · WEBM · MKV · AVI
+                    </div>
+
+                </div>
+            </div>
+
+            <input
+                id="videoInput"
+                type="file"
+                accept="video/*"
+            >
+
+        </div>
+    </section>
+
+
+    <!-- ================================
+         EDITOR
+    ================================= -->
+
+    <section
+        id="editorScreen"
+        class="screen"
     >
 
-    <video
-        id="videoPreview"
-        controls
-        style="display:none;">
-    </video>
+        <header class="topbar">
 
-    <div class="controls">
+            <div class="topbar-left">
 
-        <div>
-            <label for="startTime">
-                Start Time:
-            </label>
+                <button
+                    id="closeEditorButton"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Close editor"
+                >
+                    ×
+                </button>
 
-            <input
-                type="number"
-                id="startTime"
-                value="0"
-                min="0"
-                step="0.1"
+                <div class="editor-title">
+                    Video Editor
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <button
+                    id="exportTopButton"
+                    class="export-button"
+                    type="button"
+                >
+                    Export
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <div class="editor-body">
+
+            <main class="workspace">
+
+                <div class="preview-area">
+
+                    <div class="preview-frame">
+
+                        <div
+                            id="previewPlaceholder"
+                            class="preview-placeholder"
+                        >
+
+                            <div class="preview-empty">
+
+                                <div class="preview-empty-icon">
+                                    ▶
+                                </div>
+
+                                <div>
+                                    Video preview
+                                </div>
+
+                            </div>
+
+                            <video
+                                id="videoPreview"
+                                playsinline
+                            ></video>
+
+                        </div>
+
+                        <div
+                            id="cropGuide"
+                            class="crop-guide"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="player-controls">
+
+                    <div class="player-row">
+
+                        <button
+                            id="playButton"
+                            class="play-button"
+                            type="button"
+                            aria-label="Play"
+                        >
+                            ▶
+                        </button>
+
+                        <div
+                            id="timeDisplay"
+                            class="time-display"
+                        >
+                            00:00 / 00:00
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-panel">
+
+                    <div class="timeline-header">
+
+                        <div class="section-label">
+                            Timeline
+                        </div>
+
+                        <div
+                            id="timelineTime"
+                            class="timeline-time"
+                        >
+                            00:00
+                        </div>
+
+                    </div>
+
+                    <div
+                        id="timeline"
+                        class="timeline"
+                    >
+
+                        <div
+                            id="thumbnailStrip"
+                            class="thumbnail-strip"
+                        >
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                            <div class="thumbnail"></div>
+                        </div>
+
+                        <div
+                            id="selection"
+                            class="selection"
+                        ></div>
+
+                        <div
+                            id="startHandle"
+                            class="timeline-handle start"
+                        ></div>
+
+                        <div
+                            id="endHandle"
+                            class="timeline-handle end"
+                        ></div>
+
+                        <div
+                            id="playhead"
+                            class="playhead"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+
+            <aside class="side-panel">
+
+                <!-- Aspect Ratio -->
+
+                <div class="side-section">
+
+                    <div class="side-section-title">
+                        Aspect Ratio
+                    </div>
+
+                    <div class="ratio-grid">
+
+                        <button
+                            class="ratio-button active"
+                            data-ratio="original"
+                            type="button"
+                        >
+                            Original
+                        </button>
+
+                        <button
+                            class="ratio-button"
+                            data-ratio="9:16"
+                            type="button"
+                        >
+                            9:16
+                        </button>
+
+                        <button
+                            class="ratio-button disabled"
+                            type="button"
+                            disabled
+                        >
+                            1:1
+                        </button>
+
+                        <button
+                            class="ratio-button disabled"
+                            type="button"
+                            disabled
+                        >
+                            4:5
+                        </button>
+
+                        <button
+                            class="ratio-button disabled"
+                            type="button"
+                            disabled
+                        >
+                            16:9
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Reframe -->
+
+                <div class="side-section">
+
+                    <div class="side-section-title">
+                        Reframe
+                    </div>
+
+                    <div
+                        id="reframeControls"
+                        class="reframe-controls"
+                    >
+
+                        <div class="control-row">
+                            <span class="control-label">
+                                Position
+                            </span>
+                        </div>
+
+                        <div class="direction-grid">
+
+                            <button
+                                class="direction-button direction-empty"
+                                type="button"
+                            >
+                            </button>
+
+                            <button
+                                id="moveUp"
+                                class="direction-button"
+                                type="button"
+                                aria-label="Move up"
+                            >
+                                ↑
+                            </button>
+
+                            <button
+                                class="direction-button direction-empty"
+                                type="button"
+                            >
+                            </button>
+
+                            <button
+                                id="moveLeft"
+                                class="direction-button"
+                                type="button"
+                                aria-label="Move left"
+                            >
+                                ←
+                            </button>
+
+                            <button
+                                id="moveCenter"
+                                class="direction-button"
+                                type="button"
+                                aria-label="Center"
+                            >
+                                •
+                            </button>
+
+                            <button
+                                id="moveRight"
+                                class="direction-button"
+                                type="button"
+                                aria-label="Move right"
+                            >
+                                →
+                            </button>
+
+                            <button
+                                class="direction-button direction-empty"
+                                type="button"
+                            >
+                            </button>
+
+                            <button
+                                id="moveDown"
+                                class="direction-button"
+                                type="button"
+                                aria-label="Move down"
+                            >
+                                ↓
+                            </button>
+
+                            <button
+                                class="direction-button direction-empty"
+                                type="button"
+                            >
+                            </button>
+
+                        </div>
+
+                        <div class="control-row">
+
+                            <span class="control-label">
+                                Zoom
+                            </span>
+
+                            <span
+                                id="zoomValue"
+                                class="control-label"
+                            >
+                                100%
+                            </span>
+
+                        </div>
+
+                        <input
+                            id="zoomRange"
+                            class="range-input"
+                            type="range"
+                            min="100"
+                            max="200"
+                            value="100"
+                        >
+
+                        <button
+                            id="resetReframeButton"
+                            class="reset-button"
+                            type="button"
+                        >
+                            Reset Reframe
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="reframeDisabled"
+                        class="tracking-description"
+                    >
+                        Select 9:16 to adjust the crop position.
+                    </div>
+
+                </div>
+
+
+                <!-- Face Tracking -->
+
+                <div class="side-section">
+
+                    <div class="tracking-row">
+
+                        <div>
+                            <div class="side-section-title">
+                                Auto Face Tracking
+                            </div>
+
+                            <div
+                                id="trackingDescription"
+                                class="tracking-description"
+                            >
+                                Automatically follow a detected face.
+                            </div>
+                        </div>
+
+                        <button
+                            id="trackingToggle"
+                            class="toggle"
+                            type="button"
+                            aria-label="Auto face tracking"
+                        ></button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Undo / Redo -->
+
+                <div class="side-section">
+
+                    <div class="side-section-title">
+                        History
+                    </div>
+
+                    <div class="history-row">
+
+                        <button
+                            id="undoButton"
+                            class="history-button"
+                            type="button"
+                            disabled
+                        >
+                            ↶ Undo
+                        </button>
+
+                        <button
+                            id="redoButton"
+                            class="history-button"
+                            type="button"
+                            disabled
+                        >
+                            Redo ↷
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================
+         EXPORT
+    ================================= -->
+
+    <section
+        id="exportScreen"
+        class="screen"
+    >
+
+        <div class="export-container">
+
+            <div class="export-header">
+
+                <button
+                    id="backToEditorButton"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Back to editor"
+                >
+                    ←
+                </button>
+
+                <h1>
+                    Export Video
+                </h1>
+
+            </div>
+
+            <div class="export-preview">
+
+                <div class="export-preview-inner">
+                    Preview
+                </div>
+
+            </div>
+
+            <div class="export-options">
+
+                <div class="option-group">
+
+                    <div class="option-title">
+                        Quality
+                    </div>
+
+                    <div class="option-list">
+
+                        <label class="option selected">
+
+                            <input
+                                type="radio"
+                                name="quality"
+                                value="original"
+                                checked
+                            >
+
+                            <span>
+                                Same as Original
+                            </span>
+
+                        </label>
+
+                        <label class="option">
+
+                            <input
+                                type="radio"
+                                name="quality"
+                                value="high"
+                            >
+
+                            <span>
+                                High Quality
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="option-group">
+
+                    <div class="option-title">
+                        Resolution
+                    </div>
+
+                    <div class="option-list">
+
+                        <label class="option selected">
+
+                            <input
+                                type="radio"
+                                name="resolution"
+                                value="original"
+                                checked
+                            >
+
+                            <span>
+                                Original
+                            </span>
+
+                        </label>
+
+                        <label class="option">
+
+                            <input
+                                type="radio"
+                                name="resolution"
+                                value="1080p"
+                            >
+
+                            <span>
+                                1080p
+                            </span>
+
+                        </label>
+
+                        <label class="option">
+
+                            <input
+                                type="radio"
+                                name="resolution"
+                                value="720p"
+                            >
+
+                            <span>
+                                720p
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="option-group">
+
+                    <div class="option-title">
+                        Format
+                    </div>
+
+                    <div class="option-list">
+
+                        <label class="option selected">
+
+                            <input
+                                type="radio"
+                                name="format"
+                                value="webm"
+                                checked
+                            >
+
+                            <span>
+                                WebM
+                            </span>
+
+                        </label>
+
+                        <label class="option">
+
+                            <input
+                                type="radio"
+                                name="format"
+                                value="mp4"
+                            >
+
+                            <span>
+                                MP4
+                            </span>
+
+                        </label>
+
+                        <label class="option">
+
+                            <input
+                                type="radio"
+                                name="format"
+                                value="mov"
+                            >
+
+                            <span>
+                                MOV
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="export-actions">
+
+                <button
+                    id="cancelExportButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Back
+                </button>
+
+                <button
+                    id="startExportButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    Export Video
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================
+         EXPORTING
+    ================================= -->
+
+    <section
+        id="exportingScreen"
+        class="screen"
+    >
+
+        <div class="state-card">
+
+            <div class="state-icon">
+                ↻
+            </div>
+
+            <h2>
+                Exporting video
+            </h2>
+
+            <p>
+                Preparing your selected clip.
+            </p>
+
+            <div class="progress-wrapper">
+
+                <div class="progress-track">
+
+                    <div
+                        id="exportProgressBar"
+                        class="progress-bar"
+                    ></div>
+
+                </div>
+
+                <div
+                    id="exportProgressValue"
+                    class="progress-value"
+                >
+                    0%
+                </div>
+
+            </div>
+
+            <button
+                id="cancelProcessingButton"
+                class="secondary-button"
+                type="button"
             >
+                Cancel
+            </button>
 
-            seconds
         </div>
 
-        <div>
-            <label for="endTime">
-                End Time:
-            </label>
+    </section>
 
-            <input
-                type="number"
-                id="endTime"
-                value="0"
-                min="0"
-                step="0.1"
-            >
 
-            seconds
+    <!-- ================================
+         SUCCESS
+    ================================= -->
+
+    <section
+        id="successScreen"
+        class="screen"
+    >
+
+        <div class="state-card">
+
+            <div class="state-icon success">
+                ✓
+            </div>
+
+            <h2>
+                Video exported
+            </h2>
+
+            <p>
+                Your clip is ready.
+            </p>
+
+            <div class="state-actions">
+
+                <button
+                    id="downloadButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    Download Video
+                </button>
+
+                <button
+                    id="editAgainButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Edit Again
+                </button>
+
+                <button
+                    id="newVideoButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    New Video
+                </button>
+
+            </div>
+
         </div>
 
-        <div id="durationText"></div>
+    </section>
 
-        <button id="clipButton">
-            Create MP4 Clip
-        </button>
 
-        <div id="progressContainer">
-            <div id="progressBar"></div>
+    <!-- ================================
+         ERROR
+    ================================= -->
+
+    <section
+        id="errorScreen"
+        class="screen"
+    >
+
+        <div class="state-card">
+
+            <div class="state-icon error">
+                !
+            </div>
+
+            <h2>
+                Something went wrong
+            </h2>
+
+            <p>
+                The video could not be processed.
+                Please try again.
+            </p>
+
+            <div class="state-actions">
+
+                <button
+                    id="retryButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    Try Again
+                </button>
+
+                <button
+                    id="errorBackButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Back to Editor
+                </button>
+
+            </div>
+
         </div>
 
-        <div id="progressText">
-            0%
-        </div>
+    </section>
 
-        <div id="status"></div>
+</div>
 
-        <br>
 
-        <a
-            id="downloadButton"
-            href="#"
-            download="clipped-video.mp4">
-            Download Clip
-        </a>
+<script>
+    const screens = {
+        home: document.getElementById("homeScreen"),
+        editor: document.getElementById("editorScreen"),
+        export: document.getElementById("exportScreen"),
+        exporting: document.getElementById("exportingScreen"),
+        success: document.getElementById("successScreen"),
+        error: document.getElementById("errorScreen")
+    };
 
-    </div>
+    const videoInput =
+        document.getElementById("videoInput");
 
-    <script>
+    const uploadCard =
+        document.getElementById("uploadCard");
 
-        const {
-            createFFmpeg,
-            fetchFile
-        } = FFmpeg;
+    const browseButton =
+        document.getElementById("browseButton");
 
-        const ffmpeg =
-            createFFmpeg({
-                log: true,
+    const videoPreview =
+        document.getElementById("videoPreview");
 
-                mainName: "main",
+    const previewPlaceholder =
+        document.getElementById("previewPlaceholder");
 
-                corePath:
-                    "https://unpkg.com/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js"
-            });
+    const playButton =
+        document.getElementById("playButton");
 
-        const videoInput =
-            document.getElementById(
-                "videoInput"
+    const timeDisplay =
+        document.getElementById("timeDisplay");
+
+    const timelineTime =
+        document.getElementById("timelineTime");
+
+    const cropGuide =
+        document.getElementById("cropGuide");
+
+    const reframeControls =
+        document.getElementById("reframeControls");
+
+    const reframeDisabled =
+        document.getElementById("reframeDisabled");
+
+    const trackingToggle =
+        document.getElementById("trackingToggle");
+
+    const trackingDescription =
+        document.getElementById("trackingDescription");
+
+    const zoomRange =
+        document.getElementById("zoomRange");
+
+    const zoomValue =
+        document.getElementById("zoomValue");
+
+    const exportProgressBar =
+        document.getElementById("exportProgressBar");
+
+    const exportProgressValue =
+        document.getElementById("exportProgressValue");
+
+    let selectedFile = null;
+    let selectedRatio = "original";
+    let trackingEnabled = false;
+    let zoom = 100;
+    let progressTimer = null;
+
+
+    function showScreen(name) {
+        Object.values(screens).forEach(
+            function (screen) {
+                screen.classList.remove("active");
+            }
+        );
+
+        screens[name].classList.add("active");
+    }
+
+
+    function formatTime(seconds) {
+        if (!Number.isFinite(seconds)) {
+            return "00:00";
+        }
+
+        const totalSeconds =
+            Math.max(0, Math.floor(seconds));
+
+        const minutes =
+            Math.floor(totalSeconds / 60);
+
+        const remainingSeconds =
+            totalSeconds % 60;
+
+        return (
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(remainingSeconds).padStart(2, "0")
+        );
+    }
+
+
+    browseButton.addEventListener(
+        "click",
+        function () {
+            videoInput.click();
+        }
+    );
+
+
+    uploadCard.addEventListener(
+        "dragover",
+        function (event) {
+            event.preventDefault();
+            uploadCard.classList.add("drag-over");
+        }
+    );
+
+
+    uploadCard.addEventListener(
+        "dragleave",
+        function () {
+            uploadCard.classList.remove(
+                "drag-over"
+            );
+        }
+    );
+
+
+    uploadCard.addEventListener(
+        "drop",
+        function (event) {
+            event.preventDefault();
+
+            uploadCard.classList.remove(
+                "drag-over"
             );
 
-        const videoPreview =
+            const file =
+                event.dataTransfer.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            if (!file.type.startsWith("video/")) {
+                return;
+            }
+
+            selectedFile = file;
+
+            openEditorWithVideo(file);
+        }
+    );
+
+
+    videoInput.addEventListener(
+        "change",
+        function () {
+            const file = this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            selectedFile = file;
+
+            openEditorWithVideo(file);
+        }
+    );
+
+
+    function openEditorWithVideo(file) {
+        const objectUrl =
+            URL.createObjectURL(file);
+
+        videoPreview.src = objectUrl;
+
+        videoPreview.style.display = "block";
+
+        previewPlaceholder
+            .querySelector(".preview-empty")
+            .style.display = "none";
+
+        videoPreview.load();
+
+        showScreen("editor");
+    }
+
+
+    videoPreview.addEventListener(
+        "loadedmetadata",
+        function () {
+            updatePlayerTime();
+        }
+    );
+
+
+    videoPreview.addEventListener(
+        "timeupdate",
+        function () {
+            updatePlayerTime();
+        }
+    );
+
+
+    videoPreview.addEventListener(
+        "play",
+        function () {
+            playButton.textContent = "❚❚";
+        }
+    );
+
+
+    videoPreview.addEventListener(
+        "pause",
+        function () {
+            playButton.textContent = "▶";
+        }
+    );
+
+
+    playButton.addEventListener(
+        "click",
+        function () {
+            if (videoPreview.paused) {
+                videoPreview.play();
+            } else {
+                videoPreview.pause();
+            }
+        }
+    );
+
+
+    function updatePlayerTime() {
+        const current =
+            videoPreview.currentTime || 0;
+
+        const duration =
+            videoPreview.duration || 0;
+
+        const text =
+            formatTime(current) +
+            " / " +
+            formatTime(duration);
+
+        timeDisplay.textContent = text;
+        timelineTime.textContent =
+            formatTime(current);
+
+        if (duration > 0) {
+            const percentage =
+                (current / duration) * 100;
+
             document.getElementById(
-                "videoPreview"
+                "playhead"
+            ).style.left =
+                percentage + "%";
+        }
+    }
+
+
+    document
+        .querySelectorAll(".ratio-button:not(.disabled)")
+        .forEach(
+            function (button) {
+                button.addEventListener(
+                    "click",
+                    function () {
+                        document
+                            .querySelectorAll(".ratio-button")
+                            .forEach(
+                                function (item) {
+                                    item.classList.remove(
+                                        "active"
+                                    );
+                                }
+                            );
+
+                        button.classList.add("active");
+
+                        selectedRatio =
+                            button.dataset.ratio;
+
+                        if (
+                            selectedRatio ===
+                            "9:16"
+                        ) {
+                            cropGuide.classList.add(
+                                "active"
+                            );
+
+                            reframeControls.classList.add(
+                                "active"
+                            );
+
+                            reframeDisabled.style.display =
+                                "none";
+                        } else {
+                            cropGuide.classList.remove(
+                                "active"
+                            );
+
+                            reframeControls.classList.remove(
+                                "active"
+                            );
+
+                            reframeDisabled.style.display =
+                                "block";
+                        }
+                    }
+                );
+            }
+        );
+
+
+    trackingToggle.addEventListener(
+        "click",
+        function () {
+            trackingEnabled =
+                !trackingEnabled;
+
+            trackingToggle.classList.toggle(
+                "active",
+                trackingEnabled
             );
 
-        const startTime =
-            document.getElementById(
-                "startTime"
-            );
+            trackingDescription.textContent =
+                trackingEnabled
+                    ? "Tracking will follow a detected face."
+                    : "Automatically follow a detected face.";
+        }
+    );
 
-        const endTime =
-            document.getElementById(
-                "endTime"
-            );
 
-        const durationText =
-            document.getElementById(
-                "durationText"
-            );
+    zoomRange.addEventListener(
+        "input",
+        function () {
+            zoom =
+                Number(this.value);
 
-        const clipButton =
-            document.getElementById(
-                "clipButton"
-            );
+            zoomValue.textContent =
+                zoom + "%";
 
-        const downloadButton =
-            document.getElementById(
-                "downloadButton"
-            );
+            cropGuide.style.transform =
+                "translate(-50%, -50%) scale(" +
+                zoom / 100 +
+                ")";
+        }
+    );
 
-        const progressContainer =
-            document.getElementById(
-                "progressContainer"
-            );
 
-        const progressBar =
-            document.getElementById(
-                "progressBar"
-            );
-
-        const progressText =
-            document.getElementById(
-                "progressText"
-            );
-
-        const status =
-            document.getElementById(
-                "status"
-            );
-
-        let selectedFile = null;
-
-        let downloadUrl = null;
-
-        let ffmpegLoaded = false;
-
-        videoInput.addEventListener(
-            "change",
+    document
+        .getElementById("resetReframeButton")
+        .addEventListener(
+            "click",
             function () {
+                zoom = 100;
 
-                const file =
-                    this.files[0];
+                zoomRange.value = 100;
 
-                if (!file) {
-                    return;
-                }
+                zoomValue.textContent = "100%";
 
-                selectedFile =
-                    file;
+                cropGuide.style.transform =
+                    "translate(-50%, -50%) scale(1)";
+            }
+        );
 
-                videoPreview.src =
-                    URL.createObjectURL(
-                        file
-                    );
 
-                videoPreview.style.display =
-                    "block";
+    document
+        .getElementById("moveUp")
+        .addEventListener(
+            "click",
+            function () {
+                cropGuide.style.marginTop = "-10px";
+            }
+        );
+
+
+    document
+        .getElementById("moveDown")
+        .addEventListener(
+            "click",
+            function () {
+                cropGuide.style.marginTop = "10px";
+            }
+        );
+
+
+    document
+        .getElementById("moveLeft")
+        .addEventListener(
+            "click",
+            function () {
+                cropGuide.style.marginLeft = "-10px";
+            }
+        );
+
+
+    document
+        .getElementById("moveRight")
+        .addEventListener(
+            "click",
+            function () {
+                cropGuide.style.marginLeft = "10px";
+            }
+        );
+
+
+    document
+        .getElementById("moveCenter")
+        .addEventListener(
+            "click",
+            function () {
+                cropGuide.style.marginLeft = "0";
+                cropGuide.style.marginTop = "0";
+            }
+        );
+
+
+    document
+        .getElementById("closeEditorButton")
+        .addEventListener(
+            "click",
+            function () {
+                videoPreview.pause();
+
+                showScreen("home");
+            }
+        );
+
+
+    document
+        .getElementById("exportTopButton")
+        .addEventListener(
+            "click",
+            function () {
+                showScreen("export");
+            }
+        );
+
+
+    document
+        .getElementById("backToEditorButton")
+        .addEventListener(
+            "click",
+            function () {
+                showScreen("editor");
+            }
+        );
+
+
+    document
+        .getElementById("cancelExportButton")
+        .addEventListener(
+            "click",
+            function () {
+                showScreen("editor");
+            }
+        );
+
+
+    document
+        .getElementById("startExportButton")
+        .addEventListener(
+            "click",
+            function () {
+                startDemoExport();
+            }
+        );
+
+
+    function startDemoExport() {
+        showScreen("exporting");
+
+        let progress = 0;
+
+        exportProgressBar.style.width =
+            "0%";
+
+        exportProgressValue.textContent =
+            "0%";
+
+        clearInterval(progressTimer);
+
+        progressTimer =
+            setInterval(
+                function () {
+                    progress += 10;
+
+                    exportProgressBar.style.width =
+                        progress + "%";
+
+                    exportProgressValue.textContent =
+                        progress + "%";
+
+                    if (progress >= 100) {
+                        clearInterval(
+                            progressTimer
+                        );
+
+                        setTimeout(
+                            function () {
+                                showScreen(
+                                    "success"
+                                );
+                            },
+                            400
+                        );
+                    }
+                },
+                180
+            );
+    }
+
+
+    document
+        .getElementById("cancelProcessingButton")
+        .addEventListener(
+            "click",
+            function () {
+                clearInterval(progressTimer);
+
+                exportProgressBar.style.width =
+                    "0%";
+
+                exportProgressValue.textContent =
+                    "0%";
+
+                showScreen("export");
+            }
+        );
+
+
+    document
+        .getElementById("editAgainButton")
+        .addEventListener(
+            "click",
+            function () {
+                showScreen("editor");
+            }
+        );
+
+
+    document
+        .getElementById("newVideoButton")
+        .addEventListener(
+            "click",
+            function () {
+                selectedFile = null;
+
+                videoInput.value = "";
+
+                videoPreview.pause();
+
+                videoPreview.removeAttribute(
+                    "src"
+                );
 
                 videoPreview.load();
 
-                downloadButton.style.display =
-                    "none";
-
-                status.textContent =
-                    "";
-
-                resetProgress();
+                showScreen("home");
             }
         );
 
-        videoPreview.addEventListener(
-            "loadedmetadata",
-            function () {
 
-                const duration =
-                    videoPreview.duration;
-
-                durationText.textContent =
-                    "Video Duration: " +
-                    duration.toFixed(1) +
-                    " seconds";
-
-                endTime.value =
-                    duration.toFixed(1);
-
-                startTime.max =
-                    duration;
-
-                endTime.max =
-                    duration;
-            }
-        );
-
-        function resetProgress() {
-
-            progressBar.style.width =
-                "0%";
-
-            progressText.textContent =
-                "0%";
-
-            progressContainer.style.display =
-                "none";
-
-            progressText.style.display =
-                "none";
-        }
-
-        function updateProgress(
-            value
-        ) {
-
-            const percent =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        Math.round(value)
-                    )
-                );
-
-            progressBar.style.width =
-                percent + "%";
-
-            progressText.textContent =
-                percent + "%";
-
-            progressContainer.style.display =
-                "block";
-
-            progressText.style.display =
-                "block";
-        }
-
-        ffmpeg.setProgress(
-            function ({
-                ratio
-            }) {
-
-                updateProgress(
-                    ratio * 100
-                );
-            }
-        );
-
-        clipButton.addEventListener(
+    document
+        .getElementById("downloadButton")
+        .addEventListener(
             "click",
-            async function () {
-
-                if (!selectedFile) {
-
-                    status.textContent =
-                        "Error: Please upload a video first.";
-
-                    return;
-                }
-
-                const start =
-                    parseFloat(
-                        startTime.value
-                    );
-
-                const end =
-                    parseFloat(
-                        endTime.value
-                    );
-
-                if (
-                    isNaN(start) ||
-                    isNaN(end)
-                ) {
-
-                    status.textContent =
-                        "Error: Enter valid start and end times.";
-
-                    return;
-                }
-
-                if (
-                    start < 0 ||
-                    end <= start
-                ) {
-
-                    status.textContent =
-                        "Error: End time must be greater than start time.";
-
-                    return;
-                }
-
-                if (
-                    end >
-                    videoPreview.duration
-                ) {
-
-                    status.textContent =
-                        "Error: End time cannot exceed video duration.";
-
-                    return;
-                }
-
-                try {
-
-                    clipButton.disabled =
-                        true;
-
-                    downloadButton.style.display =
-                        "none";
-
-                    resetProgress();
-
-                    status.textContent =
-                        "Loading video engine...";
-
-                    if (!ffmpegLoaded) {
-
-                        await ffmpeg.load();
-
-                        ffmpegLoaded =
-                            true;
-                    }
-
-                    status.textContent =
-                        "Preparing video...";
-
-                    updateProgress(0);
-
-                    try {
-
-                        ffmpeg.FS(
-                            "unlink",
-                            "input.mp4"
-                        );
-
-                    } catch (error) {}
-
-                    try {
-
-                        ffmpeg.FS(
-                            "unlink",
-                            "output.mp4"
-                        );
-
-                    } catch (error) {}
-
-                    ffmpeg.FS(
-                        "writeFile",
-                        "input.mp4",
-                        await fetchFile(
-                            selectedFile
-                        )
-                    );
-
-                    const duration =
-                        end - start;
-
-                    status.textContent =
-                        "Creating MP4 clip...";
-
-                    await ffmpeg.run(
-
-                        "-ss",
-                        String(start),
-
-                        "-i",
-                        "input.mp4",
-
-                        "-t",
-                        String(duration),
-
-                        "-map",
-                        "0:v:0",
-
-                        "-map",
-                        "0:a?",
-
-                        "-c:v",
-                        "libx264",
-
-                        "-preset",
-                        "ultrafast",
-
-                        "-c:a",
-                        "aac",
-
-                        "-movflags",
-                        "+faststart",
-
-                        "output.mp4"
-                    );
-
-                    updateProgress(100);
-
-                    status.textContent =
-                        "Finalizing video...";
-
-                    const data =
-                        ffmpeg.FS(
-                            "readFile",
-                            "output.mp4"
-                        );
-
-                    const blob =
-                        new Blob(
-                            [data.buffer],
-                            {
-                                type:
-                                    "video/mp4"
-                            }
-                        );
-
-                    if (downloadUrl) {
-
-                        URL.revokeObjectURL(
-                            downloadUrl
-                        );
-                    }
-
-                    downloadUrl =
-                        URL.createObjectURL(
-                            blob
-                        );
-
-                    downloadButton.href =
-                        downloadUrl;
-
-                    downloadButton.download =
-                        "clipped-video-" +
-                        Date.now() +
-                        ".mp4";
-
-                    downloadButton.style.display =
-                        "inline-block";
-
-                    status.textContent =
-                        "Clip created successfully.";
-
-                }
-                catch (error) {
-
-                    console.error(
-                        error
-                    );
-
-                    status.textContent =
-                        "Error: " +
-                        (
-                            error.message ||
-                            error
-                        );
-
-                }
-                finally {
-
-                    clipButton.disabled =
-                        false;
-                }
+            function () {
+                showScreen("success");
             }
         );
 
-    </script>
+
+    document
+        .getElementById("retryButton")
+        .addEventListener(
+            "click",
+            function () {
+                showScreen("export");
+            }
+        );
+
+
+    document
+        .getElementById("errorBackButton")
+        .addEventListener(
+            "click",
+            function () {
+                showScreen("editor");
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            '.option input[type="radio"]'
+        )
+        .forEach(
+            function (input) {
+                input.addEventListener(
+                    "change",
+                    function () {
+                        const group =
+                            this.closest(
+                                ".option-list"
+                            );
+
+                        group
+                            .querySelectorAll(
+                                ".option"
+                            )
+                            .forEach(
+                                function (option) {
+                                    option.classList.remove(
+                                        "selected"
+                                    );
+                                }
+                            );
+
+                        this
+                            .closest(".option")
+                            .classList.add(
+                                "selected"
+                            );
+                    }
+                );
+            }
+        );
+</script>
 
 </body>
 </html>
