@@ -883,45 +883,43 @@ button{
     color:var(--muted);
 }
 
-/* RESPONSIVE */
+/* DESKTOP-ONLY EDITOR */
 
-@media(max-width:1050px){
-    .editor-body{
-        grid-template-columns:58px minmax(0,1fr) 240px;
-    }
-
-    .tool-button{
-        width:44px;
-        height:52px;
-    }
-
-    .side-panel{
-        font-size:90%;
-    }
+html,
+body{
+    min-width:1100px;
 }
 
-@media(max-width:760px){
-    #editorScreen{
-        min-height:100vh;
-        overflow:auto;
-    }
+#editorScreen{
+    width:100%;
+    min-width:1100px;
+    height:100vh;
+    min-height:700px;
+    overflow:hidden;
+}
 
-    .editor-body{
-        grid-template-columns:1fr;
-    }
+.editor-body{
+    width:100%;
+    min-width:1100px;
+    grid-template-columns:68px minmax(0,1fr) 280px;
+}
 
-    .tool-sidebar{
-        display:none;
-    }
+.tool-sidebar{
+    display:flex;
+}
 
-    .side-panel{
-        border-left:0;
-        border-top:1px solid var(--border);
-    }
+.side-panel{
+    display:block;
+    border-left:1px solid var(--border);
+    border-top:0;
+}
 
-    .preview-area{
-        min-height:420px;
-    }
+.preview-area{
+    min-height:0;
+}
+
+.timeline-panel{
+    width:100%;
 }
 </style>
 </head>
