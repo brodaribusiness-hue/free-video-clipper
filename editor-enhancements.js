@@ -160,6 +160,49 @@
         loadClipState(getActiveClip());
     }
 
+    function parseTimeValue(value) {
+        if (typeof value === "number") {
+            return Number.isFinite(value) ? value : 0;
+        }
+
+        const text = String(value || "").trim();
+
+        if (!text) {
+            return 0;
+        }
+
+        if (text.includes(":")) {
+            const parts = text.split(":").map(Number);
+
+            if (parts.some(function (part) {
+                return !Number.isFinite(part);
+            })) {
+                return 0;
+            }
+
+            if (parts.length === 3) {
+                return (
+                    parts[0] * 3600 +
+                    parts[1] * 60 +
+                    parts[2]
+                );
+            }
+
+            if (parts.length === 2) {
+                return (
+                    parts[0] * 60 +
+                    parts[1]
+                );
+            }
+        }
+
+        const seconds = Number(text);
+
+        return Number.isFinite(seconds)
+            ? seconds
+            : 0;
+    }
+
     function saveCurrentClipState() {
         const clip = getActiveClip();
 
@@ -167,16 +210,36 @@
             return;
         }
 
+        const startInput =
+            document.getElementById(
+                "startTimeInput"
+            );
+
+        const endInput =
+            document.getElementById(
+                "endTimeInput"
+            );
+
+        const duration = getDuration();
+
+        const uiStart = startInput
+            ? parseTimeValue(startInput.value)
+            : clip.start;
+
+        const uiEnd = endInput
+            ? parseTimeValue(endInput.value)
+            : clip.end;
+
         clip.start = clamp(
-            Number(clip.start) || 0,
+            uiStart,
             0,
-            getDuration()
+            duration
         );
 
         clip.end = clamp(
-            Number(clip.end) || getDuration(),
+            uiEnd,
             clip.start,
-            getDuration()
+            duration
         );
 
         clip.crop = {
@@ -1252,13 +1315,20 @@
                         return;
                     }
 
-                    clip.start =
-                        clamp(
-                            Number(
-                                startInput.value
-                            ) || 0,
-                            0,
-                            clip.end
+                    const value =
+                        parseTimeValue(
+                            startInput.value
+                        );
+
+                    clip.start = clamp(
+                        value,
+                        0,
+                        clip.end
+                    );
+
+                    startInput.value =
+                        formatTime(
+                            clip.start
                         );
 
                     renderClipList();
@@ -1277,14 +1347,20 @@
                         return;
                     }
 
-                    clip.end =
-                        clamp(
-                            Number(
-                                endInput.value
-                            ) ||
-                                getDuration(),
-                            clip.start,
-                            getDuration()
+                    const value =
+                        parseTimeValue(
+                            endInput.value
+                        );
+
+                    clip.end = clamp(
+                        value,
+                        clip.start,
+                        getDuration()
+                    );
+
+                    endInput.value =
+                        formatTime(
+                            clip.end
                         );
 
                     renderClipList();
@@ -1549,7 +1625,10 @@
         const source =
             document.createElement("video");
 
-        source.muted = true;
+        source.muted = false;
+        source.defaultMuted = false;
+        source.volume = 1;
+
         source.playsInline = true;
         source.preload = "auto";
         source.crossOrigin = "anonymous";
@@ -1962,7 +2041,7 @@
         );
     }
 
-    function createAudioStream(source) {
+    async function createAudioStream(source) {
         if (
             getExportAudio() ===
             "none"
@@ -1981,6 +2060,13 @@
 
             const context =
                 new AudioContext();
+
+            if (
+                context.state ===
+                "suspended"
+            ) {
+                await context.resume();
+            }
 
             const sourceNode =
                 context.createMediaElementSource(
@@ -2290,7 +2376,7 @@
                 );
 
             const audio =
-                createAudioStream(
+                await createAudioStream(
                     source
                 );
 
@@ -2369,19 +2455,18 @@
 
             const start =
                 clamp(
-                    Number(
+                    parseTimeValue(
                         clip.start
-                    ) || 0,
+                    ),
                     0,
                     source.duration
                 );
 
             const end =
                 clamp(
-                    Number(
+                    parseTimeValue(
                         clip.end
-                    ) ||
-                        source.duration,
+                    ),
                     start,
                     source.duration
                 );
