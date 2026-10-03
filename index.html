@@ -935,7 +935,9 @@ body{
             <div class="upload-content">
                 <div class="upload-icon">＋</div>
                 <h2 class="upload-title">Import your video</h2>
-                <p class="upload-text">Drag and drop a video here or browse from your device.</p>
+                <p class="upload-text">
+                    Drag and drop a video here or browse from your device.
+                </p>
 
                 <input id="videoInput" type="file" accept="video/*">
 
@@ -955,16 +957,29 @@ body{
 
     <header class="topbar">
         <div class="topbar-left">
-            <button id="closeEditorButton" class="icon-button">×</button>
+
+            <button
+                id="closeEditorButton"
+                class="icon-button"
+                type="button"
+            >
+                ×
+            </button>
 
             <div>
                 <div class="editor-title">Video Editor</div>
-                <div class="editor-subtitle">Free Video Clipper</div>
+                <div class="editor-subtitle">
+                    Free Video Clipper
+                </div>
             </div>
         </div>
 
         <div class="topbar-right">
-            <button id="exportButton" class="export-button">
+            <button
+                id="exportButton"
+                class="export-button"
+                type="button"
+            >
                 Export
             </button>
         </div>
@@ -973,33 +988,39 @@ body{
     <div class="editor-body">
 
         <aside class="tool-sidebar">
-            <button class="tool-button active">
+
+            <button class="tool-button active" type="button">
                 <span>◫</span>
                 <span>Crop</span>
             </button>
 
-            <button class="tool-button">
+            <button class="tool-button" type="button">
                 <span>⌗</span>
                 <span>Reframe</span>
             </button>
 
-            <button class="tool-button">
+            <button class="tool-button" type="button">
                 <span>◎</span>
                 <span>Track</span>
             </button>
 
-            <button class="tool-button">
+            <button class="tool-button" type="button">
                 <span>▦</span>
                 <span>Layout</span>
             </button>
+
         </aside>
 
         <main class="workspace">
 
             <div class="preview-area">
+
                 <div class="preview-frame">
 
-                    <div id="videoContainer" class="video-container">
+                    <div
+                        id="videoContainer"
+                        class="video-container"
+                    >
 
                         <video
                             id="videoPreview"
@@ -1007,11 +1028,17 @@ body{
                             preload="metadata"
                         ></video>
 
-                        <div id="previewEmpty" class="preview-empty">
+                        <div
+                            id="previewEmpty"
+                            class="preview-empty"
+                        >
                             Import a video to begin
                         </div>
 
-                        <div class="crop-overlay" id="cropOverlay">
+                        <div
+                            class="crop-overlay"
+                            id="cropOverlay"
+                        >
                             <span class="crop-corner tl"></span>
                             <span class="crop-corner tr"></span>
                             <span class="crop-corner bl"></span>
@@ -1021,42 +1048,85 @@ body{
                         <div class="crop-label">
                             9:16 Crop Area
                         </div>
+
                     </div>
 
                 </div>
+
             </div>
 
             <div class="player-controls">
-                <div class="player-row">
-                    <button id="playButton" class="play-button">▶</button>
 
-                    <div id="timeDisplay" class="time-display">
+                <div class="player-row">
+
+                    <button
+                        id="playButton"
+                        class="play-button"
+                        type="button"
+                    >
+                        ▶
+                    </button>
+
+                    <div
+                        id="timeDisplay"
+                        class="time-display"
+                    >
                         00:00 / 00:00
                     </div>
+
                 </div>
+
             </div>
 
             <div class="timeline-panel">
 
                 <div class="timeline-header">
-                    <span class="section-label">Timeline</span>
-                    <span id="timelineTime" class="timeline-time">
+
+                    <span class="section-label">
+                        Timeline
+                    </span>
+
+                    <span
+                        id="timelineTime"
+                        class="timeline-time"
+                    >
                         00:00
                     </span>
+
                 </div>
 
-                <div id="timeline" class="timeline">
+                <div
+                    id="timeline"
+                    class="timeline"
+                >
 
-                    <div id="thumbnailStrip" class="thumbnail-strip"></div>
+                    <div
+                        id="thumbnailStrip"
+                        class="thumbnail-strip"
+                    ></div>
 
-                    <div id="selection" class="selection"></div>
+                    <div
+                        id="selection"
+                        class="selection"
+                    ></div>
 
-                    <div id="startHandle" class="timeline-handle start"></div>
+                    <div
+                        id="startHandle"
+                        class="timeline-handle start"
+                    ></div>
 
-                    <div id="endHandle" class="timeline-handle end"></div>
+                    <div
+                        id="endHandle"
+                        class="timeline-handle end"
+                    ></div>
 
-                    <div id="playhead" class="playhead"></div>
+                    <div
+                        id="playhead"
+                        class="playhead"
+                    ></div>
+
                 </div>
+
             </div>
 
         </main>
@@ -1064,90 +1134,166 @@ body{
         <aside class="side-panel">
 
             <section class="side-section">
-                <div class="side-title">Video</div>
+
+                <div class="side-title">
+                    Video
+                </div>
 
                 <div class="metadata">
+
                     <div class="metadata-row">
                         <span>File</span>
-                        <span id="fileName" class="metadata-value">—</span>
+
+                        <span
+                            id="fileName"
+                            class="metadata-value"
+                        >
+                            —
+                        </span>
                     </div>
 
                     <div class="metadata-row">
                         <span>Duration</span>
-                        <span id="durationInfo" class="metadata-value">—</span>
+
+                        <span
+                            id="durationInfo"
+                            class="metadata-value"
+                        >
+                            —
+                        </span>
                     </div>
 
                     <div class="metadata-row">
                         <span>Resolution</span>
-                        <span id="resolutionInfo" class="metadata-value">—</span>
+
+                        <span
+                            id="resolutionInfo"
+                            class="metadata-value"
+                        >
+                            —
+                        </span>
                     </div>
+
                 </div>
+
             </section>
 
             <section class="side-section">
-                <div class="side-title">Trim</div>
+
+                <div class="side-title">
+                    Trim
+                </div>
 
                 <div class="trim-grid">
 
                     <div class="time-input-group">
-                        <label for="startTimeInput">Start</label>
+
+                        <label for="startTimeInput">
+                            Start
+                        </label>
+
                         <input
                             id="startTimeInput"
                             class="time-input"
                             type="text"
                             value="00:00"
                         >
+
                     </div>
 
                     <div class="time-input-group">
-                        <label for="endTimeInput">End</label>
+
+                        <label for="endTimeInput">
+                            End
+                        </label>
+
                         <input
                             id="endTimeInput"
                             class="time-input"
                             type="text"
                             value="00:00"
                         >
+
                     </div>
 
                 </div>
 
                 <div class="trim-actions">
-                    <button id="setStartButton" class="small-button">
+
+                    <button
+                        id="setStartButton"
+                        class="small-button"
+                        type="button"
+                    >
                         Set Start
                     </button>
 
-                    <button id="setEndButton" class="small-button">
+                    <button
+                        id="setEndButton"
+                        class="small-button"
+                        type="button"
+                    >
                         Set End
                     </button>
+
                 </div>
+
             </section>
 
             <section class="side-section">
-                <div class="side-title">Aspect Ratio</div>
+
+                <div class="side-title">
+                    Aspect Ratio
+                </div>
 
                 <div class="ratio-grid">
-                    <button class="ratio-button active" data-ratio="Original">
+
+                    <button
+                        class="ratio-button active"
+                        data-ratio="Original"
+                        type="button"
+                    >
                         Original
                     </button>
 
-                    <button class="ratio-button" data-ratio="9:16">
+                    <button
+                        class="ratio-button"
+                        data-ratio="9:16"
+                        type="button"
+                    >
                         9:16
                     </button>
 
-                    <button class="ratio-button disabled" data-ratio="1:1">
+                    <button
+                        class="ratio-button disabled"
+                        data-ratio="1:1"
+                        type="button"
+                    >
                         1:1
                     </button>
 
-                    <button class="ratio-button disabled" data-ratio="4:5">
+                    <button
+                        class="ratio-button disabled"
+                        data-ratio="4:5"
+                        type="button"
+                    >
                         4:5
                     </button>
 
-                    <button class="ratio-button disabled" data-ratio="16:9">
+                    <button
+                        class="ratio-button disabled"
+                        data-ratio="16:9"
+                        type="button"
+                    >
                         16:9
                     </button>
+
                 </div>
 
-                <div id="reframeControls" class="reframe-controls">
+                <div
+                    id="reframeControls"
+                    class="reframe-controls"
+                >
 
                     <p class="drag-hint">
                         9:16 frame ko video ke andar drag karo.
@@ -1155,8 +1301,13 @@ body{
                     </p>
 
                     <div class="zoom-row">
+
                         <span>Zoom</span>
-                        <span id="zoomValue">100%</span>
+
+                        <span id="zoomValue">
+                            100%
+                        </span>
+
                     </div>
 
                     <input
@@ -1168,161 +1319,335 @@ body{
                         value="100"
                     >
 
-                    <button id="resetReframeButton" class="reset-button">
+                    <button
+                        id="resetReframeButton"
+                        class="reset-button"
+                        type="button"
+                    >
                         Reset Position
                     </button>
+
                 </div>
+
             </section>
 
             <section class="side-section">
-                <div class="side-title">Auto Face Tracking</div>
+
+                <div class="side-title">
+                    Auto Face Tracking
+                </div>
 
                 <div class="tracking-row">
+
                     <div class="tracking-description">
                         Automatically follow detected faces during reframing.
                     </div>
 
-                    <div id="trackingToggle" class="toggle"></div>
+                    <div
+                        id="trackingToggle"
+                        class="toggle"
+                        role="button"
+                        tabindex="0"
+                    ></div>
+
                 </div>
+
             </section>
 
         </aside>
 
     </div>
+
 </section>
 
-<div class="export-options">
+<section id="exportScreen" class="screen">
 
-    <div class="option-group">
-        <div class="option-title">Quality</div>
+    <div class="export-container">
 
-        <div class="option-list">
-            <label class="option selected">
-                <input type="radio" name="quality" checked>
-                Same as Original
-            </label>
+        <div class="export-header">
 
-            <label class="option">
-                <input type="radio" name="quality">
-                High Quality
-            </label>
+            <button
+                id="backToEditorButton"
+                class="icon-button"
+                type="button"
+            >
+                ←
+            </button>
+
+            <h1>
+                Create Export
+            </h1>
+
         </div>
-    </div>
 
-    <div class="option-group">
-        <div class="option-title">Audio</div>
+        <div class="export-preview">
 
-        <div class="option-list">
-            <label class="option selected">
-                <input type="radio" name="audio" checked>
-                Original Audio
-            </label>
+            <video
+                id="exportPreview"
+                playsinline
+                muted
+                preload="metadata"
+            ></video>
 
-            <label class="option">
-                <input type="radio" name="audio">
-                No Audio
-            </label>
         </div>
-    </div>
 
-    <div class="option-group">
-        <div class="option-title">Export</div>
+        <div class="export-options">
 
-        <div class="option-list">
-            <label class="option selected">
-                <input
-                    type="radio"
-                    name="exportMode"
-                    value="current"
-                    checked
+            <div class="option-group">
+
+                <div class="option-title">
+                    Quality
+                </div>
+
+                <div class="option-list">
+
+                    <label class="option selected">
+
+                        <input
+                            type="radio"
+                            name="quality"
+                            value="original"
+                            checked
+                        >
+
+                        Same as Original
+
+                    </label>
+
+                    <label class="option">
+
+                        <input
+                            type="radio"
+                            name="quality"
+                            value="high"
+                        >
+
+                        High Quality
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="option-group">
+
+                <div class="option-title">
+                    Audio
+                </div>
+
+                <div class="option-list">
+
+                    <label class="option selected">
+
+                        <input
+                            type="radio"
+                            name="audio"
+                            value="original"
+                            checked
+                        >
+
+                        Original Audio
+
+                    </label>
+
+                    <label class="option">
+
+                        <input
+                            type="radio"
+                            name="audio"
+                            value="none"
+                        >
+
+                        No Audio
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="option-group">
+
+                <div class="option-title">
+                    Export
+                </div>
+
+                <div class="option-list">
+
+                    <label class="option selected">
+
+                        <input
+                            type="radio"
+                            name="exportMode"
+                            value="current"
+                            checked
+                        >
+
+                        Current Clip
+
+                    </label>
+
+                    <label class="option">
+
+                        <input
+                            type="radio"
+                            name="exportMode"
+                            value="all"
+                        >
+
+                        All Clips
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="export-actions">
+
+                <button
+                    id="cancelExportButton"
+                    class="secondary-button"
+                    type="button"
                 >
-                Current Clip
-            </label>
+                    Cancel
+                </button>
 
-            <label class="option">
-                <input
-                    type="radio"
-                    name="exportMode"
-                    value="all"
+                <button
+                    id="startExportButton"
+                    class="primary-button"
+                    type="button"
                 >
-                All Clips
-            </label>
+                    Create Clip
+                </button>
+
+            </div>
+
         </div>
+
     </div>
 
-    <div class="export-actions">
-        <button
-            id="cancelExportButton"
-            class="secondary-button"
-        >
-            Cancel
-        </button>
-
-        <button
-            id="startExportButton"
-            class="primary-button"
-        >
-            Create Clip
-        </button>
-    </div>
-
-</div>
+</section>
 
 <section id="successScreen" class="screen">
 
     <div class="state-card">
-        <div class="state-icon">✓</div>
 
-        <h1>Export Complete</h1>
+        <div class="state-icon">
+            ✓
+        </div>
+
+        <h1>
+            Export Complete
+        </h1>
 
         <p>
             Your video clip is ready.
         </p>
 
-        <button id="editAgainButton" class="primary-button">
+        <button
+            id="editAgainButton"
+            class="primary-button"
+            type="button"
+        >
             Back to Editor
         </button>
 
-        <button id="newVideoButton" class="secondary-button" style="margin-left:8px">
+        <button
+            id="newVideoButton"
+            class="secondary-button"
+            type="button"
+            style="margin-left:8px"
+        >
             New Video
         </button>
+
     </div>
 
 </section>
 
 <script>
-const homeScreen = document.getElementById("homeScreen");
-const editorScreen = document.getElementById("editorScreen");
-const exportScreen = document.getElementById("exportScreen");
-const successScreen = document.getElementById("successScreen");
+const homeScreen =
+    document.getElementById("homeScreen");
 
-const uploadCard = document.getElementById("uploadCard");
-const videoInput = document.getElementById("videoInput");
-const videoPreview = document.getElementById("videoPreview");
-const videoContainer = document.getElementById("videoContainer");
-const previewEmpty = document.getElementById("previewEmpty");
+const editorScreen =
+    document.getElementById("editorScreen");
 
-const playButton = document.getElementById("playButton");
-const timeDisplay = document.getElementById("timeDisplay");
-const timelineTime = document.getElementById("timelineTime");
+const exportScreen =
+    document.getElementById("exportScreen");
 
-const timeline = document.getElementById("timeline");
-const thumbnailStrip = document.getElementById("thumbnailStrip");
-const selection = document.getElementById("selection");
-const startHandle = document.getElementById("startHandle");
-const endHandle = document.getElementById("endHandle");
-const playhead = document.getElementById("playhead");
+const successScreen =
+    document.getElementById("successScreen");
 
-const startTimeInput = document.getElementById("startTimeInput");
-const endTimeInput = document.getElementById("endTimeInput");
+const uploadCard =
+    document.getElementById("uploadCard");
 
-const reframeControls = document.getElementById("reframeControls");
-const cropOverlay = document.getElementById("cropOverlay");
-const zoomRange = document.getElementById("zoomRange");
-const zoomValue = document.getElementById("zoomValue");
-const trackingToggle = document.getElementById("trackingToggle");
+const browseButton =
+    document.getElementById("browseButton");
 
-const exportPreview = document.getElementById("exportPreview");
+const videoInput =
+    document.getElementById("videoInput");
+
+const videoPreview =
+    document.getElementById("videoPreview");
+
+const videoContainer =
+    document.getElementById("videoContainer");
+
+const previewEmpty =
+    document.getElementById("previewEmpty");
+
+const playButton =
+    document.getElementById("playButton");
+
+const timeDisplay =
+    document.getElementById("timeDisplay");
+
+const timelineTime =
+    document.getElementById("timelineTime");
+
+const timeline =
+    document.getElementById("timeline");
+
+const thumbnailStrip =
+    document.getElementById("thumbnailStrip");
+
+const selection =
+    document.getElementById("selection");
+
+const startHandle =
+    document.getElementById("startHandle");
+
+const endHandle =
+    document.getElementById("endHandle");
+
+const playhead =
+    document.getElementById("playhead");
+
+const startTimeInput =
+    document.getElementById("startTimeInput");
+
+const endTimeInput =
+    document.getElementById("endTimeInput");
+
+const reframeControls =
+    document.getElementById("reframeControls");
+
+const cropOverlay =
+    document.getElementById("cropOverlay");
+
+const zoomRange =
+    document.getElementById("zoomRange");
+
+const zoomValue =
+    document.getElementById("zoomValue");
+
+const trackingToggle =
+    document.getElementById("trackingToggle");
+
+const exportPreview =
+    document.getElementById("exportPreview");
 
 let selectedFile = null;
 let objectUrl = null;
@@ -1345,79 +1670,156 @@ let cropOriginX = 0;
 let cropOriginY = 0;
 
 let draggingHandle = null;
+
 let trackingEnabled = false;
 
 function showScreen(screen){
-    document.querySelectorAll(".screen").forEach(function(item){
-        item.classList.remove("active");
-    });
+
+    if(!screen){
+        return;
+    }
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(function(item){
+            item.classList.remove("active");
+        });
 
     screen.classList.add("active");
 }
 
 function formatTime(seconds){
+
     if(!Number.isFinite(seconds)){
         return "00:00";
     }
 
-    seconds = Math.max(0, seconds);
+    seconds =
+        Math.max(
+            0,
+            seconds
+        );
 
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
+    const hours =
+        Math.floor(
+            seconds / 3600
+        );
+
+    const minutes =
+        Math.floor(
+            (seconds % 3600) / 60
+        );
+
+    const secs =
+        Math.floor(
+            seconds % 60
+        );
 
     if(hours > 0){
-        return String(hours).padStart(2,"0") + ":" +
-               String(minutes).padStart(2,"0") + ":" +
-               String(secs).padStart(2,"0");
+
+        return (
+            String(hours).padStart(2,"0") +
+            ":" +
+            String(minutes).padStart(2,"0") +
+            ":" +
+            String(secs).padStart(2,"0")
+        );
     }
 
-    return String(minutes).padStart(2,"0") + ":" +
-           String(secs).padStart(2,"0");
+    return (
+        String(minutes).padStart(2,"0") +
+        ":" +
+        String(secs).padStart(2,"0")
+    );
 }
 
 function parseTime(value){
-    const parts = value.split(":").map(Number);
 
-    if(parts.some(function(item){
-        return !Number.isFinite(item);
-    })){
+    if(
+        typeof value !== "string" &&
+        typeof value !== "number"
+    ){
+        return NaN;
+    }
+
+    if(typeof value === "number"){
+        return value;
+    }
+
+    const parts =
+        value
+            .trim()
+            .split(":")
+            .map(Number);
+
+    if(
+        parts.some(function(item){
+            return !Number.isFinite(item);
+        })
+    ){
         return NaN;
     }
 
     if(parts.length === 2){
-        return parts[0] * 60 + parts[1];
+
+        return (
+            parts[0] * 60 +
+            parts[1]
+        );
     }
 
     if(parts.length === 3){
-        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+
+        return (
+            parts[0] * 3600 +
+            parts[1] * 60 +
+            parts[2]
+        );
     }
 
     return Number(value);
 }
 
 function openVideo(file){
-    if(!file || !file.type.startsWith("video/")){
+
+    if(
+        !file ||
+        !file.type.startsWith("video/")
+    ){
         return;
     }
 
     if(objectUrl){
-        URL.revokeObjectURL(objectUrl);
+
+        URL.revokeObjectURL(
+            objectUrl
+        );
     }
 
     selectedFile = file;
-    objectUrl = URL.createObjectURL(file);
 
-    videoPreview.src = objectUrl;
+    objectUrl =
+        URL.createObjectURL(
+            file
+        );
+
+    videoPreview.src =
+        objectUrl;
+
     videoPreview.load();
 
-    previewEmpty.style.display = "none";
+    previewEmpty.style.display =
+        "none";
 
-    showScreen(editorScreen);
+    showScreen(
+        editorScreen
+    );
 }
 
 function updateTimeUI(){
-    const current = videoPreview.currentTime || 0;
+
+    const current =
+        videoPreview.currentTime || 0;
 
     timeDisplay.textContent =
         formatTime(current) +
@@ -1428,12 +1830,17 @@ function updateTimeUI(){
         formatTime(current);
 
     if(duration > 0){
+
         playhead.style.left =
-            ((current / duration) * 100) + "%";
+            (
+                (current / duration) *
+                100
+            ) + "%";
     }
 }
 
 function updateTrimUI(){
+
     if(duration <= 0){
         return;
     }
@@ -1457,73 +1864,130 @@ function updateTrimUI(){
         (100 - endPercentage) + "%";
 
     startHandle.style.left =
-        "calc(" + startPercentage + "% - 5px)";
+        "calc(" +
+        startPercentage +
+        "% - 5px)";
 
     endHandle.style.right =
-        "calc(" + (100 - endPercentage) + "% - 5px)";
+        "calc(" +
+        (100 - endPercentage) +
+        "% - 5px)";
 }
 
 function createTimelineThumbnails(){
+
     thumbnailStrip.innerHTML = "";
 
-    for(let i = 0; i < 18; i++){
-        const thumbnail = document.createElement("div");
-        thumbnail.className = "thumbnail";
-        thumbnailStrip.appendChild(thumbnail);
+    for(
+        let i = 0;
+        i < 18;
+        i++
+    ){
+
+        const thumbnail =
+            document.createElement(
+                "div"
+            );
+
+        thumbnail.className =
+            "thumbnail";
+
+        thumbnailStrip.appendChild(
+            thumbnail
+        );
     }
 }
 
 function setCurrentTime(time){
+
     if(duration <= 0){
         return;
     }
 
-    time = Math.max(0,Math.min(duration,time));
+    time =
+        Math.max(
+            0,
+            Math.min(
+                duration,
+                time
+            )
+        );
 
-    videoPreview.currentTime = time;
+    videoPreview.currentTime =
+        time;
 
     updateTimeUI();
 }
 
 function resetReframe(){
+
     cropX = 0;
     cropY = 0;
     zoom = 100;
 
-    zoomRange.value = "100";
-    zoomValue.textContent = "100%";
+    zoomRange.value =
+        "100";
+
+    zoomValue.textContent =
+        "100%";
 
     updateCropOverlay();
 }
 
 function updateCropOverlay(){
+
     if(selectedRatio !== "9:16"){
         return;
     }
 
-    const rect = videoContainer.getBoundingClientRect();
+    const rect =
+        videoContainer.getBoundingClientRect();
 
-    if(!rect.width || !rect.height){
+    if(
+        !rect.width ||
+        !rect.height
+    ){
         return;
     }
 
+    const frameRect =
+        cropOverlay.getBoundingClientRect();
+
     const frameWidth =
-        cropOverlay.getBoundingClientRect().width;
+        frameRect.width;
 
     const frameHeight =
-        cropOverlay.getBoundingClientRect().height;
+        frameRect.height;
 
     const maxX =
-        Math.max(0,(rect.width - frameWidth) / 2);
+        Math.max(
+            0,
+            (rect.width - frameWidth) / 2
+        );
 
     const maxY =
-        Math.max(0,(rect.height - frameHeight) / 2);
+        Math.max(
+            0,
+            (rect.height - frameHeight) / 2
+        );
 
     cropX =
-        Math.max(-maxX,Math.min(maxX,cropX));
+        Math.max(
+            -maxX,
+            Math.min(
+                maxX,
+                cropX
+            )
+        );
 
     cropY =
-        Math.max(-maxY,Math.min(maxY,cropY));
+        Math.max(
+            -maxY,
+            Math.min(
+                maxY,
+                cropY
+            )
+        );
 
     cropOverlay.style.transform =
         "translate(" +
@@ -1534,31 +1998,53 @@ function updateCropOverlay(){
 }
 
 function setRatio(ratio){
-    selectedRatio = ratio;
 
-    document.querySelectorAll(".ratio-button").forEach(function(button){
-        button.classList.toggle(
-            "active",
-            button.dataset.ratio === ratio
-        );
-    });
+    selectedRatio =
+        ratio;
+
+    document
+        .querySelectorAll(".ratio-button")
+        .forEach(function(button){
+
+            button.classList.toggle(
+                "active",
+                button.dataset.ratio ===
+                    ratio
+            );
+        });
 
     if(ratio === "9:16"){
-        videoContainer.classList.add("reframing");
-        reframeControls.classList.add("active");
+
+        videoContainer.classList.add(
+            "reframing"
+        );
+
+        reframeControls.classList.add(
+            "active"
+        );
 
         resetReframe();
 
-        requestAnimationFrame(function(){
-            updateCropOverlay();
-        });
+        requestAnimationFrame(
+            function(){
+                updateCropOverlay();
+            }
+        );
+
     }else{
-        videoContainer.classList.remove("reframing");
-        reframeControls.classList.remove("active");
+
+        videoContainer.classList.remove(
+            "reframing"
+        );
+
+        reframeControls.classList.remove(
+            "active"
+        );
     }
 }
 
 function startCropDrag(event){
+
     if(selectedRatio !== "9:16"){
         return;
     }
@@ -1567,16 +2053,25 @@ function startCropDrag(event){
 
     draggingCrop = true;
 
-    cropDragStartX = event.clientX;
-    cropDragStartY = event.clientY;
+    cropDragStartX =
+        event.clientX;
 
-    cropOriginX = cropX;
-    cropOriginY = cropY;
+    cropDragStartY =
+        event.clientY;
 
-    cropOverlay.setPointerCapture(event.pointerId);
+    cropOriginX =
+        cropX;
+
+    cropOriginY =
+        cropY;
+
+    cropOverlay.setPointerCapture(
+        event.pointerId
+    );
 }
 
 function moveCropDrag(event){
+
     if(!draggingCrop){
         return;
     }
@@ -1597,6 +2092,7 @@ function moveCropDrag(event){
 }
 
 function stopCropDrag(event){
+
     if(!draggingCrop){
         return;
     }
@@ -1605,155 +2101,272 @@ function stopCropDrag(event){
 
     if(
         event &&
-        cropOverlay.hasPointerCapture(event.pointerId)
+        cropOverlay.hasPointerCapture(
+            event.pointerId
+        )
     ){
-        cropOverlay.releasePointerCapture(event.pointerId);
+
+        cropOverlay.releasePointerCapture(
+            event.pointerId
+        );
     }
 }
 
-browseButton.addEventListener("click",function(){
-    videoInput.click();
-});
-
-videoInput.addEventListener("change",function(){
-    if(this.files[0]){
-        openVideo(this.files[0]);
+browseButton.addEventListener(
+    "click",
+    function(){
+        videoInput.click();
     }
-});
+);
 
-uploadCard.addEventListener("dragover",function(event){
-    event.preventDefault();
-    uploadCard.classList.add("drag-over");
-});
+videoInput.addEventListener(
+    "change",
+    function(){
 
-uploadCard.addEventListener("dragleave",function(){
-    uploadCard.classList.remove("drag-over");
-});
-
-uploadCard.addEventListener("drop",function(event){
-    event.preventDefault();
-
-    uploadCard.classList.remove("drag-over");
-
-    const file = event.dataTransfer.files[0];
-
-    if(file){
-        openVideo(file);
+        if(this.files[0]){
+            openVideo(
+                this.files[0]
+            );
+        }
     }
-});
+);
 
-videoPreview.addEventListener("loadedmetadata",function(){
-    duration = videoPreview.duration || 0;
+uploadCard.addEventListener(
+    "dragover",
+    function(event){
 
-    trimStart = 0;
-    trimEnd = duration;
+        event.preventDefault();
 
-    document.getElementById("fileName").textContent =
-        selectedFile ? selectedFile.name : "—";
-
-    document.getElementById("durationInfo").textContent =
-        formatTime(duration);
-
-    document.getElementById("resolutionInfo").textContent =
-        videoPreview.videoWidth +
-        " × " +
-        videoPreview.videoHeight;
-
-    updateTrimUI();
-    updateTimeUI();
-
-    if(selectedRatio === "9:16"){
-        updateCropOverlay();
+        uploadCard.classList.add(
+            "drag-over"
+        );
     }
-});
+);
 
-videoPreview.addEventListener("timeupdate",function(){
-    updateTimeUI();
+uploadCard.addEventListener(
+    "dragleave",
+    function(){
 
-    if(
-        duration > 0 &&
-        videoPreview.currentTime >= trimEnd
-    ){
-        videoPreview.pause();
+        uploadCard.classList.remove(
+            "drag-over"
+        );
+    }
+);
 
-        videoPreview.currentTime = trimEnd;
+uploadCard.addEventListener(
+    "drop",
+    function(event){
+
+        event.preventDefault();
+
+        uploadCard.classList.remove(
+            "drag-over"
+        );
+
+        const file =
+            event.dataTransfer.files[0];
+
+        if(file){
+            openVideo(file);
+        }
+    }
+);
+
+videoPreview.addEventListener(
+    "loadedmetadata",
+    function(){
+
+        duration =
+            videoPreview.duration || 0;
+
+        trimStart = 0;
+        trimEnd = duration;
+
+        document.getElementById(
+            "fileName"
+        ).textContent =
+            selectedFile
+                ? selectedFile.name
+                : "—";
+
+        document.getElementById(
+            "durationInfo"
+        ).textContent =
+            formatTime(duration);
+
+        document.getElementById(
+            "resolutionInfo"
+        ).textContent =
+            videoPreview.videoWidth +
+            " × " +
+            videoPreview.videoHeight;
+
+        updateTrimUI();
+        updateTimeUI();
+
+        if(selectedRatio === "9:16"){
+            updateCropOverlay();
+        }
+    }
+);
+
+videoPreview.addEventListener(
+    "timeupdate",
+    function(){
 
         updateTimeUI();
+
+        if(
+            duration > 0 &&
+            videoPreview.currentTime >= trimEnd
+        ){
+
+            videoPreview.pause();
+
+            videoPreview.currentTime =
+                trimEnd;
+
+            updateTimeUI();
+        }
     }
-});
+);
 
-videoPreview.addEventListener("play",function(){
-    playButton.textContent = "❚❚";
-});
+videoPreview.addEventListener(
+    "play",
+    function(){
+        playButton.textContent =
+            "❚❚";
+    }
+);
 
-videoPreview.addEventListener("pause",function(){
-    playButton.textContent = "▶";
-});
+videoPreview.addEventListener(
+    "pause",
+    function(){
+        playButton.textContent =
+            "▶";
+    }
+);
 
-playButton.addEventListener("click",function(){
-    if(videoPreview.paused){
+playButton.addEventListener(
+    "click",
+    function(){
 
-        if(videoPreview.currentTime >= trimEnd){
-            videoPreview.currentTime = trimStart;
+        if(videoPreview.paused){
+
+            if(
+                videoPreview.currentTime >=
+                trimEnd
+            ){
+
+                videoPreview.currentTime =
+                    trimStart;
+            }
+
+            videoPreview.play();
+
+        }else{
+
+            videoPreview.pause();
+        }
+    }
+);
+
+timeline.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === startHandle ||
+            event.target === endHandle
+        ){
+            return;
         }
 
-        videoPreview.play();
-    }else{
-        videoPreview.pause();
-    }
-});
+        if(duration <= 0){
+            return;
+        }
 
-timeline.addEventListener("click",function(event){
+        const rect =
+            timeline.getBoundingClientRect();
+
+        const percentage =
+            (
+                event.clientX -
+                rect.left
+            ) / rect.width;
+
+        setCurrentTime(
+            percentage * duration
+        );
+    }
+);
+
+function handleTimelineDrag(event){
+
     if(
-        event.target === startHandle ||
-        event.target === endHandle
+        !draggingHandle ||
+        duration <= 0
     ){
         return;
     }
 
-    if(duration <= 0){
-        return;
-    }
-
-    const rect = timeline.getBoundingClientRect();
-
-    const percentage =
-        (event.clientX - rect.left) / rect.width;
-
-    setCurrentTime(percentage * duration);
-});
-
-function handleTimelineDrag(event){
-    if(!draggingHandle || duration <= 0){
-        return;
-    }
-
-    const rect = timeline.getBoundingClientRect();
+    const rect =
+        timeline.getBoundingClientRect();
 
     let percentage =
-        (event.clientX - rect.left) / rect.width;
+        (
+            event.clientX -
+            rect.left
+        ) / rect.width;
 
     percentage =
-        Math.max(0,Math.min(1,percentage));
+        Math.max(
+            0,
+            Math.min(
+                1,
+                percentage
+            )
+        );
 
-    const time = percentage * duration;
+    const time =
+        percentage * duration;
 
     const minimumGap =
-        Math.min(0.1,duration / 100);
+        Math.min(
+            0.1,
+            duration / 100
+        );
 
-    if(draggingHandle === "start"){
+    if(
+        draggingHandle === "start"
+    ){
+
         trimStart =
-            Math.min(time,trimEnd - minimumGap);
+            Math.min(
+                time,
+                trimEnd - minimumGap
+            );
 
         trimStart =
-            Math.max(0,trimStart);
+            Math.max(
+                0,
+                trimStart
+            );
 
-        if(videoPreview.currentTime < trimStart){
-            videoPreview.currentTime = trimStart;
+        if(
+            videoPreview.currentTime <
+            trimStart
+        ){
+
+            videoPreview.currentTime =
+                trimStart;
         }
     }
 
-    if(draggingHandle === "end"){
+    if(
+        draggingHandle === "end"
+    ){
+
         trimEnd =
             Math.max(
                 time,
@@ -1761,18 +2374,42 @@ function handleTimelineDrag(event){
             );
 
         trimEnd =
-            Math.min(duration,trimEnd);
+            Math.min(
+                duration,
+                trimEnd
+            );
 
-        if(videoPreview.currentTime > trimEnd){
-            videoPreview.currentTime = trimEnd;
+        if(
+            videoPreview.currentTime >
+            trimEnd
+        ){
+
+            videoPreview.currentTime =
+                trimEnd;
         }
     }
 
     updateTrimUI();
     updateTimeUI();
+
+    const enhancement =
+        window.FreeVideoClipperEnhancements;
+
+    if(
+        enhancement &&
+        typeof enhancement.syncTrimFromTimeline ===
+            "function"
+    ){
+
+        enhancement.syncTrimFromTimeline(
+            trimStart,
+            trimEnd
+        );
+    }
 }
 
 function stopTimelineDrag(){
+
     draggingHandle = null;
 
     document.removeEventListener(
@@ -1781,113 +2418,232 @@ function stopTimelineDrag(){
     );
 }
 
-startHandle.addEventListener("pointerdown",function(event){
-    event.preventDefault();
+startHandle.addEventListener(
+    "pointerdown",
+    function(event){
 
-    draggingHandle = "start";
+        event.preventDefault();
 
-    document.addEventListener(
-        "pointermove",
-        handleTimelineDrag
-    );
+        draggingHandle =
+            "start";
 
-    document.addEventListener(
-        "pointerup",
-        stopTimelineDrag,
-        {once:true}
-    );
-});
-
-endHandle.addEventListener("pointerdown",function(event){
-    event.preventDefault();
-
-    draggingHandle = "end";
-
-    document.addEventListener(
-        "pointermove",
-        handleTimelineDrag
-    );
-
-    document.addEventListener(
-        "pointerup",
-        stopTimelineDrag,
-        {once:true}
-    );
-});
-
-startTimeInput.addEventListener("change",function(){
-    const value = parseTime(this.value);
-
-    if(!Number.isFinite(value)){
-        updateTrimUI();
-        return;
-    }
-
-    trimStart =
-        Math.max(
-            0,
-            Math.min(value,trimEnd - 0.1)
+        document.addEventListener(
+            "pointermove",
+            handleTimelineDrag
         );
 
-    updateTrimUI();
-});
-
-endTimeInput.addEventListener("change",function(){
-    const value = parseTime(this.value);
-
-    if(!Number.isFinite(value)){
-        updateTrimUI();
-        return;
+        document.addEventListener(
+            "pointerup",
+            stopTimelineDrag,
+            {once:true}
+        );
     }
+);
 
-    trimEnd =
-        Math.max(
-            trimStart + 0.1,
-            Math.min(duration,value)
+endHandle.addEventListener(
+    "pointerdown",
+    function(event){
+
+        event.preventDefault();
+
+        draggingHandle =
+            "end";
+
+        document.addEventListener(
+            "pointermove",
+            handleTimelineDrag
         );
 
-    updateTrimUI();
-});
+        document.addEventListener(
+            "pointerup",
+            stopTimelineDrag,
+            {once:true}
+        );
+    }
+);
 
-document.getElementById("setStartButton").addEventListener(
-    "click",
+startTimeInput.addEventListener(
+    "change",
     function(){
-        const current =
-            videoPreview.currentTime || 0;
 
-        if(current < trimEnd){
-            trimStart = current;
+        const value =
+            parseTime(this.value);
+
+        if(!Number.isFinite(value)){
+
             updateTrimUI();
+            return;
+        }
+
+        trimStart =
+            Math.max(
+                0,
+                Math.min(
+                    value,
+                    trimEnd - 0.1
+                )
+            );
+
+        updateTrimUI();
+
+        const enhancement =
+            window.FreeVideoClipperEnhancements;
+
+        if(
+            enhancement &&
+            typeof enhancement.syncTrimFromTimeline ===
+                "function"
+        ){
+
+            enhancement.syncTrimFromTimeline(
+                trimStart,
+                trimEnd
+            );
         }
     }
 );
 
-document.getElementById("setEndButton").addEventListener(
-    "click",
+endTimeInput.addEventListener(
+    "change",
     function(){
-        const current =
-            videoPreview.currentTime || 0;
 
-        if(current > trimStart){
-            trimEnd = current;
+        const value =
+            parseTime(this.value);
+
+        if(!Number.isFinite(value)){
+
             updateTrimUI();
+            return;
+        }
+
+        trimEnd =
+            Math.max(
+                trimStart + 0.1,
+                Math.min(
+                    duration,
+                    value
+                )
+            );
+
+        updateTrimUI();
+
+        const enhancement =
+            window.FreeVideoClipperEnhancements;
+
+        if(
+            enhancement &&
+            typeof enhancement.syncTrimFromTimeline ===
+                "function"
+        ){
+
+            enhancement.syncTrimFromTimeline(
+                trimStart,
+                trimEnd
+            );
         }
     }
 );
 
-document.querySelectorAll(".ratio-button:not(.disabled)")
-.forEach(function(button){
-    button.addEventListener("click",function(){
-        setRatio(button.dataset.ratio);
-    });
-});
+document
+    .getElementById("setStartButton")
+    .addEventListener(
+        "click",
+        function(){
 
-zoomRange.addEventListener("input",function(){
-    zoom = Number(this.value);
+            const current =
+                videoPreview.currentTime || 0;
 
-    zoomValue.textContent =
-        zoom + "%";
-});
+            if(current < trimEnd){
+
+                trimStart =
+                    current;
+
+                updateTrimUI();
+
+                const enhancement =
+                    window.FreeVideoClipperEnhancements;
+
+                if(
+                    enhancement &&
+                    typeof enhancement.syncTrimFromTimeline ===
+                        "function"
+                ){
+
+                    enhancement.syncTrimFromTimeline(
+                        trimStart,
+                        trimEnd
+                    );
+                }
+            }
+        }
+    );
+
+document
+    .getElementById("setEndButton")
+    .addEventListener(
+        "click",
+        function(){
+
+            const current =
+                videoPreview.currentTime || 0;
+
+            if(current > trimStart){
+
+                trimEnd =
+                    current;
+
+                updateTrimUI();
+
+                const enhancement =
+                    window.FreeVideoClipperEnhancements;
+
+                if(
+                    enhancement &&
+                    typeof enhancement.syncTrimFromTimeline ===
+                        "function"
+                ){
+
+                    enhancement.syncTrimFromTimeline(
+                        trimStart,
+                        trimEnd
+                    );
+                }
+            }
+        }
+    );
+
+document
+    .querySelectorAll(
+        ".ratio-button:not(.disabled)"
+    )
+    .forEach(
+        function(button){
+
+            button.addEventListener(
+                "click",
+                function(){
+
+                    setRatio(
+                        button.dataset.ratio
+                    );
+                }
+            );
+        }
+    );
+
+zoomRange.addEventListener(
+    "input",
+    function(){
+
+        zoom =
+            Number(
+                this.value
+            );
+
+        zoomValue.textContent =
+            zoom + "%";
+    }
+);
 
 cropOverlay.addEventListener(
     "pointerdown",
@@ -1909,123 +2665,202 @@ cropOverlay.addEventListener(
     stopCropDrag
 );
 
-document.getElementById("resetReframeButton")
-.addEventListener("click",function(){
-    resetReframe();
-});
-
-trackingToggle.addEventListener("click",function(){
-    trackingEnabled = !trackingEnabled;
-
-    trackingToggle.classList.toggle(
-        "active",
-        trackingEnabled
+document
+    .getElementById(
+        "resetReframeButton"
+    )
+    .addEventListener(
+        "click",
+        function(){
+            resetReframe();
+        }
     );
-});
 
-window.addEventListener("resize",function(){
-    if(selectedRatio === "9:16"){
-        updateCropOverlay();
-    }
-});
+trackingToggle.addEventListener(
+    "click",
+    function(){
 
-document.getElementById("closeEditorButton")
-.addEventListener("click",function(){
-    videoPreview.pause();
-    showScreen(homeScreen);
-});
+        trackingEnabled =
+            !trackingEnabled;
 
-document.getElementById("exportButton")
-.addEventListener("click",function(){
-    exportPreview.src = videoPreview.src;
-    showScreen(exportScreen);
-});
-
-document.getElementById("backToEditorButton")
-.addEventListener("click",function(){
-    showScreen(editorScreen);
-});
-
-document.getElementById("cancelExportButton")
-.addEventListener("click",function(){
-    showScreen(editorScreen);
-});
-
-document.getElementById("startExportButton")
-.addEventListener("click",function(){
-    showScreen(successScreen);
-});
-
-document.getElementById("editAgainButton")
-.addEventListener("click",function(){
-    showScreen(editorScreen);
-});
-
-document.getElementById("newVideoButton")
-.addEventListener("click",function(){
-
-    if(objectUrl){
-        URL.revokeObjectURL(objectUrl);
-    }
-
-    objectUrl = null;
-    selectedFile = null;
-
-    videoInput.value = "";
-
-    videoPreview.pause();
-    videoPreview.removeAttribute("src");
-    videoPreview.load();
-
-    exportPreview.removeAttribute("src");
-
-    duration = 0;
-    trimStart = 0;
-    trimEnd = 0;
-
-    selectedRatio = "Original";
-
-    resetReframe();
-
-    videoContainer.classList.remove("reframing");
-    reframeControls.classList.remove("active");
-
-    document.querySelectorAll(".ratio-button")
-    .forEach(function(button){
-        button.classList.toggle(
+        trackingToggle.classList.toggle(
             "active",
-            button.dataset.ratio === "Original"
+            trackingEnabled
         );
-    });
+    }
+);
 
-    previewEmpty.style.display = "grid";
+window.addEventListener(
+    "resize",
+    function(){
 
-    createTimelineThumbnails();
+        if(selectedRatio === "9:16"){
+            updateCropOverlay();
+        }
+    }
+);
 
-    showScreen(homeScreen);
-});
+document
+    .getElementById(
+        "closeEditorButton"
+    )
+    .addEventListener(
+        "click",
+        function(){
 
-document.querySelectorAll(
-    '.option input[type="radio"]'
-).forEach(function(input){
+            videoPreview.pause();
 
-    input.addEventListener("change",function(){
+            showScreen(
+                homeScreen
+            );
+        }
+    );
 
-        const group =
-            this.closest(".option-list");
+document
+    .getElementById(
+        "editAgainButton"
+    )
+    .addEventListener(
+        "click",
+        function(){
 
-        group.querySelectorAll(".option")
-        .forEach(function(option){
-            option.classList.remove("selected");
-        });
+            showScreen(
+                editorScreen
+            );
+        }
+    );
 
-        this.closest(".option")
-            .classList.add("selected");
-    });
-});
+document
+    .getElementById(
+        "newVideoButton"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            if(objectUrl){
+
+                URL.revokeObjectURL(
+                    objectUrl
+                );
+            }
+
+            objectUrl = null;
+            selectedFile = null;
+
+            videoInput.value = "";
+
+            videoPreview.pause();
+
+            videoPreview.removeAttribute(
+                "src"
+            );
+
+            videoPreview.load();
+
+            if(exportPreview){
+
+                exportPreview.removeAttribute(
+                    "src"
+                );
+            }
+
+            duration = 0;
+            trimStart = 0;
+            trimEnd = 0;
+
+            selectedRatio =
+                "Original";
+
+            resetReframe();
+
+            videoContainer.classList.remove(
+                "reframing"
+            );
+
+            reframeControls.classList.remove(
+                "active"
+            );
+
+            document
+                .querySelectorAll(
+                    ".ratio-button"
+                )
+                .forEach(
+                    function(button){
+
+                        button.classList.toggle(
+                            "active",
+                            button.dataset.ratio ===
+                                "Original"
+                        );
+                    }
+                );
+
+            previewEmpty.style.display =
+                "grid";
+
+            createTimelineThumbnails();
+
+            showScreen(
+                homeScreen
+            );
+        }
+    );
+
+document
+    .querySelectorAll(
+        '.option input[type="radio"]'
+    )
+    .forEach(
+        function(input){
+
+            input.addEventListener(
+                "change",
+                function(){
+
+                    const group =
+                        this.closest(
+                            ".option-list"
+                        );
+
+                    if(!group){
+                        return;
+                    }
+
+                    group
+                        .querySelectorAll(
+                            ".option"
+                        )
+                        .forEach(
+                            function(option){
+
+                                option.classList.remove(
+                                    "selected"
+                                );
+                            }
+                        );
+
+                    const option =
+                        this.closest(
+                            ".option"
+                        );
+
+                    if(option){
+
+                        option.classList.add(
+                            "selected"
+                        );
+                    }
+                }
+            );
+        }
+    );
 
 createTimelineThumbnails();
 </script>
+
 <script src="editor-enhancements.js"></script>
+
 </body>
 </html>
