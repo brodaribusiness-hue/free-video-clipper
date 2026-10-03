@@ -264,72 +264,72 @@
     }
 
     function loadClipState(clip) {
-    if (!clip) {
-        return;
+        if (!clip) {
+            return;
+        }
+
+        state.crop = {
+            x: Number(clip.crop?.x) || 0.5,
+            y: Number(clip.crop?.y) || 0.5,
+            zoom: Number(clip.crop?.zoom) || 100
+        };
+
+        state.speaker1 = normalizeSpeaker(
+            clip.speaker1,
+            1
+        );
+
+        state.speaker2 = normalizeSpeaker(
+            clip.speaker2,
+            2
+        );
+
+        updateControls();
+
+        /*
+         * Keep the original timeline controls in index.html
+         * synchronized with the currently selected clip.
+         *
+         * The main timeline uses its own trimStart / trimEnd
+         * variables. Dispatching the existing change events
+         * updates those variables without changing the original
+         * timeline implementation.
+         */
+        const startInput =
+            document.getElementById(
+                "startTimeInput"
+            );
+
+        const endInput =
+            document.getElementById(
+                "endTimeInput"
+            );
+
+        if (startInput) {
+            startInput.value =
+                formatTime(clip.start);
+
+            startInput.dispatchEvent(
+                new Event("change", {
+                    bubbles: true
+                })
+            );
+        }
+
+        if (endInput) {
+            endInput.value =
+                formatTime(clip.end);
+
+            endInput.dispatchEvent(
+                new Event("change", {
+                    bubbles: true
+                })
+            );
+        }
+
+        updateCropPreview();
+        updateSpeakerPreview();
     }
-
-    state.crop = {
-        x: Number(clip.crop?.x) || 0.5,
-        y: Number(clip.crop?.y) || 0.5,
-        zoom: Number(clip.crop?.zoom) || 100
-    };
-
-    state.speaker1 = normalizeSpeaker(
-        clip.speaker1,
-        1
-    );
-
-    state.speaker2 = normalizeSpeaker(
-        clip.speaker2,
-        2
-    );
-
-    updateControls();
-
-    /*
-     * Keep the original timeline controls in index.html
-     * synchronized with the currently selected clip.
-     *
-     * The main timeline uses its own trimStart / trimEnd
-     * variables. Dispatching the existing change events
-     * updates those variables without changing the original
-     * timeline implementation.
-     */
-    const startInput =
-        document.getElementById(
-            "startTimeInput"
-        );
-
-    const endInput =
-        document.getElementById(
-            "endTimeInput"
-        );
-
-    if (startInput) {
-        startInput.value =
-            formatTime(clip.start);
-
-        startInput.dispatchEvent(
-            new Event("change", {
-                bubbles: true
-            })
-        );
-    }
-
-    if (endInput) {
-        endInput.value =
-            formatTime(clip.end);
-
-        endInput.dispatchEvent(
-            new Event("change", {
-                bubbles: true
-            })
-        );
-    }
-
-    updateCropPreview();
-    updateSpeakerPreview();
-}
 
     function normalizeSpeaker(value, speakerNumber) {
         const defaults =
@@ -382,113 +382,115 @@
     }
 
     function addClip() {
-    const duration = getDuration();
+        const duration = getDuration();
 
-    if (!duration) {
-        return;
-    }
+        if (!duration) {
+            return;
+        }
 
-    saveCurrentClipState();
+        saveCurrentClipState();
 
-    const active = getActiveClip();
+        const active = getActiveClip();
 
-    const start = active
-        ? active.end
-        : 0;
+        const start = active
+            ? active.end
+            : 0;
 
-    if (start >= duration) {
-        return;
-    }
+        if (start >= duration) {
+            return;
+        }
 
-    const previousDuration = active
-        ? Math.max(
-              0.1,
-              active.end - active.start
-          )
-        : 10;
+        const previousDuration = active
+            ? Math.max(
+                  0.1,
+                  active.end - active.start
+              )
+            : 10;
 
-    const end = Math.min(
-        duration,
-        start + previousDuration
-    );
-
-    if (end <= start) {
-        return;
-    }
-
-    const clip = createClip(
-        start,
-        end
-    );
-
-    state.clips.push(clip);
-    state.activeClipId = clip.id;
-
-    loadClipState(clip);
-    renderClipList();
-}
-async function exportAllClips() {
-    saveCurrentClipState();
-
-    if (!state.clips.length) {
-        throw new Error(
-            "No clips are available."
+        const end = Math.min(
+            duration,
+            start + previousDuration
         );
+
+        if (end <= start) {
+            return;
+        }
+
+        const clip = createClip(
+            start,
+            end
+        );
+
+        state.clips.push(clip);
+        state.activeClipId = clip.id;
+
+        loadClipState(clip);
+        renderClipList();
     }
 
-    const originalActiveClipId =
-        state.activeClipId;
+    async function exportAllClips() {
+        saveCurrentClipState();
 
-    const clips = state.clips.map(
-        function (clip) {
-            return {
-                id: clip.id,
-                start: clip.start,
-                end: clip.end
-            };
-        }
-    );
-
-    try {
-        for (
-            let index = 0;
-            index < clips.length;
-            index++
-        ) {
-            const clip = clips[index];
-
-            selectClip(clip.id);
-
-            await new Promise(
-                function (resolve) {
-                    setTimeout(
-                        resolve,
-                        100
-                    );
-                }
-            );
-
-            await exportVideo();
-
-            await new Promise(
-                function (resolve) {
-                    setTimeout(
-                        resolve,
-                        250
-                    );
-                }
-            );
-        }
-    } finally {
-        if (originalActiveClipId !== null) {
-            selectClip(
-                originalActiveClipId
+        if (!state.clips.length) {
+            throw new Error(
+                "No clips are available."
             );
         }
 
-        hideExportProgress();
+        const originalActiveClipId =
+            state.activeClipId;
+
+        const clips = state.clips.map(
+            function (clip) {
+                return {
+                    id: clip.id,
+                    start: clip.start,
+                    end: clip.end
+                };
+            }
+        );
+
+        try {
+            for (
+                let index = 0;
+                index < clips.length;
+                index++
+            ) {
+                const clip = clips[index];
+
+                selectClip(clip.id);
+
+                await new Promise(
+                    function (resolve) {
+                        setTimeout(
+                            resolve,
+                            100
+                        );
+                    }
+                );
+
+                await exportVideo();
+
+                await new Promise(
+                    function (resolve) {
+                        setTimeout(
+                            resolve,
+                            250
+                        );
+                    }
+                );
+            }
+        } finally {
+            if (originalActiveClipId !== null) {
+                selectClip(
+                    originalActiveClipId
+                );
+            }
+
+            hideExportProgress();
+        }
     }
-}
+
     function removeClip(id) {
         if (state.clips.length <= 1) {
             return;
@@ -622,66 +624,66 @@ async function exportAllClips() {
     }
 
     function createClipControls() {
-    if (
-        document.getElementById(
-            "enhancedClipPanel"
-        )
-    ) {
-        return;
+        if (
+            document.getElementById(
+                "enhancedClipPanel"
+            )
+        ) {
+            return;
+        }
+
+        const panel =
+            document.createElement("section");
+
+        panel.id = "enhancedClipPanel";
+        panel.className = "side-section";
+
+        panel.innerHTML = `
+            <div class="side-title">Clips</div>
+
+            <div
+                id="enhancedClipList"
+                style="
+                    display:grid;
+                    gap:6px;
+                    margin-bottom:8px;
+                "
+            ></div>
+
+            <button
+                id="enhancedAddClip"
+                class="small-button"
+                type="button"
+                style="width:100%;"
+            >
+                + Add Clip
+            </button>
+        `;
+
+        const sidePanel =
+            document.querySelector(
+                ".side-panel"
+            );
+
+        if (sidePanel) {
+            sidePanel.insertBefore(
+                panel,
+                sidePanel.firstElementChild
+            );
+        }
+
+        const addButton =
+            document.getElementById(
+                "enhancedAddClip"
+            );
+
+        if (addButton) {
+            addButton.addEventListener(
+                "click",
+                addClip
+            );
+        }
     }
-
-    const panel =
-        document.createElement("section");
-
-    panel.id = "enhancedClipPanel";
-    panel.className = "side-section";
-
-    panel.innerHTML = `
-        <div class="side-title">Clips</div>
-
-        <div
-            id="enhancedClipList"
-            style="
-                display:grid;
-                gap:6px;
-                margin-bottom:8px;
-            "
-        ></div>
-
-        <button
-            id="enhancedAddClip"
-            class="small-button"
-            type="button"
-            style="width:100%;"
-        >
-            + Add Clip
-        </button>
-    `;
-
-    const sidePanel =
-        document.querySelector(
-            ".side-panel"
-        );
-
-    if (sidePanel) {
-        sidePanel.insertBefore(
-            panel,
-            sidePanel.firstElementChild
-        );
-    }
-
-    const addButton =
-        document.getElementById(
-            "enhancedAddClip"
-        );
-
-    if (addButton) {
-        addButton.addEventListener(
-            "click",
-            addClip
-        );
-    }
-}
 
     function createLayoutControls() {
         if (
@@ -1218,48 +1220,48 @@ async function exportAllClips() {
     }
 
     function updateControls() {
-    if (zoomRange) {
-        zoomRange.value =
-            String(
-                state.crop.zoom
-            );
-    }
-
-    if (zoomValue) {
-        zoomValue.textContent =
-            Math.round(
-                state.crop.zoom
-            ) + "%";
-    }
-
-    const clip = getActiveClip();
-
-    if (clip) {
-        const startInput =
-            document.getElementById(
-                "startTimeInput"
-            );
-
-        const endInput =
-            document.getElementById(
-                "endTimeInput"
-            );
-
-        if (startInput) {
-            startInput.value =
-                formatTime(
-                    clip.start
+        if (zoomRange) {
+            zoomRange.value =
+                String(
+                    state.crop.zoom
                 );
         }
 
-        if (endInput) {
-            endInput.value =
-                formatTime(
-                    clip.end
+        if (zoomValue) {
+            zoomValue.textContent =
+                Math.round(
+                    state.crop.zoom
+                ) + "%";
+        }
+
+        const clip = getActiveClip();
+
+        if (clip) {
+            const startInput =
+                document.getElementById(
+                    "startTimeInput"
                 );
+
+            const endInput =
+                document.getElementById(
+                    "endTimeInput"
+                );
+
+            if (startInput) {
+                startInput.value =
+                    formatTime(
+                        clip.start
+                    );
+            }
+
+            if (endInput) {
+                endInput.value =
+                    formatTime(
+                        clip.end
+                    );
+            }
         }
     }
-}
 
     function updateCropPreview() {
         const zoom =
@@ -2060,63 +2062,447 @@ async function exportAllClips() {
                 halfHeight * 2
         };
     }
+            const halfHeight =
+            sourceHeight / 2;
 
-    function drawSingleFrame(
+        const halfWidth =
+            sourceWidth;
+
+        return {
+            width:
+                halfWidth,
+
+            height:
+                halfHeight * 2
+        };
+    }
+
+    function drawSpeakerLayout(
         ctx,
-        canvas,
-        source
+        source,
+        width,
+        height
     ) {
-        const crop =
-            getSingleCropRect(
-                source
+        const layout =
+            state.layout;
+
+        if (
+            layout !== "top-bottom" &&
+            layout !== "left-right"
+        ) {
+            return false;
+        }
+
+        const speaker1 =
+            normalizeSpeaker(
+                state.speaker1,
+                1
             );
 
-        ctx.fillStyle =
-            "#000000";
+        const speaker2 =
+            normalizeSpeaker(
+                state.speaker2,
+                2
+            );
 
-        ctx.fillRect(
+        const sourceWidth =
+            source.videoWidth;
+
+        const sourceHeight =
+            source.videoHeight;
+
+        if (
+            !sourceWidth ||
+            !sourceHeight
+        ) {
+            return false;
+        }
+
+        ctx.clearRect(
             0,
             0,
-            canvas.width,
-            canvas.height
+            width,
+            height
         );
 
-        ctx.drawImage(
+        if (
+            layout === "top-bottom"
+        ) {
+            const halfHeight =
+                height / 2;
+
+            drawSpeakerFrame(
+                ctx,
+                source,
+                speaker1,
+                0,
+                0,
+                width,
+                halfHeight
+            );
+
+            drawSpeakerFrame(
+                ctx,
+                source,
+                speaker2,
+                0,
+                halfHeight,
+                width,
+                halfHeight
+            );
+
+            return true;
+        }
+
+        const halfWidth =
+            width / 2;
+
+        drawSpeakerFrame(
+            ctx,
             source,
-
-            crop.x,
-            crop.y,
-            crop.width,
-            crop.height,
-
+            speaker1,
             0,
             0,
-            canvas.width,
-            canvas.height
+            halfWidth,
+            height
+        );
+
+        drawSpeakerFrame(
+            ctx,
+            source,
+            speaker2,
+            halfWidth,
+            0,
+            halfWidth,
+            height
+        );
+
+        return true;
+    }
+
+    function drawSpeakerFrame(
+        ctx,
+        source,
+        speaker,
+        destinationX,
+        destinationY,
+        destinationWidth,
+        destinationHeight
+    ) {
+        const sourceWidth =
+            source.videoWidth;
+
+        const sourceHeight =
+            source.videoHeight;
+
+        if (
+            !sourceWidth ||
+            !sourceHeight
+        ) {
+            return;
+        }
+
+        const frameWidth =
+            Math.max(
+                0.05,
+                Math.min(
+                    1,
+                    Number(speaker.width) ||
+                        0.5
+                )
+            );
+
+        const frameHeight =
+            Math.max(
+                0.05,
+                Math.min(
+                    1,
+                    Number(speaker.height) ||
+                        0.5
+                )
+            );
+
+        const centerX =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    Number(speaker.x) ||
+                        0.5
+                )
+            );
+
+        const centerY =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    Number(speaker.y) ||
+                        0.5
+                )
+            );
+
+        const cropWidth =
+            sourceWidth *
+            frameWidth;
+
+        const cropHeight =
+            sourceHeight *
+            frameHeight;
+
+        const cropX =
+            sourceWidth *
+                centerX -
+            cropWidth / 2;
+
+        const cropY =
+            sourceHeight *
+                centerY -
+            cropHeight / 2;
+
+        const safeCropX =
+            Math.max(
+                0,
+                Math.min(
+                    sourceWidth -
+                        cropWidth,
+                    cropX
+                )
+            );
+
+        const safeCropY =
+            Math.max(
+                0,
+                Math.min(
+                    sourceHeight -
+                        cropHeight,
+                    cropY
+                )
+            );
+
+        drawCoverCrop(
+            ctx,
+            source,
+            safeCropX,
+            safeCropY,
+            cropWidth,
+            cropHeight,
+            destinationX,
+            destinationY,
+            destinationWidth,
+            destinationHeight
         );
     }
 
-    function drawSplitFrame(
+    function drawCoverCrop(
         ctx,
-        canvas,
+        source,
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+        destinationX,
+        destinationY,
+        destinationWidth,
+        destinationHeight
+    ) {
+        if (
+            sourceWidth <= 0 ||
+            sourceHeight <= 0 ||
+            destinationWidth <= 0 ||
+            destinationHeight <= 0
+        ) {
+            return;
+        }
+
+        const sourceRatio =
+            sourceWidth /
+            sourceHeight;
+
+        const destinationRatio =
+            destinationWidth /
+            destinationHeight;
+
+        let drawWidth =
+            destinationWidth;
+
+        let drawHeight =
+            destinationHeight;
+
+        let drawX =
+            destinationX;
+
+        let drawY =
+            destinationY;
+
+        if (
+            sourceRatio >
+            destinationRatio
+        ) {
+            drawHeight =
+                destinationHeight;
+
+            drawWidth =
+                destinationHeight *
+                sourceRatio;
+
+            drawX =
+                destinationX +
+                (
+                    destinationWidth -
+                    drawWidth
+                ) /
+                    2;
+        } else {
+            drawWidth =
+                destinationWidth;
+
+            drawHeight =
+                destinationWidth /
+                sourceRatio;
+
+            drawY =
+                destinationY +
+                (
+                    destinationHeight -
+                    drawHeight
+                ) /
+                    2;
+        }
+
+        ctx.drawImage(
+            source,
+            sourceX,
+            sourceY,
+            sourceWidth,
+            sourceHeight,
+            drawX,
+            drawY,
+            drawWidth,
+            drawHeight
+        );
+    }
+
+    function createExportCanvas(
         source
     ) {
-        const crop1 =
-            getSplitCropRect(
-                source,
-                state.speaker1
+        const crop =
+            state.crop;
+
+        const sourceWidth =
+            source.videoWidth;
+
+        const sourceHeight =
+            source.videoHeight;
+
+        if (
+            !sourceWidth ||
+            !sourceHeight
+        ) {
+            throw new Error(
+                "Video dimensions are not available."
+            );
+        }
+
+        const zoom =
+            Math.max(
+                100,
+                Number(crop.zoom) ||
+                    100
+            ) / 100;
+
+        const cropWidth =
+            sourceWidth /
+            zoom;
+
+        const cropHeight =
+            sourceHeight /
+            zoom;
+
+        const centerX =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    Number(crop.x) ||
+                        0.5
+                )
             );
 
-        const crop2 =
-            getSplitCropRect(
-                source,
-                state.speaker2
+        const centerY =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    Number(crop.y) ||
+                        0.5
+                )
             );
 
-        ctx.fillStyle =
-            "#000000";
+        const cropX =
+            Math.max(
+                0,
+                Math.min(
+                    sourceWidth -
+                        cropWidth,
+                    sourceWidth *
+                        centerX -
+                        cropWidth / 2
+                )
+            );
 
-        ctx.fillRect(
+        const cropY =
+            Math.max(
+                0,
+                Math.min(
+                    sourceHeight -
+                        cropHeight,
+                    sourceHeight *
+                        centerY -
+                        cropHeight / 2
+                )
+            );
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+        canvas.width =
+            Math.max(
+                1,
+                Math.round(
+                    cropWidth
+                )
+            );
+
+        canvas.height =
+            Math.max(
+                1,
+                Math.round(
+                    cropHeight
+                )
+            );
+
+        return {
+            canvas,
+            cropX,
+            cropY,
+            cropWidth,
+            cropHeight
+        };
+    }
+
+    function drawExportFrame(
+        ctx,
+        source,
+        canvas,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight
+    ) {
+        ctx.clearRect(
             0,
             0,
             canvas.width,
@@ -2124,281 +2510,412 @@ async function exportAllClips() {
         );
 
         if (
-            state.splitExportLayout ===
-            "horizontal"
+            state.layout ===
+                "top-bottom" ||
+            state.layout ===
+                "left-right"
         ) {
-            const halfWidth =
-                canvas.width / 2;
-
-            ctx.drawImage(
+            drawSpeakerLayout(
+                ctx,
                 source,
-
-                crop1.x,
-                crop1.y,
-                crop1.width,
-                crop1.height,
-
-                0,
-                0,
-                halfWidth,
-                canvas.height
-            );
-
-            ctx.drawImage(
-                source,
-
-                crop2.x,
-                crop2.y,
-                crop2.width,
-                crop2.height,
-
-                halfWidth,
-                0,
-                halfWidth,
+                canvas.width,
                 canvas.height
             );
 
             return;
         }
 
-        const halfHeight =
-            canvas.height / 2;
-
-        ctx.drawImage(
+        drawCoverCrop(
+            ctx,
             source,
-
-            crop1.x,
-            crop1.y,
-            crop1.width,
-            crop1.height,
-
+            cropX,
+            cropY,
+            cropWidth,
+            cropHeight,
             0,
             0,
             canvas.width,
-            halfHeight
-        );
-
-        ctx.drawImage(
-            source,
-
-            crop2.x,
-            crop2.y,
-            crop2.width,
-            crop2.height,
-
-            0,
-            halfHeight,
-            canvas.width,
-            halfHeight
+            canvas.height
         );
     }
 
-    async function createAudioStream(source) {
-        if (
-            getExportAudio() ===
-            "none"
+    function getSelectedQuality() {
+        const input =
+            document.querySelector(
+                'input[name="quality"]:checked'
+            );
+
+        if (!input) {
+            return "original";
+        }
+
+        return (
+            input.value ||
+            "original"
+        );
+    }
+
+    function getSelectedAudioMode() {
+        const input =
+            document.querySelector(
+                'input[name="audio"]:checked'
+            );
+
+        if (!input) {
+            return "original";
+        }
+
+        return (
+            input.value ||
+            "original"
+        );
+    }
+
+    function getMimeType() {
+        const types = [
+            "video/webm;codecs=vp9,opus",
+            "video/webm;codecs=vp8,opus",
+            "video/webm"
+        ];
+
+        for (
+            let index = 0;
+            index < types.length;
+            index++
         ) {
-            return null;
-        }
-
-        try {
-            const AudioContext =
-                window.AudioContext ||
-                window.webkitAudioContext;
-
-            if (!AudioContext) {
-                return null;
-            }
-
-            const context =
-                new AudioContext();
-
             if (
-                context.state ===
-                "suspended"
+                MediaRecorder.isTypeSupported(
+                    types[index]
+                )
             ) {
-                await context.resume();
+                return types[index];
             }
+        }
 
-            const sourceNode =
-                context.createMediaElementSource(
-                    source
-                );
+        throw new Error(
+            "This browser does not support video recording."
+        );
+    }
 
-            const destination =
-                context.createMediaStreamDestination();
+    function getVideoBitrate() {
+        const quality =
+            getSelectedQuality();
 
-            sourceNode.connect(
-                destination
-            );
+        if (
+            quality === "high"
+        ) {
+            return 10000000;
+        }
 
+        return 6000000;
+    }
+
+    function getExportDimensions(
+        source
+    ) {
+        const sourceWidth =
+            source.videoWidth;
+
+        const sourceHeight =
+            source.videoHeight;
+
+        if (
+            state.layout ===
+            "top-bottom"
+        ) {
             return {
-                context,
-                stream:
-                    destination.stream
+                width:
+                    sourceWidth,
+                height:
+                    sourceHeight
             };
-        } catch (error) {
-            return null;
         }
+
+        if (
+            state.layout ===
+            "left-right"
+        ) {
+            return {
+                width:
+                    sourceWidth,
+                height:
+                    sourceHeight
+            };
+        }
+
+        const zoom =
+            Math.max(
+                100,
+                Number(
+                    state.crop.zoom
+                ) || 100
+            ) / 100;
+
+        return {
+            width:
+                Math.max(
+                    1,
+                    Math.round(
+                        sourceWidth /
+                            zoom
+                    )
+                ),
+            height:
+                Math.max(
+                    1,
+                    Math.round(
+                        sourceHeight /
+                            zoom
+                    )
+                )
+        };
     }
 
-    function combineStreams(
-        canvasStream,
-        audioStream
+    function updateExportProgress(
+        value,
+        label
     ) {
-        const combined =
-            new MediaStream();
-
-        canvasStream
-            .getVideoTracks()
-            .forEach(function (track) {
-                combined.addTrack(track);
-            });
-
-        if (audioStream) {
-            audioStream
-                .getAudioTracks()
-                .forEach(function (track) {
-                    combined.addTrack(track);
-                });
-        }
-
-        return combined;
-    }
-
-    function showExportProgress(
-        percent
-    ) {
-        let progress =
+        const progress =
             document.getElementById(
-                "enhancedExportProgress"
+                "exportProgress"
             );
 
-        if (!progress) {
-            progress =
-                document.createElement(
-                    "div"
-                );
+        const progressBar =
+            document.getElementById(
+                "exportProgressBar"
+            );
 
-            progress.id =
-                "enhancedExportProgress";
+        const progressText =
+            document.getElementById(
+                "exportProgressText"
+            );
 
-            progress.style.position =
-                "fixed";
-
-            progress.style.left =
-                "50%";
-
-            progress.style.top =
-                "50%";
-
-            progress.style.transform =
-                "translate(-50%, -50%)";
-
-            progress.style.zIndex =
-                "99999";
-
-            progress.style.width =
-                "min(420px, 90vw)";
-
-            progress.style.padding =
-                "24px";
-
-            progress.style.border =
-                "1px solid var(--border)";
-
-            progress.style.borderRadius =
-                "12px";
-
-            progress.style.background =
-                "var(--panel)";
-
-            progress.innerHTML = `
-                <div
-                    style="
-                        font-weight:700;
-                        margin-bottom:12px;
-                    "
-                >
-                    Creating Video
-                </div>
-
-                <div
-                    style="
-                        height:8px;
-                        border-radius:999px;
-                        background:#303036;
-                        overflow:hidden;
-                    "
-                >
-                    <div
-                        id="enhancedProgressBar"
-                        style="
-                            width:0%;
-                            height:100%;
-                            background:var(--accent);
-                        "
-                    ></div>
-                </div>
-
-                <div
-                    id="enhancedProgressText"
-                    style="
-                        margin-top:8px;
-                        color:var(--muted);
-                        font-size:11px;
-                    "
-                >
-                    0%
-                </div>
-            `;
-
-            document.body.appendChild(
-                progress
+        if (progress) {
+            progress.classList.add(
+                "active"
             );
         }
 
-        const safe =
-            clamp(
-                percent,
-                0,
-                100
-            );
-
-        const bar =
-            document.getElementById(
-                "enhancedProgressBar"
-            );
-
-        const text =
-            document.getElementById(
-                "enhancedProgressText"
-            );
-
-        if (bar) {
-            bar.style.width =
-                safe + "%";
+        if (progressBar) {
+            progressBar.style.width =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Number(value) ||
+                            0
+                    )
+                ) + "%";
         }
 
-        if (text) {
-            text.textContent =
-                Math.round(safe) +
-                "%";
+        if (progressText) {
+            progressText.textContent =
+                label ||
+                "Exporting...";
         }
     }
 
     function hideExportProgress() {
         const progress =
             document.getElementById(
-                "enhancedExportProgress"
+                "exportProgress"
             );
 
         if (progress) {
-            progress.remove();
+            progress.classList.remove(
+                "active"
+            );
         }
     }
 
-    function createDownload(blob) {
+    async function waitForVideoMetadata(
+        media
+    ) {
+        if (
+            media.readyState >= 1 &&
+            media.videoWidth &&
+            media.videoHeight
+        ) {
+            return;
+        }
+
+        await new Promise(
+            function (
+                resolve,
+                reject
+            ) {
+                let settled =
+                    false;
+
+                function cleanup() {
+                    media.removeEventListener(
+                        "loadedmetadata",
+                        onLoaded
+                    );
+
+                    media.removeEventListener(
+                        "error",
+                        onError
+                    );
+                }
+
+                function onLoaded() {
+                    if (settled) {
+                        return;
+                    }
+
+                    settled = true;
+                    cleanup();
+                    resolve();
+                }
+
+                function onError() {
+                    if (settled) {
+                        return;
+                    }
+
+                    settled = true;
+                    cleanup();
+
+                    reject(
+                        new Error(
+                            "Unable to load video metadata."
+                        )
+                    );
+                }
+
+                media.addEventListener(
+                    "loadedmetadata",
+                    onLoaded
+                );
+
+                media.addEventListener(
+                    "error",
+                    onError
+                );
+            }
+        );
+    }
+
+    async function waitForVideoTime(
+        media,
+        time
+    ) {
+        const target =
+            Math.max(
+                0,
+                Math.min(
+                    media.duration || time,
+                    time
+                )
+            );
+
+        if (
+            Math.abs(
+                media.currentTime -
+                    target
+            ) < 0.01
+        ) {
+            return;
+        }
+
+        await new Promise(
+            function (
+                resolve,
+                reject
+            ) {
+                let settled =
+                    false;
+
+                function cleanup() {
+                    media.removeEventListener(
+                        "seeked",
+                        onSeeked
+                    );
+
+                    media.removeEventListener(
+                        "error",
+                        onError
+                    );
+                }
+
+                function onSeeked() {
+                    if (settled) {
+                        return;
+                    }
+
+                    settled = true;
+                    cleanup();
+                    resolve();
+                }
+
+                function onError() {
+                    if (settled) {
+                        return;
+                    }
+
+                    settled = true;
+                    cleanup();
+
+                    reject(
+                        new Error(
+                            "Unable to seek video."
+                        )
+                    );
+                }
+
+                media.addEventListener(
+                    "seeked",
+                    onSeeked
+                );
+
+                media.addEventListener(
+                    "error",
+                    onError
+                );
+
+                try {
+                    media.currentTime =
+                        target;
+                } catch (error) {
+                    onError();
+                }
+            }
+        );
+    }
+
+    function createSourceVideo(
+        src
+    ) {
+        const source =
+            document.createElement(
+                "video"
+            );
+
+        source.muted = true;
+        source.playsInline = true;
+        source.preload =
+            "auto";
+
+        source.src = src;
+
+        document.body.appendChild(
+            source
+        );
+
+        return source;
+    }
+
+    function downloadBlob(
+        blob,
+        filename
+    ) {
+        if (!blob) {
+            throw new Error(
+                "Export produced no file."
+            );
+        }
+
         const url =
             URL.createObjectURL(
                 blob
@@ -2410,14 +2927,8 @@ async function exportAllClips() {
             );
 
         link.href = url;
-
         link.download =
-            "free-video-clip-" +
-            Date.now() +
-            ".webm";
-
-        link.style.display =
-            "none";
+            filename;
 
         document.body.appendChild(
             link
@@ -2433,11 +2944,32 @@ async function exportAllClips() {
                     url
                 );
             },
-            60000
+            1000
+        );
+    }
+
+    function getClipFilename(
+        clip,
+        index
+    ) {
+        const number =
+            String(
+                index + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+        return (
+            "clip-" +
+            number +
+            ".webm"
         );
     }
 
     async function exportVideo() {
+        saveCurrentClipState();
+
         const clip =
             getActiveClip();
 
@@ -2447,49 +2979,57 @@ async function exportAllClips() {
             );
         }
 
+        const sourceUrl =
+            video.currentSrc ||
+            video.src;
+
+        if (!sourceUrl) {
+            throw new Error(
+                "No source video is loaded."
+            );
+        }
+
+        const start =
+            Math.max(
+                0,
+                Number(clip.start) ||
+                    0
+            );
+
+        const end =
+            Math.max(
+                start,
+                Number(clip.end) ||
+                    0
+            );
+
         if (
-            !video.src &&
-            !video.currentSrc
+            end <= start
         ) {
             throw new Error(
-                "No video is loaded."
+                "Clip duration must be greater than zero."
             );
         }
 
-        if (
-            !window.MediaRecorder
-        ) {
-            throw new Error(
-                "This browser does not support video export."
-            );
-        }
-
-        const mimeType =
-            getMimeType();
-
-        if (!mimeType) {
-            throw new Error(
-                "This browser does not support a compatible video export format."
-            );
-        }
-
-        saveCurrentClipState();
+        updateExportProgress(
+            0,
+            "Preparing export..."
+        );
 
         const source =
-            createExportVideo();
+            createSourceVideo(
+                sourceUrl
+            );
 
         try {
-            await waitForVideoReady(
+            await waitForVideoMetadata(
                 source
             );
 
-            const size =
-                state.layout ===
-                "split"
-                    ? getSplitOutputSize(
-                          source
-                      )
-                    : getSingleOutputSize();
+            const dimensions =
+                getExportDimensions(
+                    source
+                );
 
             const canvas =
                 document.createElement(
@@ -2497,85 +3037,121 @@ async function exportAllClips() {
                 );
 
             canvas.width =
-                Math.max(
-                    2,
-                    size.width
-                );
+                dimensions.width;
 
             canvas.height =
-                Math.max(
-                    2,
-                    size.height
-                );
+                dimensions.height;
 
             const ctx =
                 canvas.getContext(
-                    "2d",
-                    {
-                        alpha: false
-                    }
+                    "2d"
                 );
 
             if (!ctx) {
                 throw new Error(
-                    "Canvas export is not available."
+                    "Unable to create export canvas."
                 );
             }
 
-            const canvasStream =
+            const stream =
                 canvas.captureStream(
                     30
                 );
 
-            const audio =
-                await createAudioStream(
-                    source
-                );
+            const audioMode =
+                getSelectedAudioMode();
 
-            const stream =
-                combineStreams(
-                    canvasStream,
-                    audio
-                        ? audio.stream
-                        : null
-                );
+            let combinedStream =
+                stream;
 
-            const videoBitrate =
-                getExportQuality() ===
-                "high"
-                    ? 10_000_000
-                    : 6_000_000;
+            if (
+                audioMode !==
+                "none"
+            ) {
+                try {
+                    const audioContext =
+                        new (
+                            window.AudioContext ||
+                            window.webkitAudioContext
+                        )();
+
+                    const destination =
+                        audioContext.createMediaStreamDestination();
+
+                    const audioSource =
+                        audioContext.createMediaElementSource(
+                            source
+                        );
+
+                    audioSource.connect(
+                        destination
+                    );
+
+                    audioSource.connect(
+                        audioContext.destination
+                    );
+
+                    const audioTracks =
+                        destination
+                            .stream
+                            .getAudioTracks();
+
+                    combinedStream =
+                        new MediaStream(
+                            [
+                                ...stream.getVideoTracks(),
+                                ...audioTracks
+                            ]
+                        );
+                } catch (
+                    audioError
+                ) {
+                    console.warn(
+                        "Audio capture unavailable:",
+                        audioError
+                    );
+                }
+            }
+
+            const mimeType =
+                getMimeType();
 
             const recorder =
                 new MediaRecorder(
-                    stream,
+                    combinedStream,
                     {
                         mimeType,
                         videoBitsPerSecond:
-                            videoBitrate
+                            getVideoBitrate()
                     }
                 );
 
-            const chunks = [];
+            const chunks =
+                [];
 
-            const recording =
+            recorder.ondataavailable =
+                function (
+                    event
+                ) {
+                    if (
+                        event.data &&
+                        event.data.size
+                    ) {
+                        chunks.push(
+                            event.data
+                        );
+                    }
+                };
+
+            const recordingFinished =
                 new Promise(
                     function (
                         resolve,
                         reject
                     ) {
-                        recorder.ondataavailable =
-                            function (
-                                event
-                            ) {
-                                if (
-                                    event.data &&
-                                    event.data.size
-                                ) {
-                                    chunks.push(
-                                        event.data
-                                    );
-                                }
+                        recorder.onstop =
+                            function () {
+                                resolve();
                             };
 
                         recorder.onerror =
@@ -2585,19 +3161,356 @@ async function exportAllClips() {
                                 reject(
                                     event.error ||
                                         new Error(
-                                            "Video recording failed."
+                                            "MediaRecorder failed."
                                         )
                                 );
                             };
+                    }
+                );
 
-                        recorder.onstop =
-                            function () {
-                                resolve(
-                                    new Blob(
-                                        chunks,
-                                        {
-                                            type:
-                                                mimeType
+            await waitForVideoTime(
+                source,
+                start
+            );
+
+            recorder.start(
+                250
+            );
+
+            await new Promise(
+                async function (
+                    resolve,
+                    reject
+                ) {
+                    let animationFrame =
+                        null;
+
+                    let finished =
+                        false;
+
+                    function cleanup() {
+                        if (
+                            animationFrame !==
+                            null
+                        ) {
+                            cancelAnimationFrame(
+                                animationFrame
+                            );
+                        }
+
+                        source.removeEventListener(
+                            "ended",
+                            onEnded
+                        );
+
+                        source.removeEventListener(
+                            "error",
+                            onError
+                        );
+                    }
+
+                    function onEnded() {
+                        finish();
+                    }
+
+                    function onError() {
+                        fail(
+                            new Error(
+                                "Video playback failed during export."
+                            )
+                        );
+                    }
+
+                    function finish() {
+                        if (finished) {
+                            return;
+                        }
+
+                        finished =
+                            true;
+
+                        cleanup();
+
+                        try {
+                            if (
+                                recorder.state !==
+                                "inactive"
+                            ) {
+                                recorder.stop();
+                            }
+                        } catch (
+                            error
+                        ) {
+                            reject(
+                                error
+                            );
+                        }
+
+                        resolve();
+                    }
+
+                    function fail(
+                        error
+                    ) {
+                        if (finished) {
+                            return;
+                        }
+
+                        finished =
+                            true;
+
+                        cleanup();
+
+                        try {
+                            if (
+                                recorder.state !==
+                                "inactive"
+                            ) {
+                                recorder.stop();
+                            }
+                        } catch (
+                            stopError
+                        ) {
+                            console.warn(
+                                stopError
+                            );
+                        }
+
+                        reject(
+                            error
+                        );
+                    }
+
+                    function draw() {
+                        if (
+                            finished
+                        ) {
+                            return;
+                        }
+
+                        drawExportFrame(
+                            ctx,
+                            source,
+                            canvas,
+                            0,
+                            0,
+                            source.videoWidth,
+                            source.videoHeight
+                        );
+
+                        const elapsed =
+                            Math.max(
+                                0,
+                                source.currentTime -
+                                    start
+                            );
+
+                        const total =
+                            end -
+                            start;
+
+                        const percent =
+                            total >
+                            0
+                                ? (
+                                      elapsed /
+                                      total
+                                  ) *
+                                  100
+                                : 0;
+
+                        updateExportProgress(
+                            percent,
+                            "Exporting " +
+                                Math.min(
+                                    100,
+                                    Math.round(
+                                        percent
+                                    )
+                                ) +
+                                "%"
+                        );
+
+                        if (
+                            source.currentTime >=
+                            end
+                        ) {
+                            finish();
+                            return;
+                        }
+
+                        animationFrame =
+                            requestAnimationFrame(
+                                draw
+                            );
+                    }
+
+                    source.addEventListener(
+                        "ended",
+                        onEnded
+                    );
+
+                    source.addEventListener(
+                        "error",
+                        onError
+                    );
+
+                    try {
+                        await source.play();
+                    } catch (
+                        error
+                    ) {
+                        fail(
+                            error
+                        );
+                        return;
+                    }
+
+                    draw();
+                }
+            );
+
+            await recordingFinished;
+
+            const blob =
+                new Blob(
+                    chunks,
+                    {
+                        type: mimeType
+                    }
+                );
+
+            const clipIndex =
+                state.clips.findIndex(
+                    function (
+                        item
+                    ) {
+                        return (
+                            item.id ===
+                            clip.id
+                        );
+                    }
+                );
+
+            downloadBlob(
+                blob,
+                getClipFilename(
+                    clip,
+                    clipIndex >= 0
+                        ? clipIndex
+                        : 0
+                )
+            );
+
+            updateExportProgress(
+                100,
+                "Export complete"
+            );
+
+            await new Promise(
+                function (
+                    resolve
+                ) {
+                    setTimeout(
+                        resolve,
+                        500
+                    );
+                }
+            );
+        } finally {
+            source.pause();
+            source.removeAttribute(
+                "src"
+            );
+            source.load();
+
+            if (source.parentNode) {
+                source.parentNode.removeChild(
+                    source
+                );
+            }
+        }
+    }
+
+    async function exportAllClips() {
+        saveCurrentClipState();
+
+        if (!state.clips.length) {
+            throw new Error(
+                "No clips are available."
+            );
+        }
+
+        const originalActiveClipId =
+            state.activeClipId;
+
+        const clips =
+            state.clips.map(
+                function (
+                    clip
+                ) {
+                    return {
+                        id:
+                            clip.id,
+                        start:
+                            clip.start,
+                        end:
+                            clip.end
+                    };
+                }
+            );
+
+        try {
+            for (
+                let index = 0;
+                index <
+                clips.length;
+                index++
+            ) {
+                const clip =
+                    clips[index];
+
+                selectClip(
+                    clip.id
+                );
+
+                await new Promise(
+                    function (
+                        resolve
+                    ) {
+                        setTimeout(
+                            resolve,
+                            100
+                        );
+                    }
+                );
+
+                await exportVideo();
+
+                await new Promise(
+                    function (
+                        resolve
+                    ) {
+                        setTimeout(
+                            resolve,
+                            250
+                        );
+                    }
+                );
+            }
+        } finally {
+            if (
+                originalActiveClipId !==
+                null
+            ) {
+                selectClip(
+                    originalActiveClipId
+                );
+            }
+
+            hideExportProgress();
+        }
+                    }
                                         }
                                     )
                                 );
@@ -2816,146 +3729,148 @@ async function exportAllClips() {
                 );
             }
         }
-   function connectExport() {
-    const exportButton =
-        document.getElementById(
-            "exportButton"
-        );
-
-    if (exportButton) {
-        exportButton.addEventListener(
-            "click",
-            function (event) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-
-                saveCurrentClipState();
-
-                const exportScreen =
-                    document.getElementById(
-                        "exportScreen"
-                    );
-
-                const editorScreen =
-                    document.getElementById(
-                        "editorScreen"
-                    );
-
-                if (exportScreen) {
-                    exportScreen.classList.add(
-                        "active"
-                    );
-                }
-
-                if (editorScreen) {
-                    editorScreen.classList.remove(
-                        "active"
-                    );
-                }
-
-                createExportLayoutControls();
-                updateExportLayoutButtons();
-
-                const exportPreview =
-                    document.querySelector(
-                        "#exportScreen video"
-                    );
-
-                if (exportPreview) {
-                    exportPreview.src =
-                        video.currentSrc ||
-                        video.src;
-
-                    exportPreview.load();
-                }
-            },
-            true
-        );
     }
 
-    const exportModeInputs =
-        document.querySelectorAll(
-            'input[name="exportMode"]'
-        );
+    function connectExport() {
+        const exportButton =
+            document.getElementById(
+                "exportButton"
+            );
 
-    const createButton =
-        document.getElementById(
-            "startExportButton"
-        );
+        if (exportButton) {
+            exportButton.addEventListener(
+                "click",
+                function (event) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
 
-    exportModeInputs.forEach(
-        function (input) {
-            input.addEventListener(
-                "change",
-                function () {
-                    if (!createButton) {
-                        return;
+                    saveCurrentClipState();
+
+                    const exportScreen =
+                        document.getElementById(
+                            "exportScreen"
+                        );
+
+                    const editorScreen =
+                        document.getElementById(
+                            "editorScreen"
+                        );
+
+                    if (exportScreen) {
+                        exportScreen.classList.add(
+                            "active"
+                        );
                     }
 
-                    if (
-                        input.value ===
-                            "all" &&
-                        input.checked
-                    ) {
-                        createButton.textContent =
-                            "Export All Clips";
+                    if (editorScreen) {
+                        editorScreen.classList.remove(
+                            "active"
+                        );
                     }
 
-                    if (
-                        input.value ===
-                            "current" &&
-                        input.checked
-                    ) {
-                        createButton.textContent =
-                            "Create Clip";
+                    createExportLayoutControls();
+                    updateExportLayoutButtons();
+
+                    const exportPreview =
+                        document.querySelector(
+                            "#exportScreen video"
+                        );
+
+                    if (exportPreview) {
+                        exportPreview.src =
+                            video.currentSrc ||
+                            video.src;
+
+                        exportPreview.load();
                     }
-                }
+                },
+                true
             );
         }
-    );
 
-    if (createButton) {
-        createButton.addEventListener(
-            "click",
-            async function (event) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
+        const exportModeInputs =
+            document.querySelectorAll(
+                'input[name="exportMode"]'
+            );
 
-                const selectedMode =
-                    document.querySelector(
-                        'input[name="exportMode"]:checked'
-                    );
+        const createButton =
+            document.getElementById(
+                "startExportButton"
+            );
 
-                const exportAll =
-                    selectedMode &&
-                    selectedMode.value ===
-                        "all";
+        exportModeInputs.forEach(
+            function (input) {
+                input.addEventListener(
+                    "change",
+                    function () {
+                        if (!createButton) {
+                            return;
+                        }
 
-                createButton.disabled = true;
+                        if (
+                            input.value ===
+                                "all" &&
+                            input.checked
+                        ) {
+                            createButton.textContent =
+                                "Export All Clips";
+                        }
 
-                try {
-                    if (exportAll) {
-                        await exportAllClips();
-                    } else {
-                        await exportVideo();
+                        if (
+                            input.value ===
+                                "current" &&
+                            input.checked
+                        ) {
+                            createButton.textContent =
+                                "Create Clip";
+                        }
                     }
-                } catch (error) {
-                    hideExportProgress();
-
-                    alert(
-                        error &&
-                        error.message
-                            ? error.message
-                            : "Video export failed."
-                    );
-                } finally {
-                    createButton.disabled = false;
-                }
-            },
-            true
+                );
+            }
         );
+
+        if (createButton) {
+            createButton.addEventListener(
+                "click",
+                async function (event) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    const selectedMode =
+                        document.querySelector(
+                            'input[name="exportMode"]:checked'
+                        );
+
+                    const exportAll =
+                        selectedMode &&
+                        selectedMode.value ===
+                            "all";
+
+                    createButton.disabled = true;
+
+                    try {
+                        if (exportAll) {
+                            await exportAllClips();
+                        } else {
+                            await exportVideo();
+                        }
+                    } catch (error) {
+                        hideExportProgress();
+
+                        alert(
+                            error &&
+                            error.message
+                                ? error.message
+                                : "Video export failed."
+                        );
+                    } finally {
+                        createButton.disabled = false;
+                    }
+                },
+                true
+            );
+        }
     }
-}
 
     function injectStyles() {
         if (
@@ -3072,12 +3987,43 @@ async function exportAllClips() {
         initialize();
     }
 
-    window.FreeVideoClipperEnhancements = {
+        window.FreeVideoClipperEnhancements = {
         addClip,
         removeClip,
         selectClip,
         setLayout,
         exportVideo,
+
+        syncTrimFromTimeline: function (
+            start,
+            end
+        ) {
+            const clip =
+                getActiveClip();
+
+            if (!clip) {
+                return;
+            }
+
+            const duration =
+                getDuration();
+
+            clip.start =
+                clamp(
+                    Number(start) || 0,
+                    0,
+                    duration
+                );
+
+            clip.end =
+                clamp(
+                    Number(end) || duration,
+                    clip.start,
+                    duration
+                );
+
+            renderClipList();
+        },
 
         getClips: function () {
             saveCurrentClipState();
@@ -3093,4 +4039,3 @@ async function exportAllClips() {
             );
         }
     };
-})();
