@@ -622,103 +622,114 @@ async function exportAllClips() {
     }
 
     function createClipControls() {
-        if (
-            document.getElementById(
-                "enhancedClipPanel"
-            )
-        ) {
-            return;
-        }
-
-        const panel =
-            document.createElement("section");
-
-        panel.id = "enhancedClipPanel";
-        panel.className = "side-section";
-
-        panel.innerHTML = `
-            <div class="side-title">Clips</div>
-
-            <div
-                id="enhancedClipList"
-                style="
-                    display:grid;
-                    gap:6px;
-                    margin-bottom:8px;
-                "
-            ></div>
-
-            <button
-    id="enhancedAddClip"
-    class="small-button"
-    type="button"
-    style="width:100%;"
->
-    + Add Clip
-</button>
-
-<button
-    id="enhancedExportAllClips"
-    class="small-button"
-    type="button"
-    style="
-        width:100%;
-        margin-top:6px;
-    "
->
-    Export All Clips
-</button>
-        `;
-const exportAllButton =
-    document.getElementById(
-        "enhancedExportAllClips"
-    );
-
-if (exportAllButton) {
-    exportAllButton.addEventListener(
-        "click",
-        async function () {
-            exportAllButton.disabled = true;
-
-            try {
-                await exportAllClips();
-            } catch (error) {
-                hideExportProgress();
-
-                alert(
-                    error &&
-                    error.message
-                        ? error.message
-                        : "Export all clips failed."
-                );
-            } finally {
-                exportAllButton.disabled = false;
-            }
-        }
-    );
-}
-        const sidePanel =
-            document.querySelector(".side-panel");
-
-        if (sidePanel) {
-            sidePanel.insertBefore(
-                panel,
-                sidePanel.firstElementChild
-            );
-        }
-
-        const button =
-            document.getElementById(
-                "enhancedAddClip"
-            );
-
-        if (button) {
-            button.addEventListener(
-                "click",
-                addClip
-            );
-        }
+    if (
+        document.getElementById(
+            "enhancedClipPanel"
+        )
+    ) {
+        return;
     }
+
+    const panel =
+        document.createElement("section");
+
+    panel.id = "enhancedClipPanel";
+    panel.className = "side-section";
+
+    panel.innerHTML = `
+        <div class="side-title">Clips</div>
+
+        <div
+            id="enhancedClipList"
+            style="
+                display:grid;
+                gap:6px;
+                margin-bottom:8px;
+            "
+        ></div>
+
+        <button
+            id="enhancedAddClip"
+            class="small-button"
+            type="button"
+            style="width:100%;"
+        >
+            + Add Clip
+        </button>
+
+        <button
+            id="enhancedExportAllClips"
+            class="small-button"
+            type="button"
+            style="
+                width:100%;
+                margin-top:6px;
+            "
+        >
+            Export All Clips
+        </button>
+    `;
+
+    const sidePanel =
+        document.querySelector(
+            ".side-panel"
+        );
+
+    if (sidePanel) {
+        sidePanel.insertBefore(
+            panel,
+            sidePanel.firstElementChild
+        );
+    }
+
+    /*
+     * The panel must be inserted into the DOM
+     * before looking up its buttons.
+     */
+
+    const addButton =
+        document.getElementById(
+            "enhancedAddClip"
+        );
+
+    if (addButton) {
+        addButton.addEventListener(
+            "click",
+            addClip
+        );
+    }
+
+    const exportAllButton =
+        document.getElementById(
+            "enhancedExportAllClips"
+        );
+
+    if (exportAllButton) {
+        exportAllButton.addEventListener(
+            "click",
+            async function () {
+                exportAllButton.disabled =
+                    true;
+
+                try {
+                    await exportAllClips();
+                } catch (error) {
+                    hideExportProgress();
+
+                    alert(
+                        error &&
+                        error.message
+                            ? error.message
+                            : "Export all clips failed."
+                    );
+                } finally {
+                    exportAllButton.disabled =
+                        false;
+                }
+            }
+        );
+    }
+}
 
     function createLayoutControls() {
         if (
