@@ -656,18 +656,6 @@ async function exportAllClips() {
         >
             + Add Clip
         </button>
-
-        <button
-            id="enhancedExportAllClips"
-            class="small-button"
-            type="button"
-            style="
-                width:100%;
-                margin-top:6px;
-            "
-        >
-            Export All Clips
-        </button>
     `;
 
     const sidePanel =
@@ -682,11 +670,6 @@ async function exportAllClips() {
         );
     }
 
-    /*
-     * The panel must be inserted into the DOM
-     * before looking up its buttons.
-     */
-
     const addButton =
         document.getElementById(
             "enhancedAddClip"
@@ -696,37 +679,6 @@ async function exportAllClips() {
         addButton.addEventListener(
             "click",
             addClip
-        );
-    }
-
-    const exportAllButton =
-        document.getElementById(
-            "enhancedExportAllClips"
-        );
-
-    if (exportAllButton) {
-        exportAllButton.addEventListener(
-            "click",
-            async function () {
-                exportAllButton.disabled =
-                    true;
-
-                try {
-                    await exportAllClips();
-                } catch (error) {
-                    hideExportProgress();
-
-                    alert(
-                        error &&
-                        error.message
-                            ? error.message
-                            : "Export all clips failed."
-                    );
-                } finally {
-                    exportAllButton.disabled =
-                        false;
-                }
-            }
         );
     }
 }
