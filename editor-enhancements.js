@@ -2816,94 +2816,146 @@ async function exportAllClips() {
                 );
             }
         }
+   function connectExport() {
+    const exportButton =
+        document.getElementById(
+            "exportButton"
+        );
+
+    if (exportButton) {
+        exportButton.addEventListener(
+            "click",
+            function (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                saveCurrentClipState();
+
+                const exportScreen =
+                    document.getElementById(
+                        "exportScreen"
+                    );
+
+                const editorScreen =
+                    document.getElementById(
+                        "editorScreen"
+                    );
+
+                if (exportScreen) {
+                    exportScreen.classList.add(
+                        "active"
+                    );
+                }
+
+                if (editorScreen) {
+                    editorScreen.classList.remove(
+                        "active"
+                    );
+                }
+
+                createExportLayoutControls();
+                updateExportLayoutButtons();
+
+                const exportPreview =
+                    document.querySelector(
+                        "#exportScreen video"
+                    );
+
+                if (exportPreview) {
+                    exportPreview.src =
+                        video.currentSrc ||
+                        video.src;
+
+                    exportPreview.load();
+                }
+            },
+            true
+        );
     }
 
-    function connectExport() {
-        const exportButton =
-            document.getElementById(
-                "exportButton"
-            );
+    const exportModeInputs =
+        document.querySelectorAll(
+            'input[name="exportMode"]'
+        );
 
-        if (exportButton) {
-            exportButton.addEventListener(
-                "click",
-                function (event) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
+    const createButton =
+        document.getElementById(
+            "startExportButton"
+        );
 
-                    saveCurrentClipState();
-
-                    const exportScreen =
-                        document.getElementById(
-                            "exportScreen"
-                        );
-
-                    const editorScreen =
-                        document.getElementById(
-                            "editorScreen"
-                        );
-
-                    if (exportScreen) {
-                        exportScreen.classList.add(
-                            "active"
-                        );
+    exportModeInputs.forEach(
+        function (input) {
+            input.addEventListener(
+                "change",
+                function () {
+                    if (!createButton) {
+                        return;
                     }
 
-                    if (editorScreen) {
-                        editorScreen.classList.remove(
-                            "active"
-                        );
+                    if (
+                        input.value ===
+                            "all" &&
+                        input.checked
+                    ) {
+                        createButton.textContent =
+                            "Export All Clips";
                     }
 
-                    createExportLayoutControls();
-                    updateExportLayoutButtons();
-
-                    const exportPreview =
-                        document.querySelector(
-                            "#exportScreen video"
-                        );
-
-                    if (exportPreview) {
-                        exportPreview.src =
-                            video.currentSrc ||
-                            video.src;
-
-                        exportPreview.load();
+                    if (
+                        input.value ===
+                            "current" &&
+                        input.checked
+                    ) {
+                        createButton.textContent =
+                            "Create Clip";
                     }
-                },
-                true
+                }
             );
         }
+    );
 
-        const createButton =
-            document.getElementById(
-                "startExportButton"
-            );
+    if (createButton) {
+        createButton.addEventListener(
+            "click",
+            async function (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
 
-        if (createButton) {
-            createButton.addEventListener(
-                "click",
-                async function (event) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
+                const selectedMode =
+                    document.querySelector(
+                        'input[name="exportMode"]:checked'
+                    );
 
-                    try {
+                const exportAll =
+                    selectedMode &&
+                    selectedMode.value ===
+                        "all";
+
+                createButton.disabled = true;
+
+                try {
+                    if (exportAll) {
+                        await exportAllClips();
+                    } else {
                         await exportVideo();
-                    } catch (error) {
-                        hideExportProgress();
-
-                        alert(
-                            error &&
-                            error.message
-                                ? error.message
-                                : "Video export failed."
-                        );
                     }
-                },
-                true
-            );
-        }
+                } catch (error) {
+                    hideExportProgress();
+
+                    alert(
+                        error &&
+                        error.message
+                            ? error.message
+                            : "Video export failed."
+                    );
+                } finally {
+                    createButton.disabled = false;
+                }
+            },
+            true
+        );
     }
+}
 
     function injectStyles() {
         if (
