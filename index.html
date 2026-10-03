@@ -2247,59 +2247,23 @@ videoPreview.addEventListener(
     }
 );
 
-playButton.addEventListener(
-    "click",
-    function(){
+    updateTrimUI();
+    updateTimeUI();
 
-        if(videoPreview.paused){
+    const enhancement =
+        window.FreeVideoClipperEnhancements;
 
-            if(
-                videoPreview.currentTime >=
-                trimEnd
-            ){
+    if(
+        enhancement &&
+        typeof enhancement.syncTrimFromTimeline ===
+            "function"
+    ){
 
-                videoPreview.currentTime =
-                    trimStart;
-            }
-
-            videoPreview.play();
-
-        }else{
-
-            videoPreview.pause();
-        }
-    }
-);
-
-timeline.addEventListener(
-    "click",
-    function(event){
-
-        if(
-            event.target === startHandle ||
-            event.target === endHandle
-        ){
-            return;
-        }
-
-        if(duration <= 0){
-            return;
-        }
-
-        const rect =
-            timeline.getBoundingClientRect();
-
-        const percentage =
-            (
-                event.clientX -
-                rect.left
-            ) / rect.width;
-
-        setCurrentTime(
-            percentage * duration
+        enhancement.syncTrimFromTimeline(
+            trimStart,
+            trimEnd
         );
     }
-);
 
 function handleTimelineDrag(event){
 
