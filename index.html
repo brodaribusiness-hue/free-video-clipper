@@ -1191,66 +1191,82 @@ body{
     </div>
 </section>
 
-<section id="exportScreen" class="screen">
+<div class="export-options">
 
-    <div class="export-container">
+    <div class="option-group">
+        <div class="option-title">Quality</div>
 
-        <div class="export-header">
-            <button id="backToEditorButton" class="icon-button">←</button>
-            <h1>Export</h1>
-        </div>
+        <div class="option-list">
+            <label class="option selected">
+                <input type="radio" name="quality" checked>
+                Same as Original
+            </label>
 
-        <div class="export-preview">
-            <video id="exportPreview" controls playsinline></video>
-        </div>
-
-        <div class="export-options">
-
-            <div class="option-group">
-                <div class="option-title">Quality</div>
-
-                <div class="option-list">
-                    <label class="option selected">
-                        <input type="radio" name="quality" checked>
-                        Same as Original
-                    </label>
-
-                    <label class="option">
-                        <input type="radio" name="quality">
-                        High Quality
-                    </label>
-                </div>
-            </div>
-
-            <div class="option-group">
-                <div class="option-title">Audio</div>
-
-                <div class="option-list">
-                    <label class="option selected">
-                        <input type="radio" name="audio" checked>
-                        Original Audio
-                    </label>
-
-                    <label class="option">
-                        <input type="radio" name="audio">
-                        No Audio
-                    </label>
-                </div>
-            </div>
-
-            <div class="export-actions">
-                <button id="cancelExportButton" class="secondary-button">
-                    Cancel
-                </button>
-
-                <button id="startExportButton" class="primary-button">
-                    Create Clip
-                </button>
-            </div>
-
+            <label class="option">
+                <input type="radio" name="quality">
+                High Quality
+            </label>
         </div>
     </div>
-</section>
+
+    <div class="option-group">
+        <div class="option-title">Audio</div>
+
+        <div class="option-list">
+            <label class="option selected">
+                <input type="radio" name="audio" checked>
+                Original Audio
+            </label>
+
+            <label class="option">
+                <input type="radio" name="audio">
+                No Audio
+            </label>
+        </div>
+    </div>
+
+    <div class="option-group">
+        <div class="option-title">Export</div>
+
+        <div class="option-list">
+            <label class="option selected">
+                <input
+                    type="radio"
+                    name="exportMode"
+                    value="current"
+                    checked
+                >
+                Current Clip
+            </label>
+
+            <label class="option">
+                <input
+                    type="radio"
+                    name="exportMode"
+                    value="all"
+                >
+                All Clips
+            </label>
+        </div>
+    </div>
+
+    <div class="export-actions">
+        <button
+            id="cancelExportButton"
+            class="secondary-button"
+        >
+            Cancel
+        </button>
+
+        <button
+            id="startExportButton"
+            class="primary-button"
+        >
+            Create Clip
+        </button>
+    </div>
+
+</div>
 
 <section id="successScreen" class="screen">
 
