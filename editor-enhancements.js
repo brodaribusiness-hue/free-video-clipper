@@ -1094,20 +1094,48 @@
     }
 
     function updateControls() {
-        if (zoomRange) {
-            zoomRange.value =
-                String(
-                    state.crop.zoom
+    if (zoomRange) {
+        zoomRange.value =
+            String(
+                state.crop.zoom
+            );
+    }
+
+    if (zoomValue) {
+        zoomValue.textContent =
+            Math.round(
+                state.crop.zoom
+            ) + "%";
+    }
+
+    const clip = getActiveClip();
+
+    if (clip) {
+        const startInput =
+            document.getElementById(
+                "startTimeInput"
+            );
+
+        const endInput =
+            document.getElementById(
+                "endTimeInput"
+            );
+
+        if (startInput) {
+            startInput.value =
+                formatTime(
+                    clip.start
                 );
         }
 
-        if (zoomValue) {
-            zoomValue.textContent =
-                Math.round(
-                    state.crop.zoom
-                ) + "%";
+        if (endInput) {
+            endInput.value =
+                formatTime(
+                    clip.end
+                );
         }
     }
+}
 
     function updateCropPreview() {
         const zoom =
