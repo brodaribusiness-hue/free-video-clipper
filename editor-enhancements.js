@@ -340,32 +340,51 @@
     }
 
     function addClip() {
-        const duration = getDuration();
+    const duration = getDuration();
 
-        if (!duration) {
-            return;
-        }
-
-        saveCurrentClipState();
-
-        const active = getActiveClip();
-
-        const start = active
-            ? active.end
-            : 0;
-
-        if (start >= duration) {
-            return;
-        }
-
-        const clip = createClip(start, duration);
-
-        state.clips.push(clip);
-        state.activeClipId = clip.id;
-
-        loadClipState(clip);
-        renderClipList();
+    if (!duration) {
+        return;
     }
+
+    saveCurrentClipState();
+
+    const active = getActiveClip();
+
+    const start = active
+        ? active.end
+        : 0;
+
+    if (start >= duration) {
+        return;
+    }
+
+    const previousDuration = active
+        ? Math.max(
+              0.1,
+              active.end - active.start
+          )
+        : 10;
+
+    const end = Math.min(
+        duration,
+        start + previousDuration
+    );
+
+    if (end <= start) {
+        return;
+    }
+
+    const clip = createClip(
+        start,
+        end
+    );
+
+    state.clips.push(clip);
+    state.activeClipId = clip.id;
+
+    loadClipState(clip);
+    renderClipList();
+}
 
     function removeClip(id) {
         if (state.clips.length <= 1) {
