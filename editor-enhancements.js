@@ -264,30 +264,72 @@
     }
 
     function loadClipState(clip) {
-        if (!clip) {
-            return;
-        }
-
-        state.crop = {
-            x: Number(clip.crop?.x) || 0.5,
-            y: Number(clip.crop?.y) || 0.5,
-            zoom: Number(clip.crop?.zoom) || 100
-        };
-
-        state.speaker1 = normalizeSpeaker(
-            clip.speaker1,
-            1
-        );
-
-        state.speaker2 = normalizeSpeaker(
-            clip.speaker2,
-            2
-        );
-
-        updateControls();
-        updateCropPreview();
-        updateSpeakerPreview();
+    if (!clip) {
+        return;
     }
+
+    state.crop = {
+        x: Number(clip.crop?.x) || 0.5,
+        y: Number(clip.crop?.y) || 0.5,
+        zoom: Number(clip.crop?.zoom) || 100
+    };
+
+    state.speaker1 = normalizeSpeaker(
+        clip.speaker1,
+        1
+    );
+
+    state.speaker2 = normalizeSpeaker(
+        clip.speaker2,
+        2
+    );
+
+    updateControls();
+
+    /*
+     * Keep the original timeline controls in index.html
+     * synchronized with the currently selected clip.
+     *
+     * The main timeline uses its own trimStart / trimEnd
+     * variables. Dispatching the existing change events
+     * updates those variables without changing the original
+     * timeline implementation.
+     */
+    const startInput =
+        document.getElementById(
+            "startTimeInput"
+        );
+
+    const endInput =
+        document.getElementById(
+            "endTimeInput"
+        );
+
+    if (startInput) {
+        startInput.value =
+            formatTime(clip.start);
+
+        startInput.dispatchEvent(
+            new Event("change", {
+                bubbles: true
+            })
+        );
+    }
+
+    if (endInput) {
+        endInput.value =
+            formatTime(clip.end);
+
+        endInput.dispatchEvent(
+            new Event("change", {
+                bubbles: true
+            })
+        );
+    }
+
+    updateCropPreview();
+    updateSpeakerPreview();
+}
 
     function normalizeSpeaker(value, speakerNumber) {
         const defaults =
