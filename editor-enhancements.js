@@ -385,7 +385,68 @@
     loadClipState(clip);
     renderClipList();
 }
+async function exportAllClips() {
+    saveCurrentClipState();
 
+    if (!state.clips.length) {
+        throw new Error(
+            "No clips are available."
+        );
+    }
+
+    const originalActiveClipId =
+        state.activeClipId;
+
+    const clips = state.clips.map(
+        function (clip) {
+            return {
+                id: clip.id,
+                start: clip.start,
+                end: clip.end
+            };
+        }
+    );
+
+    try {
+        for (
+            let index = 0;
+            index < clips.length;
+            index++
+        ) {
+            const clip = clips[index];
+
+            selectClip(clip.id);
+
+            await new Promise(
+                function (resolve) {
+                    setTimeout(
+                        resolve,
+                        100
+                    );
+                }
+            );
+
+            await exportVideo();
+
+            await new Promise(
+                function (resolve) {
+                    setTimeout(
+                        resolve,
+                        250
+                    );
+                }
+            );
+        }
+    } finally {
+        if (originalActiveClipId !== null) {
+            selectClip(
+                originalActiveClipId
+            );
+        }
+
+        hideExportProgress();
+    }
+}
     function removeClip(id) {
         if (state.clips.length <= 1) {
             return;
@@ -546,15 +607,54 @@
             ></div>
 
             <button
-                id="enhancedAddClip"
-                class="small-button"
-                type="button"
-                style="width:100%;"
-            >
-                + Add Clip
-            </button>
-        `;
+    id="enhancedAddClip"
+    class="small-button"
+    type="button"
+    style="width:100%;"
+>
+    + Add Clip
+</button>
 
+<button
+    id="enhancedExportAllClips"
+    class="small-button"
+    type="button"
+    style="
+        width:100%;
+        margin-top:6px;
+    "
+>
+    Export All Clips
+</button>
+        `;
+const exportAllButton =
+    document.getElementById(
+        "enhancedExportAllClips"
+    );
+
+if (exportAllButton) {
+    exportAllButton.addEventListener(
+        "click",
+        async function () {
+            exportAllButton.disabled = true;
+
+            try {
+                await exportAllClips();
+            } catch (error) {
+                hideExportProgress();
+
+                alert(
+                    error &&
+                    error.message
+                        ? error.message
+                        : "Export all clips failed."
+                );
+            } finally {
+                exportAllButton.disabled = false;
+            }
+        }
+    );
+}
         const sidePanel =
             document.querySelector(".side-panel");
 
